@@ -53,10 +53,21 @@ select {
 }
 
 .question-block,
+.criteria-block,
 .answer-form,
 .result-block {
   display: grid;
   gap: 0.75rem;
+}
+
+.criteria-block ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #475569;
+}
+
+.criteria-block li + li {
+  margin-top: 0.35rem;
 }
 
 .answer-form label {

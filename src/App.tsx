@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { fixedQuestion } from "./data/fixedQuestion";
+import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
@@ -39,6 +40,15 @@ export default function App() {
         <h2 id="question-title">{fixedQuestion.title}</h2>
         <p>{fixedQuestion.scenario}</p>
         <p>{fixedQuestion.prompt}</p>
+      </section>
+
+      <section className="criteria-block" aria-labelledby="criteria-title">
+        <h2 id="criteria-title">Evaluation Criteria</h2>
+        <ul>
+          {rubricCriteria.map((criterion) => (
+            <li key={criterion}>{criterion}</li>
+          ))}
+        </ul>
       </section>
 
       <form className="answer-form" onSubmit={handleSubmit}>
