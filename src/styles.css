@@ -27,18 +27,26 @@ select {
   font: inherit;
 }
 
-.app-shell {
+.page-shell {
   min-height: 100vh;
-  width: min(860px, 100%);
+  width: min(1180px, 100%);
   margin: 0 auto;
   display: grid;
-  align-content: start;
-  gap: 1.25rem;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 2rem;
   padding: 2rem;
 }
 
+.app-shell {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+}
+
+.flow-panel h2,
 .app-shell h1,
 .app-shell h2,
+.flow-panel p,
 .app-shell p {
   margin: 0;
 }
@@ -50,6 +58,42 @@ select {
 
 .app-shell p {
   color: #475569;
+}
+
+.flow-panel {
+  align-self: start;
+  display: grid;
+  gap: 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.flow-panel p,
+.flow-panel span {
+  color: #475569;
+}
+
+.flow-panel ol {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.flow-panel li {
+  padding-left: 0.25rem;
+}
+
+.flow-panel strong,
+.flow-panel span {
+  display: block;
+}
+
+.flow-panel span {
+  margin-top: 0.15rem;
+  font-size: 0.925rem;
 }
 
 .question-block,
@@ -106,4 +150,12 @@ select {
 .result-block {
   border-top: 1px solid #cbd5e1;
   padding-top: 1rem;
+}
+
+@media (max-width: 760px) {
+  .page-shell {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
 }
