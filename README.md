@@ -6,6 +6,16 @@ Rather than building a large product, the goal is to demonstrate how I think abo
 
 > Train reasoning consistency, not answer generation.
 
+## Live Demo
+
+[View Live Demo](https://frontend-reasoning-lab.netlify.app/)
+
+## Preview
+
+![Frontend Reasoning Lab preview](./docs/preview.png)
+
+This tiny proof demonstrates a controlled frontend reasoning loop: a fixed question, answer input, evaluator boundary, structured result, and visible feedback/data-flow behavior.
+
 ## Why This Project Exists
 
 Frontend work is not only about rendering UI. It also involves deciding:
