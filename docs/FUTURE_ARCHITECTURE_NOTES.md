@@ -1,3 +1,9 @@
+> Status: Future architecture notes.
+>
+> This document describes possible architecture for a later MVP with backend evaluation and provider abstraction.
+>
+> It does not describe the completed tiny proof implementation.
+
 # Architecture Overview
 
 ## Architecture Goal

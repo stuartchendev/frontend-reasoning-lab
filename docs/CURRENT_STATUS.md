@@ -2,119 +2,45 @@
 
 ## Current Phase
 
-Pre-implementation planning phase.
+Tiny proof completed and frozen.
 
-The project has not entered active feature implementation yet.
+The current implementation demonstrates a deliberately controlled frontend reasoning workflow. The project is not currently moving into feature expansion or a broader MVP build.
 
----
+## Current Demonstrated Scope
 
-## Current Direction
+The frozen tiny proof demonstrates:
+- controlled scope
+- state-driven UI
+- visible data flow
+- evaluator boundary
+- rubric/result separation
+- AI-assisted decision logging
 
-Final positioning:
-> Frontend Reasoning Trainer
+## Source Of Truth
 
-This is an experimental AI-assisted workflow project focused on:
-- frontend interview reasoning
-- structured evaluation
-- follow-up defense
-- reasoning consistency
+`README.md` is the public-facing summary and source of truth for the current scope.
 
----
+Supporting tiny proof documents:
+- `docs/VERIFICATION.md` records manual verification.
+- `docs/EVALUATOR_RUBRIC.md` records the fixed question, rubric expectations, fake evaluator behavior, and future evaluator boundary.
+- `docs/ai-assisted-decision-log.md` records decision evidence from the implementation process.
+- `docs/TINY_PROOF.md` preserves the original owner draft and project intent note.
 
-## Major Decisions Already Made
+## Next Use
 
-### Confirmed
+The next use of this project is not feature expansion.
 
-- text-first workflow
-- frontend-focused scope
-- structured rubric evaluation
-- adaptive follow-up questioning
-- provider abstraction architecture
-- AI-assisted engineering workflow positioning
-- Next.js + React + TypeScript direction
+The project is ready to support:
+- README presentation
+- resume bullet writing
+- interview narrative preparation
+- a freeze decision about whether to stop, archive, or later restart from the tiny proof boundary
 
----
+## Deferred Notes
 
-### Explicitly Rejected
+Older planning documents are preserved as future or archived context:
+- `docs/FUTURE_MVP_SCOPE.md` preserves broader MVP product direction that was intentionally deferred.
+- `docs/FUTURE_ARCHITECTURE_NOTES.md` preserves possible later architecture notes that do not describe the completed tiny proof.
+- `docs/ARCHIVED_AI_COLLAB_CONTEXT.md` preserves earlier product and AI-collaboration reasoning.
 
-- realtime voice-first architecture
-- cheating/copilot overlay
-- generic AI chatbot direction
-- broad software engineering interview coverage
-- over-engineered infrastructure
-- autonomous multi-agent architecture
-- premature SaaS platform complexity
-
----
-
-## Current Priorities
-
-Priority order:
-1. clear workflow
-2. stable evaluation structure
-3. architecture clarity
-4. async UX quality
-5. practice tracking
-6. visual polish
-
----
-
-## Next Immediate Tasks
-
-Suggested next tasks:
-- define first question set
-- define first rubric JSON schema
-- sketch UI flow
-- define evaluation API shape
-- scaffold project structure
-- establish basic async state flow
-
----
-
-## Current Risk Areas
-
-Potential risks:
-- becoming a generic AI wrapper
-- over-scoping too early
-- vague evaluation logic
-- weak differentiation
-- unstable AI output structure
-
----
-
-## AI Collaboration Workflow
-
-Current expected workflow:
-
-ChatGPT:
-- architecture
-- planning
-- workflow reasoning
-- rubric design
-
-Codex / Claude Code:
-- implementation
-- scaffolding
-- refactoring
-- testing support
-
-Human:
-- final decisions
-- integration
-- evaluation
-- product boundaries
-
----
-
-## Important Reminder
-
-This project succeeds if:
-- the workflow is coherent
-- the reasoning evaluation feels meaningful
-- the architecture remains explainable
-- the scope stays controlled
-
-This project fails if:
-- it turns into ChatGPT with extra UI
-- the workflow becomes vague
-- complexity grows faster than product clarity
+These documents should not override the current tiny proof scope described in `README.md`.

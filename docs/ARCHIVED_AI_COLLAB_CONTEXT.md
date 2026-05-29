@@ -1,3 +1,9 @@
+> Status: Archived AI collaboration context.
+>
+> This document records early product and AI-collaboration reasoning before the project was reduced to a completed tiny proof.
+>
+> It is not the current implementation scope. The current public-facing scope is documented in `README.md`.
+
 # AI Collaboration Context — Frontend Reasoning Trainer
 
 ## Why This Project Exists

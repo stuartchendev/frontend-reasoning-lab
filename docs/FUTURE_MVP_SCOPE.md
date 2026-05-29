@@ -1,3 +1,9 @@
+> Status: Future MVP scope note.
+>
+> This document describes a broader product direction that was intentionally deferred after the tiny proof was completed.
+>
+> The current public-facing scope is documented in `README.md`.
+
 # Frontend Reasoning Trainer — Project Scope
 
 ## Project Overview

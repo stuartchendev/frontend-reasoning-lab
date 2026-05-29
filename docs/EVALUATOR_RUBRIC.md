@@ -4,6 +4,36 @@ This document defines manual test cases for the current fake evaluator flow.
 
 It is documentation only. It should not change the UI, source code, evaluator behavior, or current tiny-proof scope.
 
+## Rubric Philosophy
+
+The rubric should not attempt to determine a single perfect answer.
+
+Instead, the rubric exists to:
+- detect missing reasoning parts
+- identify explanation weaknesses
+- evaluate consistency
+- encourage structured engineering thinking
+
+This is a reasoning calibration system, not a grading system.
+
+## Feedback Philosophy
+
+Avoid generic feedback such as:
+- Good answer.
+- Be more specific.
+- Nice explanation.
+
+Prefer:
+- concrete reasoning gaps
+- explicit missing dimensions
+- actionable explanation improvements
+
+Example:
+
+```txt
+You explained the intent clearly, but you did not explain why storing the entire object could create duplicated truth risk.
+```
+
 ## 1. Current Question Summary
 
 The current fixed question asks the user to reason about state and derived data in a project list UI.
@@ -119,3 +149,38 @@ The future evaluator should preserve the current architectural boundary:
 - UI submits the fixed question and user answer.
 - Evaluation happens behind a replaceable async function or API boundary.
 - The UI renders structured results without knowing evaluator internals.
+
+## Future Rubric Notes
+
+Future evaluator work may use broader reasoning dimensions, but those dimensions are not part of the current fake evaluator behavior.
+
+Possible future dimensions:
+- intent clarity: whether the user explains the purpose of the decision
+- trade-off awareness: whether the user explains costs, benefits, and alternatives
+- example specificity: whether the answer is grounded in a concrete implementation scenario
+- state responsibility awareness: whether the user explains ownership, avoids duplicated truth, and identifies derived state
+- failure case awareness: whether the user describes what can go wrong
+- follow-up consistency: whether later answers align with the original reasoning
+
+Reasoning calibration idea:
+- The evaluator should detect reasoning structure and gaps rather than produce a single pass/fail grade.
+- Feedback should help the user improve the explanation, not just label the answer as correct or incorrect.
+- Follow-up questions, if added in a later MVP, should test reasoning depth, consistency, trade-offs, and assumptions.
+
+Future follow-up questions should avoid:
+- random unrelated questions
+- trivia
+- excessively academic prompts
+
+Possible later topic coverage:
+- React state
+- derived state
+- async UI
+- `useEffect`
+- API normalization
+- component responsibility
+- rendering logic
+- state machines
+- optimistic UI
+
+Do not treat these future notes as current tiny proof scope.
