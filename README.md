@@ -1,137 +1,113 @@
 # Frontend Reasoning Lab
 
-An experimental frontend reasoning practice project focused on state design, data flow, component responsibility, and AI-assisted engineering workflow.
+Frontend Reasoning Lab is a tiny proof project focused on frontend reasoning within a small, controlled UI workflow.
+
+Rather than building a large product, the goal is to demonstrate how I think about state, data flow, responsibility boundaries, and AI-assisted engineering decisions.
 
 > Train reasoning consistency, not answer generation.
 
-## Project Status
-
-This repository is currently in the **tiny proof / planning stage**.
-
-The broader MVP direction is documented in [`PROJECT_SCOPE.md`](./PROJECT_SCOPE.md).  
-The current short-term goal is to slice that broader vision into a small, explainable proof of workflow before expanding the product scope.
-
 ## Why This Project Exists
 
-Frontend learners often know how to make a UI work, but struggle to explain:
+Frontend work is not only about rendering UI. It also involves deciding:
 
-- why a specific state model was chosen
-- what should be stored vs derived
-- how data flows through the UI
-- where component responsibilities should be separated
-- how to defend trade-offs in an interview or code review
+- what state should exist
+- what should be derived
+- where evaluation logic belongs
+- how user actions move through the system
+- how to keep scope small and explainable
 
-This project explores a structured way to practice those explanations.
+This project makes those decisions visible.
 
-The goal is not to build a generic AI chatbot or answer generator.  
-The goal is to build a reasoning-focused training flow that helps users practice frontend engineering decisions.
+## What It Demonstrates
 
-## Current Tiny Proof Scope
+> This project demonstrates a small but complete frontend reasoning loop:
+>
+> ```txt
+> fixed question + code snippet
+> → user answer
+> → state update
+> → fake async evaluator
+> → structured result
+> → UI feedback
+> → decision notes
+> ```
+>
+> The focus is not feature expansion, but making state, data flow, responsibility boundaries, and engineering decisions explainable.
 
-The first proof should stay intentionally small.
+## Core Ideas
 
-It should focus on one end-to-end flow:
+### State-Driven UI
 
-1. Show a small frontend code snippet and reasoning question.
-2. Let the user write an answer.
-3. Evaluate the answer through a fake or replaceable evaluator boundary.
-4. Display structured feedback.
-5. Keep the state model and component responsibilities explainable.
+User input updates state, the evaluator produces a result, and the UI renders feedback from that result.
 
-The first version may use:
+The UI does not own the evaluation decision. It reflects the current state and result.
 
-- a small local question list
-- a fake async evaluator instead of a real API
-- structured feedback data
-- minimal stored state
-- derived values where possible
+### Evaluator Boundary
 
-## Tiny Proof Non-Goals
+The evaluator is separated from the UI layer.
 
-The tiny proof should not include:
+The UI presents input and feedback.  
+The evaluator checks input against the rubric and produces a result.
 
-- login
-- realtime voice interview flow
-- avatar interviewer
-- cheating / copilot overlay
-- autonomous multi-agent workflow
-- large external question bank
-- full SaaS account system
-- long-term AI memory
-- analytics dashboard
-- full MVP-level practice tracking
+This keeps rendering responsibility separate from evaluation responsibility.
 
-These may be reconsidered later only after the core reasoning loop is proven.
+### Rubric vs Result
 
-## Broader MVP Direction
+The rubric defines what should be evaluated.  
+The result represents the outcome of that evaluation.
 
-The broader MVP vision may eventually include:
+Keeping them separate makes responsibilities easier to reason about.
 
-- topic selection
-- curated frontend reasoning questions
-- structured rubric-based evaluation
-- adaptive follow-up questions
-- final feedback summary
-- minimal practice attempt tracking
-- clear loading / error / retry states
+### Scope Control
 
-The key product direction is to support:
+This project was intentionally kept small.
 
-- reasoning structure
-- engineering intent
-- design defense
-- evaluation consistency
+The focus was on completing a tiny proof with a clear boundary and explainable decisions.
 
-## Engineering Focus
+### AI-Assisted Engineering Workflow
 
-This project is intended to demonstrate:
+AI was used as a thinking and implementation assistant during development.
 
-- state-driven UI
-- single source of truth
-- stored vs derived state decisions
-- async UI status handling
-- component responsibility separation
-- API / evaluator boundary design
-- TypeScript contracts for structured data
-- scope control before implementation
+Project scope, architecture, and final decisions were reviewed and owned by me.
 
-## AI-Assisted Workflow Positioning
-
-This project is also used as a small proof of AI-assisted engineering workflow.
-
-AI tools may support:
-
-- goal review
-- scope risk identification
-- implementation planning
-- small diff review
-- documentation drafting
-
-However, the owner remains responsible for:
-
-- final scope decisions
-- state model design
-- data flow decisions
-- component boundaries
-- TypeScript type design
-- final code quality review
-- project explanation and documentation
-
-## Current Workflow
+Decision notes are documented in:
 
 ```txt
-MVP vision
-→ tiny proof goal
-→ Codex /goal review
-→ owner decision
-→ implementation plan
-→ small implementation slice
+docs/ai-assisted-decision-log.md
 ```
 
-For now, implementation should not expand beyond the tiny proof unless the scope is reviewed first.
+## Tech Stack
 
-## Possible Resume / Interview Narrative
+- React
+- TypeScript
+- Vite
+- CSS
 
-> Scoped a broader AI-assisted frontend reasoning trainer into a tiny proof milestone to validate the core evaluation flow before expanding into a full MVP.
+## Status
 
-This project is meant to show not only that a feature can be built, but that the scope, state model, data flow, and responsibilities can be explained clearly.
+Tiny proof completed and frozen.
+
+Demonstrates:
+
+- controlled scope
+- state-driven UI
+- visible data flow
+- evaluator boundary
+- rubric/result separation
+- AI-assisted decision logging
+
+## Key Takeaway
+
+Frontend Reasoning Lab shows how I approach frontend work beyond rendering UI:
+
+define a small scope, model state, separate responsibilities, document decisions, and keep implementation explainable.
+
+## Additional Notes
+
+This README is intentionally focused on the completed tiny proof scope.
+
+For deeper project context, see:
+
+- `docs/ai-assisted-decision-log.md` — scope decisions, slice rationale, deferred features, owner responsibility, and AI assistance boundary
+- `docs/EVALUATOR_RUBRIC.md` — fixed question context, rubric expectations, manual evaluator checks, and future evaluator boundary
+- `docs/TINY_PROOF.md` — original owner draft for the tiny proof direction
