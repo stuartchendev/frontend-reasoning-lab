@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { fixedQuestion } from "./data/fixedQuestion";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
+import { ProjectFooter } from "./components/ProjectFooter";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
 const flowSteps = [
@@ -58,22 +59,6 @@ export default function App() {
 
   return (
     <main className="page-shell">
-      <aside className="flow-panel" aria-labelledby="flow-title">
-        <h2 id="flow-title">Data-flow Loop</h2>
-        <p>
-          This panel maps the current UI to the data and state used by the
-          tiny proof.
-        </p>
-        <ol>
-          {flowSteps.map((step) => (
-            <li key={step.label}>
-              <strong>{step.label}</strong>
-              <span>{step.source}</span>
-            </li>
-          ))}
-        </ol>
-      </aside>
-
       <section className="app-shell" aria-labelledby="app-title">
         <h1 id="app-title">Frontend Reasoning Lab</h1>
         <section className="question-block" aria-labelledby="question-title">
@@ -124,6 +109,26 @@ export default function App() {
           </section>
         )}
       </section>
+
+      <aside className="flow-panel" aria-labelledby="flow-title">
+        <h2 id="flow-title">Data-flow Loop</h2>
+        <p>
+          This panel maps the current UI to the data and state used by the tiny
+          proof.
+        </p>
+        <ol>
+          {flowSteps.map((step) => (
+            <li key={step.label}>
+              <strong>{step.label}</strong>
+              <span>{step.source}</span>
+            </li>
+          ))}
+        </ol>
+      </aside>
+
+      <aside className="project-meta-column" aria-label="Project metadata">
+        <ProjectFooter />
+      </aside>
     </main>
   );
 }
