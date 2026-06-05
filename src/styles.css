@@ -34,9 +34,7 @@ select {
   display: grid;
   grid-template-areas: "flow app meta";
   grid-template-columns:
-    minmax(220px, 280px)
-    minmax(0, 1fr)
-    minmax(200px, 260px);
+    minmax(220px, 280px) minmax(0, 1fr) minmax(200px, 260px);
   gap: 2rem;
   padding: 2rem;
 }
@@ -123,7 +121,7 @@ select {
   color: #475569;
 }
 
-.criteria-block li + li {
+.criteria-block li+li {
   margin-top: 0.35rem;
 }
 
@@ -199,6 +197,15 @@ select {
 .project-footer p {
   color: #475569;
 }
+
+.project-footer p em {
+  display: block;
+  font-size: clamp(0.875rem, 2vw, 0.925rem);
+  margin-top: 0.25rem;
+  font-synthesis: style;
+  color: #99a9be;
+}
+
 
 .project-footer__closing {
   font-size: 0.875rem;

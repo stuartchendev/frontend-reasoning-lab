@@ -6,6 +6,12 @@ Rather than building a large product, the goal is to demonstrate how I think abo
 
 > Train reasoning consistency, not answer generation.
 
+## Project Evidence
+
+- **Live Demo** — frontend reasoning loop and state-driven UI behavior
+- **AI-Assisted Decision Log** — scope decisions, AI assistance boundary, and owner review
+- **Evaluator Rubric** — reasoning criteria and evaluator boundary
+
 ## Live Demo
 
 [View Live Demo](https://frontend-reasoning-lab.netlify.app/)
