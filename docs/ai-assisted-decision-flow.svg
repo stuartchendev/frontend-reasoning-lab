@@ -1,8 +1,8 @@
-<svg width="1400" height="920" viewBox="0 0 1400 920" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="1400" height="980" viewBox="0 0 1400 980" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Frontend Reasoning Lab AI-assisted decision flow</title>
   <desc id="desc">A visual summary of the project scope, owner responsibility, AI assistance boundary, slice decisions, visible data flow, deferred features, and stop line.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="920" gradientUnits="userSpaceOnUse">
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="980" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#FFF8EF"/>
       <stop offset="1" stop-color="#F6EFE7"/>
     </linearGradient>
@@ -23,7 +23,6 @@
       .ai { fill: #EFE6FF; stroke: #A58AD8; stroke-width: 2; }
       .defer { fill: #F4F1ED; stroke: #C8B9AA; stroke-width: 2; }
       .accent-line { stroke: #B9783F; stroke-width: 3; stroke-linecap: round; }
-      .muted-line { stroke: #C7B4A1; stroke-width: 2.5; stroke-linecap: round; }
       .arrow { stroke: #9A6A42; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); }
       .thin-arrow { stroke: #B49B85; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead-soft); }
     </style>
@@ -35,9 +34,9 @@
     </marker>
   </defs>
 
-  <rect width="1400" height="920" rx="36" fill="url(#bg)"/>
+  <rect width="1400" height="980" rx="36" fill="url(#bg)"/>
   <circle cx="1190" cy="130" r="120" fill="#F1D5B8" opacity="0.32"/>
-  <circle cx="170" cy="790" r="150" fill="#E9DDFF" opacity="0.35"/>
+  <circle cx="170" cy="820" r="150" fill="#E9DDFF" opacity="0.35"/>
 
   <text x="70" y="78" class="title">Frontend Reasoning Lab</text>
   <text x="70" y="112" class="subtitle">AI-assisted decision flow: scope control, owner review, and visible frontend data flow</text>
@@ -97,24 +96,29 @@
   <path d="M780 522H820" class="thin-arrow"/>
   <path d="M1030 522H1070" class="thin-arrow"/>
 
-  <rect x="70" y="640" width="1260" height="155" rx="28" class="node"/>
+  <rect x="70" y="640" width="1260" height="165" rx="28" class="node"/>
   <text x="100" y="682" class="section-title">Visible frontend data flow</text>
-  <text x="100" y="715" class="body">Fixed question + code snippet</text>
-  <path d="M285 710H345" class="arrow"/>
-  <text x="365" y="715" class="body">User answer</text>
-  <path d="M470 710H530" class="arrow"/>
-  <text x="550" y="715" class="body">State update</text>
-  <path d="M665 710H725" class="arrow"/>
-  <text x="745" y="715" class="body">Fake async evaluator</text>
-  <path d="M915 710H975" class="arrow"/>
-  <text x="995" y="715" class="body">Structured result</text>
-  <path d="M1150 710H1210" class="arrow"/>
-  <text x="100" y="758" class="body">UI feedback + decision notes</text>
-  <text x="820" y="758" class="small">Rendering reflects state; evaluation responsibility stays outside the UI layer.</text>
+  <text x="100" y="720" class="body">Fixed question + code snippet</text>
+  <path d="M285 715H345" class="arrow"/>
+  <text x="365" y="720" class="body">User answer</text>
+  <path d="M470 715H530" class="arrow"/>
+  <text x="550" y="720" class="body">State update</text>
+  <path d="M665 715H725" class="arrow"/>
+  <text x="745" y="720" class="body">Fake async evaluator</text>
+  <path d="M915 715H975" class="arrow"/>
+  <text x="995" y="720" class="body">Structured result</text>
+  <path d="M1150 715H1210" class="arrow"/>
+  <text x="1228" y="720" class="body">UI feedback</text>
+  <text x="100" y="765" class="body">Decision notes</text>
+  <text x="820" y="765" class="small">Rendering reflects state; evaluation responsibility stays outside the UI layer.</text>
 
-  <rect x="70" y="835" width="600" height="45" rx="18" class="defer"/>
-  <text x="100" y="864" class="body">Deferred: real AI API, login, database, dashboard, full scoring, agent workflow</text>
+  <rect x="70" y="850" width="600" height="82" rx="18" class="defer"/>
+  <text x="100" y="882" class="body">Deferred features</text>
+  <text x="100" y="910" class="small">Real AI API, login, database, dashboard, full scoring,</text>
+  <text x="100" y="930" class="small">agent workflow, production polish, analytics / tracking.</text>
 
-  <rect x="720" y="835" width="610" height="45" rx="18" fill="#E8F3E2" stroke="#97B980" stroke-width="2" filter="url(#shadow)"/>
-  <text x="750" y="864" class="body">Stop line: freeze, summarize, resume bullet, interview narrative, expand only with a clear reason</text>
+  <rect x="720" y="850" width="610" height="82" rx="18" fill="#E8F3E2" stroke="#97B980" stroke-width="2" filter="url(#shadow)"/>
+  <text x="750" y="882" class="body">Current stop line</text>
+  <text x="750" y="910" class="small">Freeze, summarize, resume bullet, interview narrative.</text>
+  <text x="750" y="930" class="small">Expand only with a clear reason beyond feature accumulation.</text>
 </svg>
