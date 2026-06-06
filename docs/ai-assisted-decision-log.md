@@ -8,6 +8,12 @@ It preserves engineering decision evidence for resume, GitHub, and interview use
 
 Frontend Reasoning Lab is intentionally a tiny proof, not a full MVP. The project stayed small to prove one clear frontend reasoning loop before adding real AI behavior, persistence, dashboards, or broader product structure.
 
+## Visual Summary
+
+![AI-assisted decision flow](./ai-assisted-decision-flow.svg)
+
+This diagram summarizes the project scope, owner responsibility, AI assistance boundary, slice decisions, visible data flow, deferred features, and current stop line.
+
 ## 2. Owner Responsibility
 
 The owner remained responsible for:
