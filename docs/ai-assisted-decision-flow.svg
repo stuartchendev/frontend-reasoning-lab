@@ -1,0 +1,120 @@
+<svg width="1400" height="920" viewBox="0 0 1400 920" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Frontend Reasoning Lab AI-assisted decision flow</title>
+  <desc id="desc">A visual summary of the project scope, owner responsibility, AI assistance boundary, slice decisions, visible data flow, deferred features, and stop line.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="920" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF8EF"/>
+      <stop offset="1" stop-color="#F6EFE7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#5B4636" flood-opacity="0.13"/>
+    </filter>
+    <style>
+      .title { font: 700 42px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #2F241C; }
+      .subtitle { font: 500 19px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #6E5946; }
+      .section-title { font: 700 20px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #3A2A20; }
+      .card-title { font: 700 18px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #3A2A20; }
+      .body { font: 500 15px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #594637; }
+      .small { font: 500 13px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #6E5946; }
+      .pill { font: 700 13px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #7A4A22; }
+      .node { fill: #FFFFFF; stroke: #E1CBB6; stroke-width: 2; filter: url(#shadow); }
+      .node-soft { fill: #FFFDF9; stroke: #E6D5C3; stroke-width: 2; filter: url(#shadow); }
+      .owner { fill: #F6E2C8; stroke: #D79B5D; stroke-width: 2; }
+      .ai { fill: #EFE6FF; stroke: #A58AD8; stroke-width: 2; }
+      .defer { fill: #F4F1ED; stroke: #C8B9AA; stroke-width: 2; }
+      .accent-line { stroke: #B9783F; stroke-width: 3; stroke-linecap: round; }
+      .muted-line { stroke: #C7B4A1; stroke-width: 2.5; stroke-linecap: round; }
+      .arrow { stroke: #9A6A42; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); }
+      .thin-arrow { stroke: #B49B85; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead-soft); }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#9A6A42" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrowhead-soft" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#B49B85" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="920" rx="36" fill="url(#bg)"/>
+  <circle cx="1190" cy="130" r="120" fill="#F1D5B8" opacity="0.32"/>
+  <circle cx="170" cy="790" r="150" fill="#E9DDFF" opacity="0.35"/>
+
+  <text x="70" y="78" class="title">Frontend Reasoning Lab</text>
+  <text x="70" y="112" class="subtitle">AI-assisted decision flow: scope control, owner review, and visible frontend data flow</text>
+  <line x1="70" y1="136" x2="1330" y2="136" class="accent-line" opacity="0.65"/>
+
+  <rect x="70" y="175" width="390" height="165" rx="26" class="node"/>
+  <text x="100" y="215" class="section-title">1. Project intent</text>
+  <text x="100" y="250" class="body">Tiny proof, not a full MVP.</text>
+  <text x="100" y="278" class="body">Prove one explainable frontend</text>
+  <text x="100" y="306" class="body">reasoning loop before expansion.</text>
+
+  <rect x="505" y="175" width="390" height="165" rx="26" class="owner" filter="url(#shadow)"/>
+  <text x="535" y="215" class="section-title">2. Owner responsibility</text>
+  <text x="535" y="250" class="body">Final scope, state model, data flow,</text>
+  <text x="535" y="278" class="body">component boundaries, TypeScript</text>
+  <text x="535" y="306" class="body">contracts, review, and explanation.</text>
+
+  <rect x="940" y="175" width="390" height="165" rx="26" class="ai" filter="url(#shadow)"/>
+  <text x="970" y="215" class="section-title">3. AI assistance boundary</text>
+  <text x="970" y="250" class="body">Planning, scope review, creep detection,</text>
+  <text x="970" y="278" class="body">prompt drafting, small diff review,</text>
+  <text x="970" y="306" class="body">and documentation support.</text>
+
+  <path d="M460 258H505" class="arrow"/>
+  <path d="M895 258H940" class="arrow"/>
+
+  <text x="70" y="400" class="section-title">Slice decisions</text>
+  <text x="70" y="428" class="subtitle">A small sequence of controlled slices kept the project explainable instead of letting it become feature accumulation.</text>
+
+  <rect x="70" y="465" width="210" height="115" rx="22" class="node-soft"/>
+  <text x="95" y="500" class="pill">Slice 1.0</text>
+  <text x="95" y="530" class="card-title">Domain foundation</text>
+  <text x="95" y="558" class="small">Define data shapes first</text>
+
+  <rect x="320" y="465" width="210" height="115" rx="22" class="node-soft"/>
+  <text x="345" y="500" class="pill">Slice 1.5</text>
+  <text x="345" y="530" class="card-title">Thin UI connection</text>
+  <text x="345" y="558" class="small">Validate one end-to-end loop</text>
+
+  <rect x="570" y="465" width="210" height="115" rx="22" class="node-soft"/>
+  <text x="595" y="500" class="pill">Slice 1.6</text>
+  <text x="595" y="530" class="card-title">Rubric spec</text>
+  <text x="595" y="558" class="small">Separate expectations</text>
+
+  <rect x="820" y="465" width="210" height="115" rx="22" class="node-soft"/>
+  <text x="845" y="500" class="pill">Slice 1.7</text>
+  <text x="845" y="530" class="card-title">Criteria panel</text>
+  <text x="845" y="558" class="small">Show standards before answer</text>
+
+  <rect x="1070" y="465" width="260" height="115" rx="22" class="node-soft"/>
+  <text x="1095" y="500" class="pill">Slice 1.8</text>
+  <text x="1095" y="530" class="card-title">Visible data-flow loop</text>
+  <text x="1095" y="558" class="small">Make reasoning visible</text>
+
+  <path d="M280 522H320" class="thin-arrow"/>
+  <path d="M530 522H570" class="thin-arrow"/>
+  <path d="M780 522H820" class="thin-arrow"/>
+  <path d="M1030 522H1070" class="thin-arrow"/>
+
+  <rect x="70" y="640" width="1260" height="155" rx="28" class="node"/>
+  <text x="100" y="682" class="section-title">Visible frontend data flow</text>
+  <text x="100" y="715" class="body">Fixed question + code snippet</text>
+  <path d="M285 710H345" class="arrow"/>
+  <text x="365" y="715" class="body">User answer</text>
+  <path d="M470 710H530" class="arrow"/>
+  <text x="550" y="715" class="body">State update</text>
+  <path d="M665 710H725" class="arrow"/>
+  <text x="745" y="715" class="body">Fake async evaluator</text>
+  <path d="M915 710H975" class="arrow"/>
+  <text x="995" y="715" class="body">Structured result</text>
+  <path d="M1150 710H1210" class="arrow"/>
+  <text x="100" y="758" class="body">UI feedback + decision notes</text>
+  <text x="820" y="758" class="small">Rendering reflects state; evaluation responsibility stays outside the UI layer.</text>
+
+  <rect x="70" y="835" width="600" height="45" rx="18" class="defer"/>
+  <text x="100" y="864" class="body">Deferred: real AI API, login, database, dashboard, full scoring, agent workflow</text>
+
+  <rect x="720" y="835" width="610" height="45" rx="18" fill="#E8F3E2" stroke="#97B980" stroke-width="2" filter="url(#shadow)"/>
+  <text x="750" y="864" class="body">Stop line: freeze, summarize, resume bullet, interview narrative, expand only with a clear reason</text>
+</svg>
