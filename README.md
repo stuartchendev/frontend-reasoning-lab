@@ -1,10 +1,10 @@
 # Frontend Reasoning Lab
 
-Frontend Reasoning Lab is a tiny proof project focused on frontend reasoning within a small, controlled UI workflow.
+Frontend Reasoning Lab is a tiny proof project focused on AI-assisted frontend reasoning within a small, controlled React + TypeScript UI workflow.
 
-Rather than building a large product, the goal is to demonstrate how I think about state, data flow, responsibility boundaries, and AI-assisted engineering decisions.
+Rather than building a large product or adding more features, the goal is to demonstrate how I model interactive UI behavior through explicit state, clear data flow, separated responsibility boundaries, and verifiable engineering decisions.
 
-> Train reasoning consistency, not answer generation.
+> Small scope, clear engineering signal.
 
 ## Project Evidence
 
@@ -114,9 +114,7 @@ Demonstrates:
 
 ## Key Takeaway
 
-Frontend Reasoning Lab shows how I approach frontend work beyond rendering UI:
-
-define a small scope, model state, separate responsibilities, document decisions, and keep implementation explainable.
+Frontend Reasoning Lab demonstrates how I turn a small UI workflow into clear frontend engineering evidence: explicit state modeling, separated responsibilities, documented AI-assisted decisions, and an implementation that can be explained, inspected, and verified.
 
 ## Additional Notes
 
