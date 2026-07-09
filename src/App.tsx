@@ -3,6 +3,7 @@ import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
 import { ProjectFooter } from "./components/ProjectFooter";
+import { QuestionNavigator } from "./components/QuestionNavigator";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
 const flowSteps = [
@@ -110,8 +111,8 @@ export default function App() {
           </section>
         )}
       </section>
-
-      <aside className="flow-panel" aria-labelledby="flow-title">
+      <QuestionNavigator questions={fixedQuestions} />
+      {/* <aside className="flow-panel" aria-labelledby="flow-title">
         <h2 id="flow-title">Data-flow Loop</h2>
         <p>
           This panel maps the current UI to the data and state used by the tiny
@@ -125,7 +126,7 @@ export default function App() {
             </li>
           ))}
         </ol>
-      </aside>
+      </aside> */}
 
       <aside className="project-meta-column" aria-label="Project metadata">
         <ProjectFooter />
