@@ -9,7 +9,7 @@
             "serverReadyAction": {
                 "pattern": ".*(http://localhost:[0-9]+).*",
                 "uriFormat": "%s",
-                "action": "debugWithChrome"
+                "action": "openIntegratedBrowser"
             }
         }
     ]

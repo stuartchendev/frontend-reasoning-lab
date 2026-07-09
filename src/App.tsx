@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
-import { fixedQuestion } from "./data/fixedQuestion";
+﻿import { useState, type FormEvent } from "react";
+import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
 import { ProjectFooter } from "./components/ProjectFooter";
@@ -29,6 +29,7 @@ const flowSteps = [
 ];
 
 export default function App() {
+  const fixedQuestion = fixedQuestions[0];
   const [answerText, setAnswerText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] =
@@ -132,3 +133,5 @@ export default function App() {
     </main>
   );
 }
+
+

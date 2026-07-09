@@ -1,8 +1,23 @@
+﻿export type QuestionCategory =
+  | "State Modeling"
+  | "Data Flow"
+  | "Component Responsibility"
+  | "Async UI"
+  | "TypeScript"
+  | "JavaScript Fundamentals"
+  | "Form Handling"
+  | "Evaluator UX";
+
 export type ReasoningQuestion = {
   id: string;
+  order: string;
   title: string;
-  prompt: string;
+  shortTitle: string;
+  category: QuestionCategory;
+  difficulty: "Junior" | "Junior+";
   scenario: string;
+  prompt: string;
+  criteria: string[];
 };
 
 export type UserAnswer = {
