@@ -73,57 +73,69 @@ export default function App() {
         <ProjectIntro />
       </section>
       <div className="workspace-layout">
-        <QuestionNavigator questions={fixedQuestions} onSelectQuestion={handleSelectQuestion} />
+        <QuestionNavigator
+          questions={fixedQuestions}
+          selectedQuestionId={selectedQuestionId}
+          onSelectQuestion={handleSelectQuestion}
+        />
         {selectedQuestion ?
-          <section className="app-shell" aria-labelledby="app-title">
-            <h1 id="app-title">Frontend Reasoning Lab</h1>
-            <section className="question-block" aria-labelledby="question-title">
-              <h2 id="question-title">{selectedQuestion.title}</h2>
-              <p>{selectedQuestion.scenario}</p>
-              <p>{selectedQuestion.prompt}</p>
-            </section>
+          <section className="practice-panel" aria-labelledby="question-title">
+            <div className="practice-layout">
+              <div className="practice-main">
+                <section className="question-block" aria-labelledby="question-title">
+                  <h1 id="question-title">{selectedQuestion.title}</h1>
+                  <p>{selectedQuestion.scenario}</p>
+                  <p>{selectedQuestion.prompt}</p>
+                </section>
 
-            <section className="criteria-block" aria-labelledby="criteria-title">
-              <h2 id="criteria-title">Evaluation Criteria</h2>
-              <ul>
-                {rubricCriteria.map((criterion) => (
-                  <li key={criterion}>{criterion}</li>
-                ))}
-              </ul>
-            </section>
+                <details
+                  className="evaluation-guide"
+                  aria-labelledby="evaluation-guide-title"
+                >
+                  <summary id="evaluation-guide-title">Evaluation guide</summary>
+                  <ul>
+                    {rubricCriteria.map((criterion) => (
+                      <li key={criterion}>{criterion}</li>
+                    ))}
+                  </ul>
+                </details>
 
-            <form className="answer-form" onSubmit={handleSubmit}>
-              <label htmlFor="answer">Your answer</label>
-              <textarea
-                id="answer"
-                value={answerText}
-                onChange={(event) => setAnswerText(event.target.value)}
-                rows={8}
-              />
-              <button type="submit" disabled={isEvaluating || !answerText.trim()}>
-                {isEvaluating ? "Evaluating..." : "Submit answer"}
-              </button>
-            </form>
+                <form className="answer-form" onSubmit={handleSubmit}>
+                  <textarea
+                    id="answer"
+                    value={answerText}
+                    onChange={(event) => setAnswerText(event.target.value)}
+                    placeholder="Type Answer here!"
+                    rows={8}
+                  />
+                  <button type="submit" disabled={isEvaluating || !answerText.trim()}>
+                    {isEvaluating ? "Evaluating..." : "Submit"}
+                  </button>
+                </form>
 
-            {isEvaluating && (
-              <p className="status-text">Evaluation is running...</p>
-            )}
+                {isEvaluating && (
+                  <p className="status-text" role="status" aria-live="polite">
+                    Evaluation is running. Your result will appear below.
+                  </p>
+                )}
 
-            {evaluationResult && (
-              <section className="result-block" aria-labelledby="result-title">
-                <h2 id="result-title">Evaluation result</h2>
-                <p>
-                  <strong>Status:</strong>{" "}
-                  {evaluationResult.isComplete ? "Complete" : "Incomplete"}
-                </p>
-                <p>
-                  <strong>Summary:</strong> {evaluationResult.summary}
-                </p>
-                <p>
-                  <strong>Feedback:</strong> {evaluationResult.feedback}
-                </p>
-              </section>
-            )}
+                {evaluationResult && (
+                  <section className="result-block" aria-labelledby="result-title">
+                    <h2 id="result-title">Evaluation result</h2>
+                    <p>
+                      <strong>Status:</strong>{" "}
+                      {evaluationResult.isComplete ? "Complete" : "Incomplete"}
+                    </p>
+                    <p>
+                      <strong>Summary:</strong> {evaluationResult.summary}
+                    </p>
+                    <p>
+                      <strong>Feedback:</strong> {evaluationResult.feedback}
+                    </p>
+                  </section>
+                )}
+              </div>
+            </div>
           </section> :
           <p>Please select a question</p>
         }
@@ -150,4 +162,13 @@ export default function App() {
 </aside> 
 */}
 
+
+{/* <section className="criteria-block" aria-labelledby="criteria-title">
+                  <h2 id="criteria-title">Evaluation Criteria</h2>
+                  <ul>
+                    {rubricCriteria.map((criterion) => (
+                      <li key={criterion}>{criterion}</li>
+                    ))}
+                  </ul>
+                </section> */}
 

@@ -1,9 +1,14 @@
 import type { ReasoningQuestions } from "../types/reasoning";
 type QuestionNavigatorProps = {
     questions: ReasoningQuestions[];
+    selectedQuestionId: string;
     onSelectQuestion: (id: string) => void;
 }
-export function QuestionNavigator({ questions, onSelectQuestion }: QuestionNavigatorProps) {
+export function QuestionNavigator({
+    questions,
+    selectedQuestionId,
+    onSelectQuestion,
+}: QuestionNavigatorProps) {
 
     return (
         <aside className="question-navigator" aria-label="Question navigator">
@@ -19,7 +24,12 @@ export function QuestionNavigator({ questions, onSelectQuestion }: QuestionNavig
                     <button
                         key={question.id}
                         type="button"
-                        className="question-navigator__link"
+                        className={`question-navigator__link${
+                            question.id === selectedQuestionId ? " is-active" : ""
+                        }`}
+                        aria-current={
+                            question.id === selectedQuestionId ? "page" : undefined
+                        }
                         onClick={() => onSelectQuestion(question.id)}
                     >
                         <span className="question-navigator__order">{question.order}</span>
