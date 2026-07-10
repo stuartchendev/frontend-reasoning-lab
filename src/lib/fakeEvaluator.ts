@@ -1,11 +1,11 @@
 import type {
   EvaluationResult,
-  ReasoningQuestion,
+  ReasoningQuestions,
   UserAnswer,
 } from "../types/reasoning";
 
 export function fakeEvaluator(
-  question: ReasoningQuestion,
+  question: ReasoningQuestions,
   answer: UserAnswer
 ): Promise<EvaluationResult> {
   return new Promise((resolve) => {

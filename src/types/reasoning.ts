@@ -8,7 +8,7 @@
   | "Form Handling"
   | "Evaluator UX";
 
-export type ReasoningQuestion = {
+export type ReasoningQuestions = {
   id: string;
   order: string;
   title: string;

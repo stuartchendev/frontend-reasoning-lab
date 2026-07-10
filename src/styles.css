@@ -27,37 +27,38 @@ select {
   font: inherit;
 }
 
-.page-shell {
-  min-height: 100vh;
-  width: min(1280px, 100%);
-  margin: 0 auto;
+.workspace-layout {
   display: grid;
-  grid-template-areas: "flow app meta";
-  grid-template-columns:
-    minmax(220px, 280px) minmax(0, 1fr) minmax(200px, 260px);
-  gap: 2rem;
-  padding: 2rem;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+.page-shell {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+  padding-block: 2rem;
 }
 
 .app-shell {
-  grid-area: app;
   display: grid;
   align-content: start;
+  align-self: start;
+  min-width: 0;
   gap: 1.25rem;
 }
 
 .project-meta-column {
-  grid-area: meta;
   align-self: start;
 }
 
 .flow-panel h2,
 .app-shell h1,
 .app-shell h2,
-.project-footer h2,
+.project-intro h2,
 .flow-panel p,
 .app-shell p,
-.project-footer p {
+.project-intro p {
   margin: 0;
 }
 
@@ -71,7 +72,6 @@ select {
 }
 
 .flow-panel {
-  grid-area: flow;
   align-self: start;
   display: grid;
   gap: 0.875rem;
@@ -163,42 +163,40 @@ select {
   padding-top: 1rem;
 }
 
-.project-footer {
-  display: grid;
-  gap: 0.625rem;
-  border-top: 1px solid #cbd5e1;
-  padding-top: 1.25rem;
-  color: #1f2937;
+.project-intro {
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #d9dee8;
 }
 
-.project-footer__links {
+.project-intro__links {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
 }
 
-.project-footer__links a {
+.project-intro__links a {
   color: #2563eb;
   font-size: 0.925rem;
   font-weight: 700;
   text-decoration: none;
 }
 
-.project-footer__links a:hover,
-.project-footer__links a:focus-visible {
+.project-intro__links a:hover,
+.project-intro__links a:focus-visible {
   text-decoration: underline;
 }
 
-.project-footer h2 {
+.project-intro h2 {
   font-size: clamp(1.2rem, 2.4vw, 1.5rem);
   line-height: 1.2;
 }
 
-.project-footer p {
+.project-intro p {
   color: #475569;
 }
 
-.project-footer p em {
+.project-intro p em {
   display: block;
   font-size: clamp(0.875rem, 2vw, 0.925rem);
   margin-top: 0.25rem;
@@ -207,15 +205,14 @@ select {
 }
 
 
-.project-footer__closing {
+.project-intro__closing {
   font-size: 0.875rem;
 }
 
 /* QuestionNavigator */
 .question-navigator {
-  width: 260px;
-  flex-shrink: 0;
-  padding: 1rem 1.25rem;
+  width: 100%;
+  padding: 1rem;
 }
 
 .question-navigator__header {
@@ -282,16 +279,15 @@ select {
 
 @media (max-width: 980px) {
   .page-shell {
-    grid-template-areas:
-      "app"
-      "flow"
-      "meta";
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
     padding: 1.25rem;
   }
 
-  .project-footer {
-    padding-top: 1rem;
+  .workspace-layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .question-navigator {
+    width: 100%;
   }
 }

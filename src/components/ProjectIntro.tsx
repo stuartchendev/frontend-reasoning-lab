@@ -13,10 +13,10 @@ const footerLinks = [
   },
 ];
 
-export function ProjectFooter() {
+export function ProjectIntro() {
   return (
-    <footer className="project-footer">
-      <nav className="project-footer__links" aria-label="Project links">
+    <>
+      <nav className="project-intro__links" aria-label="Project links">
         {footerLinks.map((link) => (
           <a
             key={link.href}
@@ -39,6 +39,6 @@ export function ProjectFooter() {
         Built by Yi-Ting (Stuart) Chen · Open to junior frontend and
         remote-friendly roles.
       </p>
-    </footer>
+    </>
   );
 }

@@ -1,6 +1,6 @@
-﻿import type { ReasoningQuestion } from "../types/reasoning";
+﻿import type { ReasoningQuestions } from "../types/reasoning";
 
-export const fixedQuestions: ReasoningQuestion[] = [
+export const fixedQuestions: ReasoningQuestions[] = [
   {
     id: "project-list-state-data-flow",
     order: "Q1",

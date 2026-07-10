@@ -1,9 +1,10 @@
-import type { ReasoningQuestion } from "../types/reasoning";
+import type { ReasoningQuestions } from "../types/reasoning";
 type QuestionNavigatorProps = {
-    questions: ReasoningQuestion[];
+    questions: ReasoningQuestions[];
+    onSelectQuestion: (id: string) => void;
 }
+export function QuestionNavigator({ questions, onSelectQuestion }: QuestionNavigatorProps) {
 
-export function QuestionNavigator({ questions }: QuestionNavigatorProps) {
     return (
         <aside className="question-navigator" aria-label="Question navigator">
             <div className="question-navigator__header">
@@ -19,6 +20,7 @@ export function QuestionNavigator({ questions }: QuestionNavigatorProps) {
                         key={question.id}
                         type="button"
                         className="question-navigator__link"
+                        onClick={() => onSelectQuestion(question.id)}
                     >
                         <span className="question-navigator__order">{question.order}</span>
 
