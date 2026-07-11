@@ -6,29 +6,6 @@ import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
-const flowSteps = [
-  {
-    label: "Question",
-    source: "source: fixedQuestion",
-  },
-  {
-    label: "Evaluation Criteria",
-    source: "source: rubricCriteria",
-  },
-  {
-    label: "User Answer",
-    source: "state: answerText",
-  },
-  {
-    label: "Fake Evaluator Boundary",
-    source: "function: fakeEvaluator(question, answer)",
-  },
-  {
-    label: "Evaluation Result",
-    source: "state: evaluationResult",
-  },
-];
-
 export default function App() {
   const [selectedQuestionId, setSelectedQuestionId] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -160,32 +137,3 @@ export default function App() {
     </main>
   );
 }
-
-{/* flow panel
-<aside className="flow-panel" aria-labelledby="flow-title">
-        <h2 id="flow-title">Data-flow Loop</h2>
-        <p>
-          This panel maps the current UI to the data and state used by the tiny
-          proof.
-        </p>
-        <ol>
-          {flowSteps.map((step) => (
-            <li key={step.label}>
-              <strong>{step.label}</strong>
-              <span>{step.source}</span>
-            </li>
-          ))}
-        </ol>
-</aside> 
-*/}
-
-
-{/* <section className="criteria-block" aria-labelledby="criteria-title">
-                  <h2 id="criteria-title">Evaluation Criteria</h2>
-                  <ul>
-                    {rubricCriteria.map((criterion) => (
-                      <li key={criterion}>{criterion}</li>
-                    ))}
-                  </ul>
-                </section> */}
-
