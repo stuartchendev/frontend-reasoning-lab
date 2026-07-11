@@ -1,5 +1,21 @@
 # FRL v2 Mini Scope v0.1
 
+## Current Status
+
+FRL v1 remains the production deployment. This document applies to the `FRLv2` development/release branch; v2 has not been deployed.
+
+Slice 1 and its final verification are complete:
+
+- **Slice 1A — Selection flow:** static question data, parent-owned `selectedQuestionId`, derived selected question, controlled navigation, and answer/result reset when changing questions.
+- **Slice 1B — Search:** controlled `searchText`, derived filtered questions, case-insensitive matching across question fields, and a no-results state. Filtering does not automatically replace the selected practice question.
+- **Slice 1C — Visual category grouping:** filtered questions are grouped by category for rendering, with no collapse state or separate category source of truth.
+- **RWD and interaction verification:** responsive checks at 390px, 980px, and 1280px; active and hover states; Tab focus and Enter activation; question selection; and the evaluation flow were verified.
+- **Engineering verification:** WSL-native typecheck and production build passed, the development server returned `200 OK`, and `git diff --check` passed.
+
+The completed work preserves parent-owned state, derived selected/filtered data, the controlled `QuestionNavigator`, and the typed evaluator boundary. It does not include layout polish, component extraction, practice history, persistence, routing, or Slice 2.
+
+The next bounded phase is project cleanup, followed separately by layout polish. Slice 2 requires a new goal, in-scope/out-of-scope boundary, and completion criteria before implementation.
+
 ## Purpose
 
 FRL v2 Mini is the next-stage evidence upgrade for Frontend Reasoning Lab.
@@ -345,11 +361,11 @@ The goal was not to build a production SaaS. The goal was to show a small but co
 
 ---
 
-## First Implementation Slice
+## First Implementation Slice (Completed)
 
 Do not start with practice history.
 
-The first implementation slice should be:
+The first implementation slice was:
 
 ```txt
 Question Bank Foundation
@@ -359,7 +375,7 @@ Question Bank Foundation
 
 Add a static question bank and allow the user to select a question.
 
-### Slice 1 includes
+### Slice 1 foundation included
 
 - create static `questions.ts`
 - define `Question` type
@@ -378,7 +394,7 @@ Add a static question bank and allow the user to select a question.
 - dashboard
 - redesign
 
-### Slice 1 success criteria
+### Slice 1 foundation success criteria
 
 The app should allow a user to:
 

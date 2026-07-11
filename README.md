@@ -1,5 +1,7 @@
 # Frontend Reasoning Lab
 
+> **Deployment note:** The live demo currently serves the completed FRL v1 tiny proof. Development of FRL v2 Mini continues on the `FRLv2` branch; v2 has not been deployed to production.
+
 Frontend Reasoning Lab is a tiny proof project focused on AI-assisted frontend reasoning within a small, controlled React + TypeScript UI workflow.
 
 Rather than building a large product or adding more features, the goal is to demonstrate how I model interactive UI behavior through explicit state, clear data flow, separated responsibility boundaries, and verifiable engineering decisions.
@@ -20,7 +22,9 @@ Rather than building a large product or adding more features, the goal is to dem
 
 ![Frontend Reasoning Lab preview](./docs/preview.png)
 
-This tiny proof demonstrates a controlled frontend reasoning loop: a fixed question, answer input, evaluator boundary, structured result, and visible feedback/data-flow behavior.
+The production v1 tiny proof demonstrates a controlled frontend reasoning loop: a fixed question, answer input, evaluator boundary, structured result, and visible feedback/data-flow behavior.
+
+The current v2 development branch extends that foundation with a static question bank, question selection, search, and visual category grouping while preserving the evaluator boundary and parent-owned state flow.
 
 ## Why This Project Exists
 
@@ -101,7 +105,17 @@ docs/ai-assisted-decision-log.md
 
 ## Status
 
-Tiny proof completed and frozen.
+FRL v1 is completed, frozen, and currently deployed.
+
+On the `FRLv2` development/release branch, Slice 1 is complete:
+
+- Slice 1A: question selection and derived selected-question flow
+- Slice 1B: controlled search and derived filtered questions
+- Slice 1C: visual category grouping of filtered questions
+- responsive verification and minimal responsive fixes
+- keyboard, selection, evaluation-flow, typecheck, and production-build verification
+
+FRL v2 is not currently deployed. Layout polish, code cleanup, component extraction, and Slice 2 are not part of the completed Slice 1 work.
 
 Demonstrates:
 
@@ -118,10 +132,11 @@ Frontend Reasoning Lab demonstrates how I turn a small UI workflow into clear fr
 
 ## Additional Notes
 
-This README is intentionally focused on the completed tiny proof scope.
+This README keeps the deployed v1 scope distinct from the in-development v2 branch.
 
 For deeper project context, see:
 
 - `docs/ai-assisted-decision-log.md` — scope decisions, slice rationale, deferred features, owner responsibility, and AI assistance boundary
 - `docs/EVALUATOR_RUBRIC.md` — fixed question context, rubric expectations, manual evaluator checks, and future evaluator boundary
 - `docs/TINY_PROOF.md` — original owner draft for the tiny proof direction
+- `docs/v2/FRL_V2_MINI_SCOPE.md` — v2 scope guardrails and completed Slice 1 status
