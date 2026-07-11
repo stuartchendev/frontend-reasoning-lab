@@ -436,7 +436,7 @@ select {
 
 @media (max-width: 980px) {
   .page-shell {
-    padding: 1.25rem;
+    padding-block: 1.25rem;
   }
 
   .workspace-layout {
@@ -468,6 +468,6 @@ select {
   }
 
   .result-block {
-    padding: 1rem;
+    padding: 1rem 0;
   }
 }
