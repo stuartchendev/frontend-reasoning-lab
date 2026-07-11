@@ -95,6 +95,7 @@ export default function App() {
                 </details>
 
                 <form className="answer-form" onSubmit={handleSubmit}>
+                  <label htmlFor="answer">Your answer:</label>
                   <textarea
                     id="answer"
                     value={answerText}
