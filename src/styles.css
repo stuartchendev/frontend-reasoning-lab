@@ -350,6 +350,45 @@ select {
   line-height: 1.25;
 }
 
+.question-navigator__search {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.65rem 0.75rem;
+
+  border: 1px solid #d7deea;
+  border-radius: 0.5rem;
+  background: #ffffff;
+
+  color: #172033;
+  font: inherit;
+}
+
+.question-navigator__search::placeholder {
+  color: #8a97ad;
+}
+
+.question-navigator__search:focus {
+  outline: 2px solid #4f7cff;
+  outline-offset: 2px;
+  border-color: transparent;
+}
+
+.question-navigator__empty {
+  padding: 1rem 0.75rem;
+  color: #63708a;
+  text-align: center;
+}
+
+.question-navigator__empty p {
+  margin: 0 0 0.25rem;
+  color: #28344a;
+  font-weight: 600;
+}
+
+.question-navigator__empty span {
+  font-size: 0.875rem;
+}
+
 /* Evaluation guide */
 .practice-layout {
   display: block;

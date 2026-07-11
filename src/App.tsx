@@ -31,12 +31,27 @@ const flowSteps = [
 
 export default function App() {
   const [selectedQuestionId, setSelectedQuestionId] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [answerText, setAnswerText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] =
     useState<EvaluationResult | null>(null);
 
   const selectedQuestion = fixedQuestions.find((question) => question.id === selectedQuestionId);
+
+  // for QuestionNavigator Search filter
+  const filteredQuestions = fixedQuestions.filter((question) => {
+    const normalizedSearchText = searchText.trim().toLowerCase();
+
+    if (!normalizedSearchText) return true;
+
+    return [
+      question.order,
+      question.title,
+      question.shortTitle,
+      question.category
+    ].some((value) => value.toLowerCase().includes(normalizedSearchText));
+  });
 
   const handleSelectQuestion = (id: string) => {
     setSelectedQuestionId(id);
@@ -74,9 +89,11 @@ export default function App() {
       </section>
       <div className="workspace-layout">
         <QuestionNavigator
-          questions={fixedQuestions}
+          questions={filteredQuestions}
+          searchText={searchText}
           selectedQuestionId={selectedQuestionId}
           onSelectQuestion={handleSelectQuestion}
+          onSearchTextChange={setSearchText}
         />
         {selectedQuestion ?
           <section className="practice-panel" aria-labelledby="question-title">
