@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from "react";
+﻿import { useRef, useState, type FormEvent } from "react";
 import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
@@ -13,6 +13,7 @@ export default function App() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] =
     useState<EvaluationResult | null>(null);
+  const evaluationRequestVersionRef = useRef(0);
 
   const selectedQuestion = fixedQuestions.find((question) => question.id === selectedQuestionId);
 
@@ -31,8 +32,10 @@ export default function App() {
   });
 
   const handleSelectQuestion = (id: string) => {
+    evaluationRequestVersionRef.current += 1;
     setSelectedQuestionId(id);
     setAnswerText("");
+    setIsEvaluating(false);
     setEvaluationResult(null);
   }
 
@@ -46,6 +49,9 @@ export default function App() {
       questionId: selectedQuestion.id,
       text: answerText,
     };
+    const requestVersion = evaluationRequestVersionRef.current + 1;
+
+    evaluationRequestVersionRef.current = requestVersion;
 
     setIsEvaluating(true);
     setEvaluationResult(null);
@@ -53,9 +59,14 @@ export default function App() {
     // API call and handling
     try {
       const result = await fakeEvaluator(selectedQuestion, userAnswer);
-      setEvaluationResult(result);
+
+      if (evaluationRequestVersionRef.current === requestVersion) {
+        setEvaluationResult(result);
+      }
     } finally {
-      setIsEvaluating(false);
+      if (evaluationRequestVersionRef.current === requestVersion) {
+        setIsEvaluating(false);
+      }
     }
   }
 
