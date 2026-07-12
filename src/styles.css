@@ -44,7 +44,10 @@ select {
   padding-block: 2rem;
 }
 
-.project-intro h2,
+.project-intro h2 {
+  margin: 0;
+}
+
 .project-intro p {
   margin: 0;
 }
@@ -53,6 +56,11 @@ select {
   display: grid;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+}
+
+.practice-workflow {
+  display: grid;
+  gap: 1rem;
 }
 
 .answer-form {
@@ -69,17 +77,20 @@ select {
 .result-block {
   display: grid;
   gap: 0.625rem;
-  margin-top: 0.5rem;
-  border: 0;
-  border-top: 1px solid #d9dee8;
-  border-radius: 0;
-  padding: 1rem 0;
-  background: transparent;
+  margin: 0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: #f8fafc;
 }
 
 
 .result-block h2 {
   font-size: 1.25rem;
+  color: #1d4ed8;
+}
+
+.result-block strong {
+  color: #1d4ed8;
 }
 
 
@@ -125,7 +136,7 @@ select {
 }
 
 .status-text {
-  margin: 0.5rem 0 0;
+  margin: 0;
   border-left: 3px solid #60a5fa;
   padding: 0.625rem 0.75rem;
   background: #eff6ff;
@@ -157,7 +168,7 @@ select {
   margin: 0 0 0.25rem;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #64748b;
+  color: #1d4ed8;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -366,6 +377,7 @@ select {
     padding-block: 1.25rem;
   }
 
+
   .workspace-layout {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -374,6 +386,9 @@ select {
   .question-navigator {
     position: static;
     width: 100%;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .question-navigator__nav {
@@ -394,7 +409,4 @@ select {
     white-space: normal;
   }
 
-  .result-block {
-    padding: 1rem 0;
-  }
 }

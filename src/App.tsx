@@ -105,41 +105,43 @@ export default function App() {
                   </ul>
                 </details>
 
-                <form className="answer-form" onSubmit={handleSubmit}>
-                  <label htmlFor="answer">Your answer:</label>
-                  <textarea
-                    id="answer"
-                    value={answerText}
-                    onChange={(event) => setAnswerText(event.target.value)}
-                    placeholder="Type Answer here!"
-                    rows={8}
-                  />
-                  <button type="submit" disabled={isEvaluating || !answerText.trim()}>
-                    {isEvaluating ? "Evaluating..." : "Submit"}
-                  </button>
-                </form>
+                <div className="practice-workflow">
+                  <form className="answer-form" onSubmit={handleSubmit}>
+                    <label htmlFor="answer">Your answer:</label>
+                    <textarea
+                      id="answer"
+                      value={answerText}
+                      onChange={(event) => setAnswerText(event.target.value)}
+                      placeholder="Type Answer here!"
+                      rows={6}
+                    />
+                    <button type="submit" disabled={isEvaluating || !answerText.trim()}>
+                      {isEvaluating ? "Evaluating..." : "Submit"}
+                    </button>
+                  </form>
 
-                {isEvaluating && (
-                  <p className="status-text" role="status" aria-live="polite">
-                    Evaluation is running. Your result will appear below.
-                  </p>
-                )}
+                  {isEvaluating && (
+                    <p className="status-text" role="status" aria-live="polite">
+                      Evaluation is running. Your result will appear below.
+                    </p>
+                  )}
 
-                {evaluationResult && (
-                  <section className="result-block" aria-labelledby="result-title">
-                    <h2 id="result-title">Evaluation result</h2>
-                    <p>
-                      <strong>Status:</strong>{" "}
-                      {evaluationResult.isComplete ? "Complete" : "Incomplete"}
-                    </p>
-                    <p>
-                      <strong>Summary:</strong> {evaluationResult.summary}
-                    </p>
-                    <p>
-                      <strong>Feedback:</strong> {evaluationResult.feedback}
-                    </p>
-                  </section>
-                )}
+                  {evaluationResult && (
+                    <section className="result-block" aria-labelledby="result-title">
+                      <h2 id="result-title">Evaluation result</h2>
+                      <p>
+                        <strong>Status:</strong>{" "}
+                        {evaluationResult.isComplete ? "Complete" : "Incomplete"}
+                      </p>
+                      <p>
+                        <strong>Summary:</strong> {evaluationResult.summary}
+                      </p>
+                      <p>
+                        <strong>Feedback:</strong> {evaluationResult.feedback}
+                      </p>
+                    </section>
+                  )}
+                </div>
               </div>
             </div>
           </section> :
