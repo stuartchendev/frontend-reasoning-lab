@@ -21,11 +21,6 @@ export function ProjectIntro() {
           <p className="project-intro__eyebrow">Frontend Reasoning Lab</p>
 
           <h2>Frontend reasoning, made visible.</h2>
-
-          <p className="project-intro__description">
-            A React + TypeScript practice project focused on state, data flow,
-            evaluator boundaries, and responsible AI-assisted implementation review.
-          </p>
         </div>
 
         <nav className="project-intro__links" aria-label="Project links">

@@ -78,15 +78,15 @@ export default function App() {
     }
   }
 
-  function renderSelectedContent(){
-    if(selectedContent.type === "overview"){
-      return <OverviewPanel/>;
+  function renderSelectedContent() {
+    if (selectedContent.type === "overview") {
+      return <OverviewPanel />;
     }
-    if(!selectedQuestion){
+    if (!selectedQuestion) {
       return <p role="alert">The selected question could not be found.</p>
     }
 
-    return(
+    return (
       <section className="practice-panel" aria-labelledby="question-title">
             <div className="practice-layout">
               <div className="practice-main">
