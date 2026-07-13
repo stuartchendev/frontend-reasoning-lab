@@ -1,20 +1,26 @@
+import { staticNavigationItems } from "../data/staticNavigationItems";
+import type { SelectedContent } from "../types/navigation";
 import type { ReasoningQuestions } from "../types/reasoning";
 type QuestionNavigatorProps = {
     questions: ReasoningQuestions[];
-    selectedQuestionId: string | null;
+    selectedContent: SelectedContent;
     searchText: string;
-    onSelectQuestion: (id: string) => void;
-    onSearchTextChange: (questionId: string) => void;
+    onSelectContent: (content: SelectedContent) => void;
+    onSearchTextChange: (searchText: string) => void;
 }
 export function QuestionNavigator({
     questions,
     searchText,
-    selectedQuestionId,
-    onSelectQuestion,
+    selectedContent,
+    onSelectContent,
     onSearchTextChange
 }: QuestionNavigatorProps) {
 
-    const groupedQuesitons = questions.reduce<
+    const selectedQuestionId = selectedContent.type === "question"
+        ? selectedContent.questionId
+        : undefined;
+
+    const groupedQuestions = questions.reduce<
         Record<string, typeof questions>
     >((groups, question) => {
         const currentGroup = groups[question.category] ?? [];
@@ -38,6 +44,29 @@ export function QuestionNavigator({
             </div>
 
             <nav className="question-navigator__nav">
+                {staticNavigationItems.map((item) => {
+
+                    const isActive = selectedContent.type === item.content.type;
+
+                    return(
+                    <button
+                        key={item.content.type}
+                        type="button"
+                        className={`question-navigator__link question-navigator__link--static${
+                            isActive ? " is-active" : ""
+                            }`}
+                        aria-current={
+                            isActive ? "page" : undefined
+                        }
+                        onClick={() => onSelectContent({ type: "overview" })}
+                    >
+                        <span className="question-navigator__title">
+                            {item.label}
+                        </span>
+                    </button>
+                    );
+                })}
+
                 {questions.length === 0 ?
                     (
                         <div className="question-navigator__empty">
@@ -46,7 +75,7 @@ export function QuestionNavigator({
                         </div>
                     ) :
                     (
-                        Object.entries(groupedQuesitons).map(([category, categoryQuestions]) => (
+                        Object.entries(groupedQuestions).map(([category, categoryQuestions]) => (
                             <section
                                 key={category}
                                 className="question-navigator__group"
@@ -69,7 +98,10 @@ export function QuestionNavigator({
                                                     ? "page"
                                                     : undefined
                                             }
-                                            onClick={() => onSelectQuestion(question.id)}
+                                            onClick={() => onSelectContent({
+                                                type: "question",
+                                                questionId: question.id,
+                                            })}
                                         >
                                             <span className="question-navigator__order">
                                                 {question.order}

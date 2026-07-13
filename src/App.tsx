@@ -2,12 +2,15 @@
 import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
+import { OverviewPanel } from "./components/OverviewPanel";
 import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
+import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
 export default function App() {
-  const [selectedQuestionId, setSelectedQuestionId] = useState("");
+  const [selectedContent, setSelectedContent] =
+    useState<SelectedContent>({ type: "overview" });
   const [searchText, setSearchText] = useState("");
   const [answerText, setAnswerText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -15,7 +18,12 @@ export default function App() {
     useState<EvaluationResult | null>(null);
   const evaluationRequestVersionRef = useRef(0);
 
-  const selectedQuestion = fixedQuestions.find((question) => question.id === selectedQuestionId);
+  const selectedQuestion =
+    selectedContent.type === "question"
+      ? fixedQuestions.find(
+          (question) => question.id === selectedContent.questionId,
+        )
+      : undefined;
 
   // for QuestionNavigator Search filter
   const filteredQuestions = fixedQuestions.filter((question) => {
@@ -31,13 +39,13 @@ export default function App() {
     ].some((value) => value.toLowerCase().includes(normalizedSearchText));
   });
 
-  const handleSelectQuestion = (id: string) => {
+  const handleSelectContent = (content: SelectedContent) => {
     evaluationRequestVersionRef.current += 1;
-    setSelectedQuestionId(id);
+    setSelectedContent(content);
     setAnswerText("");
     setIsEvaluating(false);
     setEvaluationResult(null);
-  }
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,21 +78,16 @@ export default function App() {
     }
   }
 
-  return (
-    <main className="page-shell">
-      <section className="project-intro">
-        <ProjectIntro />
-      </section>
-      <div className="workspace-layout">
-        <QuestionNavigator
-          questions={filteredQuestions}
-          searchText={searchText}
-          selectedQuestionId={selectedQuestionId}
-          onSelectQuestion={handleSelectQuestion}
-          onSearchTextChange={setSearchText}
-        />
-        {selectedQuestion ?
-          <section className="practice-panel" aria-labelledby="question-title">
+  function renderSelectedContent(){
+    if(selectedContent.type === "overview"){
+      return <OverviewPanel/>;
+    }
+    if(!selectedQuestion){
+      return <p role="alert">The selected question could not be found.</p>
+    }
+
+    return(
+      <section className="practice-panel" aria-labelledby="question-title">
             <div className="practice-layout">
               <div className="practice-main">
                 <section className="question-block" aria-labelledby="question-title">
@@ -144,10 +147,26 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </section> :
-          <p>Please select a question</p>
-        }
+      </section>
+    )
+  }
+
+  return (
+    <main className="page-shell">
+      <section className="project-intro">
+        <ProjectIntro />
+      </section>
+      <div className="workspace-layout">
+        <QuestionNavigator
+          questions={filteredQuestions}
+          searchText={searchText}
+          selectedContent={selectedContent}
+          onSelectContent={handleSelectContent}
+          onSearchTextChange={setSearchText}
+        />
+       {renderSelectedContent()}
       </div>
     </main>
   );
 }
+

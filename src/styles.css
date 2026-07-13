@@ -259,6 +259,11 @@ select {
   font-weight: 650;
 }
 
+.question-navigator__link--static {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 1.25rem;
+}
+
 .question-navigator__order {
   color: #8a99b3;
   line-height: 1.25;
