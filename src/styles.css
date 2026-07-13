@@ -125,7 +125,7 @@ select {
   border: 0;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  background: #2563eb;
+  background: #1d4ed8;
   color: #ffffff;
   cursor: pointer;
 }
@@ -182,7 +182,7 @@ select {
 }
 
 .project-intro__links a {
-  color: #2563eb;
+  color: #1d4ed8;
   font-size: 0.925rem;
   font-weight: 700;
   text-decoration: none;
@@ -454,6 +454,34 @@ select {
   line-height: 1.4;
 }
 
+/* footer */
+.project-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.project-footer p {
+  margin: 0;
+}
+
+.project-footer__note {
+  color: #839de6;
+}
+
+.project-footer__author {
+  color: var(--text-secondary);
+}
+
+.project-footer__author span {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
 @media (max-width: 980px) {
   .page-shell {
     padding-block: 1.25rem;
@@ -477,6 +505,11 @@ select {
     max-height: 18rem;
     overflow-y: auto;
     padding-right: 0.25rem;
+  }
+
+  .project-footer {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 

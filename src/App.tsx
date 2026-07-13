@@ -5,6 +5,7 @@ import { fakeEvaluator } from "./lib/fakeEvaluator";
 import { OverviewPanel } from "./components/OverviewPanel";
 import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
+import { ProjectFooter } from "./components/ProjectFooter";
 import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
@@ -21,8 +22,8 @@ export default function App() {
   const selectedQuestion =
     selectedContent.type === "question"
       ? fixedQuestions.find(
-          (question) => question.id === selectedContent.questionId,
-        )
+        (question) => question.id === selectedContent.questionId,
+      )
       : undefined;
 
   // for QuestionNavigator Search filter
@@ -88,65 +89,65 @@ export default function App() {
 
     return (
       <section className="practice-panel" aria-labelledby="question-title">
-            <div className="practice-layout">
-              <div className="practice-main">
-                <section className="question-block" aria-labelledby="question-title">
-                  <h1 id="question-title">{selectedQuestion.title}</h1>
-                  <p>{selectedQuestion.scenario}</p>
-                  <p>{selectedQuestion.prompt}</p>
+        <div className="practice-layout">
+          <div className="practice-main">
+            <section className="question-block" aria-labelledby="question-title">
+              <h1 id="question-title">{selectedQuestion.title}</h1>
+              <p>{selectedQuestion.scenario}</p>
+              <p>{selectedQuestion.prompt}</p>
+            </section>
+
+            <details
+              className="evaluation-guide"
+              aria-labelledby="evaluation-guide-title"
+            >
+              <summary id="evaluation-guide-title">Evaluation guide</summary>
+              <ul>
+                {rubricCriteria.map((criterion) => (
+                  <li key={criterion}>{criterion}</li>
+                ))}
+              </ul>
+            </details>
+
+            <div className="practice-workflow">
+              <form className="answer-form" onSubmit={handleSubmit}>
+                <label htmlFor="answer">Your answer:</label>
+                <textarea
+                  id="answer"
+                  value={answerText}
+                  onChange={(event) => setAnswerText(event.target.value)}
+                  placeholder="Type Answer here!"
+                  rows={6}
+                />
+                <button type="submit" disabled={isEvaluating || !answerText.trim()}>
+                  {isEvaluating ? "Evaluating..." : "Submit"}
+                </button>
+              </form>
+
+              {isEvaluating && (
+                <p className="status-text" role="status" aria-live="polite">
+                  Evaluation is running. Your result will appear below.
+                </p>
+              )}
+
+              {evaluationResult && (
+                <section className="result-block" aria-labelledby="result-title">
+                  <h2 id="result-title">Evaluation result</h2>
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    {evaluationResult.isComplete ? "Complete" : "Incomplete"}
+                  </p>
+                  <p>
+                    <strong>Summary:</strong> {evaluationResult.summary}
+                  </p>
+                  <p>
+                    <strong>Feedback:</strong> {evaluationResult.feedback}
+                  </p>
                 </section>
-
-                <details
-                  className="evaluation-guide"
-                  aria-labelledby="evaluation-guide-title"
-                >
-                  <summary id="evaluation-guide-title">Evaluation guide</summary>
-                  <ul>
-                    {rubricCriteria.map((criterion) => (
-                      <li key={criterion}>{criterion}</li>
-                    ))}
-                  </ul>
-                </details>
-
-                <div className="practice-workflow">
-                  <form className="answer-form" onSubmit={handleSubmit}>
-                    <label htmlFor="answer">Your answer:</label>
-                    <textarea
-                      id="answer"
-                      value={answerText}
-                      onChange={(event) => setAnswerText(event.target.value)}
-                      placeholder="Type Answer here!"
-                      rows={6}
-                    />
-                    <button type="submit" disabled={isEvaluating || !answerText.trim()}>
-                      {isEvaluating ? "Evaluating..." : "Submit"}
-                    </button>
-                  </form>
-
-                  {isEvaluating && (
-                    <p className="status-text" role="status" aria-live="polite">
-                      Evaluation is running. Your result will appear below.
-                    </p>
-                  )}
-
-                  {evaluationResult && (
-                    <section className="result-block" aria-labelledby="result-title">
-                      <h2 id="result-title">Evaluation result</h2>
-                      <p>
-                        <strong>Status:</strong>{" "}
-                        {evaluationResult.isComplete ? "Complete" : "Incomplete"}
-                      </p>
-                      <p>
-                        <strong>Summary:</strong> {evaluationResult.summary}
-                      </p>
-                      <p>
-                        <strong>Feedback:</strong> {evaluationResult.feedback}
-                      </p>
-                    </section>
-                  )}
-                </div>
-              </div>
+              )}
             </div>
+          </div>
+        </div>
       </section>
     )
   }
@@ -164,8 +165,9 @@ export default function App() {
           onSelectContent={handleSelectContent}
           onSearchTextChange={setSearchText}
         />
-       {renderSelectedContent()}
+        {renderSelectedContent()}
       </div>
+      <ProjectFooter />
     </main>
   );
 }
