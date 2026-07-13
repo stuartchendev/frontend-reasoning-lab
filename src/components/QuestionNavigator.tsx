@@ -48,22 +48,21 @@ export function QuestionNavigator({
 
                     const isActive = selectedContent.type === item.content.type;
 
-                    return(
-                    <button
-                        key={item.content.type}
-                        type="button"
-                        className={`question-navigator__link question-navigator__link--static${
-                            isActive ? " is-active" : ""
-                            }`}
-                        aria-current={
-                            isActive ? "page" : undefined
-                        }
-                        onClick={() => onSelectContent({ type: "overview" })}
-                    >
-                        <span className="question-navigator__title">
-                            {item.label}
-                        </span>
-                    </button>
+                    return (
+                        <button
+                            key={item.content.type}
+                            type="button"
+                            className={`question-navigator__link question-navigator__link--static${isActive ? " is-active" : ""
+                                }`}
+                            aria-current={
+                                isActive ? "page" : undefined
+                            }
+                            onClick={() => onSelectContent(item.content)}
+                        >
+                            <span className="question-navigator__title">
+                                {item.label}
+                            </span>
+                        </button>
                     );
                 })}
 
@@ -90,8 +89,8 @@ export function QuestionNavigator({
                                             key={question.id}
                                             type="button"
                                             className={`question-navigator__link${question.id === selectedQuestionId
-                                                    ? " is-active"
-                                                    : ""
+                                                ? " is-active"
+                                                : ""
                                                 }`}
                                             aria-current={
                                                 question.id === selectedQuestionId

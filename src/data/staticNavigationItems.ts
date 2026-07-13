@@ -1,6 +1,6 @@
 import type { SelectedContent } from "../types/navigation";
 
-type StaticNavgationItem = {
+type StaticNavigationItem = {
   label: string;
   content: SelectedContent;
 }
@@ -8,6 +8,6 @@ type StaticNavgationItem = {
 export const staticNavigationItems = [
   {
     label: "Overview",
-    content: {type:"overview"},
+    content: { type: "overview" },
   },
-] satisfies StaticNavgationItem[];
+] satisfies StaticNavigationItem[];
