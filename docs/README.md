@@ -16,7 +16,12 @@ For the current release status, see [`CURRENT_STATUS.md`](./CURRENT_STATUS.md).
 
 ## Shared Reference
 
-- [`EVALUATOR_RUBRIC.md`](./EVALUATOR_RUBRIC.md) documents the evaluator rubric and boundary. It remains in the root docs directory because that boundary is shared across the project evolution.
+![Frontend Reasoning Lab core reasoning model](./frl-core-concepts.svg)
+
+The core reasoning model summarizes the project principles that remain shared across versions: explicit state ownership, predictable data flow, responsibility boundaries, verification, scope control, and owner accountability in AI-assisted work.
+
+- [`frl-core-concepts.svg`](./frl-core-concepts.svg) — cross-version reasoning model
+- [`EVALUATOR_RUBRIC.md`](./EVALUATOR_RUBRIC.md) — shared evaluator rubric and boundary
 
 ## Historical v1 Evidence
 

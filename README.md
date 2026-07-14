@@ -328,6 +328,7 @@ The project is designed to be small enough to explain clearly while still showin
 ## Additional Documentation
 
 - `docs/README.md` — documentation entry point and reading order
+- `docs/frl-core-concepts.svg` — shared reasoning model across FRL versions
 - `docs/v2/FRL_V2_DECISIONS.md` — current v2 engineering decisions and implemented scope
 - `docs/v2/VERIFICATION.md` — current v2 interaction, responsive, and engineering verification
 - `docs/v2/FRL_V2_MINI_SCOPE_V0_1.md` — historical v0.1 planning context
