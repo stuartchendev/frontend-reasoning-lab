@@ -24,6 +24,10 @@ The release demonstrates:
 
 The goal is visible frontend engineering evidence, not a full learning platform.
 
+## Architecture Summary
+
+![FRL v2 workspace architecture summary](./frl-v2-architecture-summary.svg)
+
 ## Current State and Data Flow
 
 The main content selection is represented by a discriminated union:

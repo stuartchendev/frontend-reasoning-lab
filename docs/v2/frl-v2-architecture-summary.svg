@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Frontend Reasoning Lab v2 Workspace Architecture Summary</title>
+  <desc id="desc">A summary of the v2 navigation and content structure, selected content model, search and selection independence, evaluation flow, ownership boundaries, and stale-result protection.</desc>
+
+  <defs>
+    <style>
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        fill: #172033;
+      }
+      .eyebrow { font-size: 15px; font-weight: 750; letter-spacing: 2.4px; fill: #315f9e; }
+      .title { font-size: 39px; font-weight: 760; letter-spacing: -0.7px; }
+      .subtitle { font-size: 18px; font-weight: 450; fill: #5d6b80; }
+      .section-label { font-size: 14px; font-weight: 760; letter-spacing: 1.6px; fill: #315f9e; }
+      .card-title { font-size: 18px; font-weight: 720; }
+      .body { font-size: 15px; font-weight: 470; fill: #435168; }
+      .bullet { font-size: 14px; font-weight: 470; fill: #435168; }
+      .small { font-size: 13px; font-weight: 500; fill: #65738a; }
+      .flow-title { font-size: 15px; font-weight: 680; }
+      .principle { font-size: 14px; font-weight: 650; fill: #244e86; }
+      .pill { font-size: 12px; font-weight: 700; fill: #315f9e; }
+      .card { fill: #ffffff; stroke: #d9e1ec; stroke-width: 1.5; }
+      .app-card { fill: #f5f9ff; stroke: #4d79b2; stroke-width: 2.5; }
+      .support-card { fill: #fbfcfe; stroke: #ccd7e5; stroke-width: 1.5; }
+      .flow-card { fill: #ffffff; stroke: #aac0dd; stroke-width: 1.5; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M1 1 8 5 1 9" fill="none" stroke="#547fb7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-soft" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M1 1 7 4.5 1 8" fill="none" stroke="#9aabc0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#f5f7fa"/>
+  <rect x="0" y="0" width="12" height="900" fill="#4d79b2"/>
+
+  <g aria-label="Title">
+    <text x="64" y="49" class="eyebrow">FRONTEND REASONING LAB v2</text>
+    <text x="64" y="94" class="title">Workspace Architecture Summary</text>
+    <text x="64" y="124" class="subtitle">Navigation, content ownership, evaluation flow, and stale-result protection</text>
+    <line x1="64" y1="142" x2="1536" y2="142" stroke="#d7e0eb" stroke-width="1.5"/>
+  </g>
+
+  <g aria-label="Workspace Goal">
+    <rect x="64" y="160" width="1472" height="76" rx="14" class="card"/>
+    <rect x="64" y="160" width="8" height="76" rx="4" fill="#4d79b2"/>
+    <text x="94" y="190" class="section-label">WORKSPACE GOAL</text>
+    <text x="94" y="218" class="body">Turn the v1 proof into a navigable reasoning workspace</text>
+    <circle cx="620" cy="213" r="3" fill="#9aabc0"/>
+    <text x="638" y="218" class="body">Separate question discovery from evaluation</text>
+    <circle cx="1071" cy="213" r="3" fill="#9aabc0"/>
+    <text x="1089" y="218" class="body">Keep ownership and data flow explicit</text>
+  </g>
+
+  <g aria-label="Main Workspace Structure">
+    <text x="64" y="267" class="section-label">MAIN WORKSPACE STRUCTURE</text>
+
+    <rect x="64" y="284" width="420" height="142" rx="16" class="support-card"/>
+    <text x="90" y="316" class="card-title">QuestionNavigator</text>
+    <text x="90" y="347" class="bullet">• Renders search and category groups</text>
+    <text x="90" y="373" class="bullet">• Shows active Overview or Question</text>
+    <text x="90" y="399" class="bullet">• Emits explicit selection intent</text>
+
+    <rect x="590" y="284" width="420" height="142" rx="16" class="app-card"/>
+    <text x="616" y="316" class="card-title">App-owned selectedContent</text>
+    <text x="616" y="347" class="bullet">• Owns content, search, answer, and result state</text>
+    <text x="616" y="373" class="bullet">• Derives the selected question</text>
+    <text x="616" y="399" class="bullet">• Resets invalid state on navigation</text>
+    <rect x="916" y="299" width="68" height="26" rx="13" fill="#dce9f8"/>
+    <text x="950" y="317" text-anchor="middle" class="pill">OWNER</text>
+
+    <rect x="1116" y="284" width="420" height="142" rx="16" class="support-card"/>
+    <text x="1142" y="316" class="card-title">Main Content</text>
+    <text x="1142" y="347" class="bullet">• Renders Overview or Question mode</text>
+    <text x="1142" y="373" class="bullet">• Keeps practice UI tied to the active question</text>
+    <text x="1142" y="399" class="bullet">• Renders typed evaluation feedback</text>
+
+    <path d="M496 355H576" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <text x="536" y="341" text-anchor="middle" class="small">selection intent</text>
+    <path d="M1022 355H1102" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <text x="1062" y="341" text-anchor="middle" class="small">active mode</text>
+  </g>
+
+  <g aria-label="Selection Model and Search Independence">
+    <rect x="64" y="452" width="720" height="122" rx="16" class="card"/>
+    <text x="90" y="484" class="section-label">SELECTED CONTENT MODEL</text>
+    <rect x="90" y="505" width="160" height="44" rx="12" class="flow-card"/>
+    <text x="170" y="533" text-anchor="middle" class="flow-title">Overview</text>
+    <text x="270" y="533" class="body">or</text>
+    <rect x="300" y="505" width="160" height="44" rx="12" class="flow-card"/>
+    <text x="380" y="533" text-anchor="middle" class="flow-title">Question ID</text>
+    <text x="488" y="520" class="principle">One discriminated state controls</text>
+    <text x="488" y="543" class="principle">the active workspace.</text>
+
+    <rect x="816" y="452" width="720" height="122" rx="16" class="card"/>
+    <text x="842" y="484" class="section-label">SEARCH AND SELECTION STAY INDEPENDENT</text>
+    <text x="842" y="516" class="flow-title">Search query</text>
+    <path d="M953 511H1025" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="1053" y="516" class="body">filtered navigator list</text>
+    <text x="842" y="546" class="flow-title">Current selection</text>
+    <path d="M979 541H1025" stroke="#547fb7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <text x="1053" y="546" class="body">active main content</text>
+    <text x="1280" y="516" class="small">Search narrows choices.</text>
+    <text x="1280" y="546" class="small">Only intent changes selection.</text>
+  </g>
+
+  <g aria-label="Evaluation Flow">
+    <rect x="64" y="600" width="1472" height="104" rx="16" class="card"/>
+    <text x="90" y="632" class="section-label">EVALUATION FLOW</text>
+
+    <rect x="90" y="651" width="224" height="36" rx="10" class="flow-card"/>
+    <text x="202" y="675" text-anchor="middle" class="flow-title">Question + answer</text>
+    <path d="M326 669H404" stroke="#547fb7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <rect x="416" y="651" width="224" height="36" rx="10" class="flow-card"/>
+    <text x="528" y="675" text-anchor="middle" class="flow-title">Evaluator boundary</text>
+    <path d="M652 669H730" stroke="#547fb7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <rect x="742" y="651" width="224" height="36" rx="10" class="flow-card"/>
+    <text x="854" y="675" text-anchor="middle" class="flow-title">Structured evaluation</text>
+    <path d="M978 669H1056" stroke="#547fb7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <rect x="1068" y="651" width="260" height="36" rx="10" class="flow-card"/>
+    <text x="1198" y="675" text-anchor="middle" class="flow-title">Summary + feedback UI</text>
+    <rect x="1360" y="651" width="70" height="26" rx="13" fill="#e9eef4"/>
+    <text x="1395" y="669" text-anchor="middle" class="pill" style="fill:#66778d">LOADING</text>
+    <rect x="1440" y="651" width="68" height="26" rx="13" fill="#dce9f8"/>
+    <text x="1474" y="669" text-anchor="middle" class="pill">RESULT</text>
+  </g>
+
+  <g aria-label="Ownership Boundaries">
+    <rect x="64" y="730" width="850" height="138" rx="16" class="card"/>
+    <text x="90" y="762" class="section-label">OWNERSHIP BOUNDARIES</text>
+
+    <text x="90" y="794" class="flow-title">Navigator renders</text>
+    <text x="90" y="817" class="small">search + category UI</text>
+    <text x="90" y="838" class="small">active item display</text>
+    <text x="292" y="794" class="flow-title">App owns</text>
+    <text x="292" y="817" class="small">selection + derivation</text>
+    <text x="292" y="838" class="small">evaluation lifecycle</text>
+    <text x="495" y="794" class="flow-title">Evaluator owns</text>
+    <text x="495" y="817" class="small">typed evaluation contract</text>
+    <text x="495" y="838" class="small">structured result</text>
+    <text x="698" y="794" class="flow-title">Panels render</text>
+    <text x="698" y="817" class="small">rendering only</text>
+    <text x="698" y="838" class="small">no duplicate state</text>
+    <line x1="272" y1="786" x2="272" y2="840" stroke="#d9e1ec" stroke-width="1.5"/>
+    <line x1="475" y1="786" x2="475" y2="840" stroke="#d9e1ec" stroke-width="1.5"/>
+    <line x1="678" y1="786" x2="678" y2="840" stroke="#d9e1ec" stroke-width="1.5"/>
+
+    <rect x="946" y="730" width="590" height="138" rx="16" fill="#f5f9ff" stroke="#4d79b2" stroke-width="2"/>
+    <text x="972" y="762" class="section-label">STALE-RESULT PROTECTION</text>
+    <text x="972" y="795" class="flow-title">Submit</text>
+    <path d="M1035 790H1075" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="1103" y="795" class="flow-title">Request starts</text>
+    <path d="M1220 790H1260" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="1285" y="795" class="flow-title">Content changes</text>
+    <text x="972" y="825" class="small">The request version advances; previous result and loading updates are ignored.</text>
+    <text x="972" y="850" class="principle">Only the active request may update the UI.</text>
+  </g>
+</svg>
