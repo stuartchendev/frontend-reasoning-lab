@@ -10,7 +10,7 @@ Frontend Reasoning Lab is intentionally a tiny proof, not a full MVP. The projec
 
 ## Visual Summary
 
-![AI-assisted decision flow](./ai-assisted-decision-flow.svg)
+![AI-assisted decision flow](../ai-assisted-decision-flow.svg)
 
 This diagram summarizes the project scope, owner responsibility, AI assistance boundary, slice decisions, visible data flow, deferred features, and current stop line.
 

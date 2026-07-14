@@ -26,10 +26,8 @@ The current implementation decisions are documented in [`v2/FRL_V2_DECISIONS.md`
 
 ## Remaining Before Merge
 
-- organize the existing v1 documents into the approved versioned structure
-- move archived planning documents and repair links affected by those moves
 - replace the v1 preview image with the final v2 release preview
-- run the final README and documentation link check
+- run the final README and documentation link check after the preview update
 - verify the production deployment as part of the version-level release
 - align portfolio and public evidence with the released version
 

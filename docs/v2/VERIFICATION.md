@@ -4,7 +4,7 @@
 
 This document records verification for the FRL v2 Mini implementation on the `FRLv2` development/release branch. It does not describe the deployed v1 tiny proof.
 
-The v1 verification record remains at [`../VERIFICATION.md`](../VERIFICATION.md).
+The v1 verification record remains at [`../v1/VERIFICATION.md`](../v1/VERIFICATION.md).
 
 ## Interaction Verification
 

@@ -1,6 +1,6 @@
 # Verification — Tiny Proof v0
 
-> Historical v1 verification document. It describes the tiny proof currently deployed to production, not the implementation status of the `FRLv2` development branch. Current v2 Slice 1 verification is summarized in `docs/CURRENT_STATUS.md` and `docs/v2/FRL_V2_MINI_SCOPE.md`.
+> Historical v1 verification document. It describes the tiny proof currently deployed to production, not the implementation status of the `FRLv2` development branch. Current v2 verification is documented in [`../v2/VERIFICATION.md`](../v2/VERIFICATION.md).
 
 This document defines how to verify that the tiny proof stays small and works as intended.
 

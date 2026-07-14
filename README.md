@@ -333,6 +333,6 @@ The project is designed to be small enough to explain clearly while still showin
 - `docs/v2/FRL_V2_MINI_SCOPE_V0_1.md` — historical v0.1 planning context
 - `docs/CURRENT_STATUS.md` — current branch and release status
 - `docs/EVALUATOR_RUBRIC.md` — shared evaluator criteria and boundary
-- `docs/ai-assisted-decision-log.md` — historical v1 AI-assisted decision evidence
-- `docs/VERIFICATION.md` — historical v1 verification
-- `docs/TINY_PROOF.md` — original FRL v1 project direction
+- `docs/v1/FRL_V1_DECISIONS.md` — historical v1 AI-assisted decision evidence
+- `docs/v1/VERIFICATION.md` — historical v1 verification
+- `docs/v1/TINY_PROOF.md` — original FRL v1 project direction

@@ -20,14 +20,18 @@ For the current release status, see [`CURRENT_STATUS.md`](./CURRENT_STATUS.md).
 
 ## Historical v1 Evidence
 
-The following files currently remain in their original locations and describe the v1 tiny proof:
+The following files describe the completed and frozen v1 tiny proof:
 
-- [`TINY_PROOF.md`](./TINY_PROOF.md)
-- [`VERIFICATION.md`](./VERIFICATION.md)
-- [`ai-assisted-decision-log.md`](./ai-assisted-decision-log.md)
-
-Their later move into a dedicated `v1/` directory is a separate documentation-organization step and is not part of the current v2 documentation update.
+- [`v1/FRL_V1_DECISIONS.md`](./v1/FRL_V1_DECISIONS.md)
+- [`v1/TINY_PROOF.md`](./v1/TINY_PROOF.md)
+- [`v1/VERIFICATION.md`](./v1/VERIFICATION.md)
 
 ## Archived and Future Context
 
-The existing future and archived planning documents are retained for historical context. They do not override [`CURRENT_STATUS.md`](./CURRENT_STATUS.md) or the current v2 decisions.
+The following planning documents are retained for historical context:
+
+- [`archive/FUTURE_MVP_SCOPE.md`](./archive/FUTURE_MVP_SCOPE.md)
+- [`archive/FUTURE_ARCHITECTURE_NOTES.md`](./archive/FUTURE_ARCHITECTURE_NOTES.md)
+- [`archive/ARCHIVED_AI_COLLAB_CONTEXT.md`](./archive/ARCHIVED_AI_COLLAB_CONTEXT.md)
+
+They do not override [`CURRENT_STATUS.md`](./CURRENT_STATUS.md) or the current v2 decisions.
