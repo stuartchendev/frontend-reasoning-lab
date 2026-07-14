@@ -1,6 +1,6 @@
 # Frontend Reasoning Lab
 
-> **Release note:** FRL v2 Mini is currently being prepared on the `FRLv2` branch. The production deployment still serves the completed FRL v1 tiny proof. The v2 branch, documentation, preview, and deployment will be merged and released together.
+> **Release note:** FRL v2 Mini is released on `main`, deployed to production, and tagged as `v0.2.0`. FRL v1 remains preserved as completed and frozen historical evidence.
 
 Frontend Reasoning Lab is a React + TypeScript practice workspace designed to make frontend engineering reasoning visible through structured questions, written responses, explicit state ownership, and evaluation feedback.
 
@@ -20,13 +20,11 @@ The project began as a small evaluator proof and has evolved into a controlled q
 
 [View Live Demo](https://frontend-reasoning-lab.netlify.app/)
 
-> The current live demo serves FRL v1. FRL v2 Mini remains on the `FRLv2` release branch until its documentation, preview, and deployment are ready to be merged together.
+> The live demo serves the released FRL v2 Mini workspace.
 
 ## Preview
 
 ![Frontend Reasoning Lab preview](./docs/preview.png)
-
-> The preview image will be replaced with the final FRL v2 Mini workspace before release.
 
 ## What the Project Does
 
@@ -259,7 +257,7 @@ The original v1 AI-assisted decision log remains preserved as historical evidenc
 
 ## Verification
 
-The current v2 branch has been checked for:
+The released v2 workspace has been checked for:
 
 - question selection behavior
 - Overview and Question navigation
@@ -283,9 +281,9 @@ docs/v2/VERIFICATION.md
 
 ## Current Status
 
-FRL v1 is completed, frozen, and currently deployed.
+FRL v2 Mini is released on `main`, deployed to production, and tagged as `v0.2.0`.
 
-FRL v2 Mini is implemented on the `FRLv2` release branch and currently includes:
+The current production release includes:
 
 - static frontend reasoning question bank
 - searchable Question Navigator
@@ -299,14 +297,9 @@ FRL v2 Mini is implemented on the `FRLv2` release branch and currently includes:
 - project metadata and presentation polish
 - responsive and build verification
 
-Before the version is merged into `main`, the remaining release work is limited to:
+FRL v1 is completed and frozen as historical evidence of the original tiny proof.
 
-- organizing the existing v1 and archived documents into the approved structure
-- repairing links affected by document moves
-- updating the preview image
-- final README and documentation link verification
-- production deployment verification
-- portfolio and public evidence alignment
+Post-release follow-up is limited to aligning portfolio and public evidence with the released version. It is not a release blocker and does not reopen application feature scope.
 
 Dark mode, additional visual accents, practice history, backend features, and platform expansion remain outside the current release scope.
 

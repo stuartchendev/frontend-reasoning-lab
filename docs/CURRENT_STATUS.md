@@ -2,13 +2,13 @@
 
 ## Production
 
-FRL v1 is completed, frozen, and currently deployed to production.
+FRL v2 Mini is the current production release. It is merged into `main`, deployed, and tagged as `v0.2.0`.
 
-FRL v2 Mini is implemented on the `FRLv2` development/release branch. It has not yet been merged into `main` or deployed.
+FRL v1 is completed and frozen as historical evidence of the original tiny proof.
 
-## FRLv2 Release Status
+## FRL v2 Release Status
 
-The branch currently includes:
+The released version includes:
 
 - a static ten-question frontend reasoning bank
 - controlled search and visual category grouping
@@ -24,14 +24,11 @@ The branch currently includes:
 
 The current implementation decisions are documented in [`v2/FRL_V2_DECISIONS.md`](./v2/FRL_V2_DECISIONS.md). V2 verification is documented in [`v2/VERIFICATION.md`](./v2/VERIFICATION.md).
 
-## Remaining Before Merge
+## Post-release Follow-up
 
-- replace the v1 preview image with the final v2 release preview
-- run the final README and documentation link check after the preview update
-- verify the production deployment as part of the version-level release
 - align portfolio and public evidence with the released version
 
-These are release-evidence and organization tasks. They do not reopen application feature scope.
+This is a non-blocking evidence task. It does not reopen application feature scope.
 
 ## Deferred Scope
 

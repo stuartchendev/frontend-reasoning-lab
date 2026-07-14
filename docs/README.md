@@ -4,7 +4,7 @@ This directory separates shared project references from version-specific evidenc
 
 ## Current Release Path
 
-FRL v1 is the version currently deployed to production. FRL v2 Mini is implemented on the `FRLv2` development/release branch and is being prepared for a version-level merge into `main`.
+FRL v2 Mini is the current production release on `main`, tagged as `v0.2.0`. FRL v1 is completed and frozen as historical evidence.
 
 For the current v2 implementation, read:
 
