@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Frontend Reasoning Lab Core Reasoning Model</title>
+  <desc id="desc">A cross-version summary of the project purpose, core reasoning loop, engineering concerns, human and AI boundary, and scope principle.</desc>
+
+  <defs>
+    <style>
+      text {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        fill: #172033;
+      }
+      .eyebrow { font-size: 15px; font-weight: 750; letter-spacing: 2.4px; fill: #315f9e; }
+      .title { font-size: 39px; font-weight: 760; letter-spacing: -0.7px; }
+      .subtitle { font-size: 18px; font-weight: 450; fill: #5d6b80; }
+      .section-label { font-size: 14px; font-weight: 760; letter-spacing: 1.6px; fill: #315f9e; }
+      .card-title { font-size: 18px; font-weight: 720; }
+      .body { font-size: 16px; font-weight: 470; fill: #435168; }
+      .bullet { font-size: 14px; font-weight: 470; fill: #435168; }
+      .flow-title { font-size: 16px; font-weight: 680; }
+      .flow-note { font-size: 13px; font-weight: 520; fill: #65738a; }
+      .principle { font-size: 16px; font-weight: 650; fill: #244e86; }
+      .scope-step { font-size: 14px; font-weight: 650; }
+      .card { fill: #ffffff; stroke: #d9e1ec; stroke-width: 1.5; }
+      .core-card { fill: #ffffff; stroke: #aac0dd; stroke-width: 1.5; }
+      .owner-card { fill: #f7faff; stroke: #8eadd4; stroke-width: 2; }
+      .ai-card { fill: #fbfcfe; stroke: #ccd7e5; stroke-width: 1.5; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M1 1 8 5 1 9" fill="none" stroke="#547fb7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-soft" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M1 1 7 4.5 1 8" fill="none" stroke="#9aabc0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#f5f7fa"/>
+  <rect x="0" y="0" width="12" height="900" fill="#4d79b2"/>
+
+  <g aria-label="Title">
+    <text x="64" y="49" class="eyebrow">FRONTEND REASONING LAB</text>
+    <text x="64" y="94" class="title">Core Reasoning Model</text>
+    <text x="64" y="124" class="subtitle">Shared engineering principles across project versions</text>
+    <line x1="64" y1="142" x2="1536" y2="142" stroke="#d7e0eb" stroke-width="1.5"/>
+  </g>
+
+  <g aria-label="Purpose">
+    <rect x="64" y="166" width="1472" height="92" rx="14" class="card"/>
+    <rect x="64" y="166" width="8" height="92" rx="4" fill="#4d79b2"/>
+    <text x="94" y="196" class="section-label">PURPOSE</text>
+    <text x="94" y="229" class="body">Make frontend reasoning visible</text>
+    <circle cx="467" cy="224" r="3" fill="#9aabc0"/>
+    <text x="485" y="229" class="body">Turn implementation choices into explainable evidence</text>
+    <circle cx="1052" cy="224" r="3" fill="#9aabc0"/>
+    <text x="1070" y="229" class="body">Prefer small validated slices over feature volume</text>
+  </g>
+
+  <g aria-label="Core Reasoning Loop">
+    <text x="64" y="294" class="section-label">CORE REASONING LOOP</text>
+
+    <rect x="64" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="151" y="360" text-anchor="middle" class="flow-title">Problem</text>
+
+    <rect x="274" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="361" y="360" text-anchor="middle" class="flow-title">Scope</text>
+
+    <rect x="484" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="571" y="360" text-anchor="middle" class="flow-title">State model</text>
+
+    <rect x="694" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="781" y="360" text-anchor="middle" class="flow-title">Data flow</text>
+
+    <rect x="904" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="991" y="360" text-anchor="middle" class="flow-title">UI behavior</text>
+
+    <rect x="1114" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="1201" y="360" text-anchor="middle" class="flow-title">Verification</text>
+
+    <rect x="1324" y="312" width="174" height="82" rx="14" class="core-card"/>
+    <text x="1411" y="360" text-anchor="middle" class="flow-title">Evidence</text>
+
+    <path d="M246 353H262" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M456 353H472" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M666 353H682" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M876 353H892" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M1086 353H1102" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M1296 353H1312" stroke="#547fb7" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+  </g>
+
+  <g aria-label="Engineering Concerns">
+    <rect x="64" y="424" width="350" height="188" rx="16" class="card"/>
+    <text x="90" y="456" class="section-label">STATE OWNERSHIP</text>
+    <text x="90" y="490" class="bullet">• Identify the source of truth</text>
+    <text x="90" y="519" class="bullet">• Derive values when possible</text>
+    <text x="90" y="548" class="bullet">• Avoid duplicate state</text>
+
+    <rect x="438" y="424" width="350" height="188" rx="16" class="card"/>
+    <text x="464" y="456" class="section-label">DATA FLOW</text>
+    <text x="464" y="490" class="bullet">• Keep inputs and outputs explicit</text>
+    <text x="464" y="519" class="bullet">• Preserve predictable transitions</text>
+    <text x="464" y="548" class="bullet">• Make async boundaries visible</text>
+
+    <rect x="812" y="424" width="350" height="188" rx="16" class="card"/>
+    <text x="838" y="456" class="section-label">RESPONSIBILITY BOUNDARIES</text>
+    <text x="838" y="490" class="bullet">• Separate UI, state, and evaluation</text>
+    <text x="838" y="519" class="bullet">• Keep components explainable</text>
+    <text x="838" y="548" class="bullet">• Prefer narrow contracts</text>
+
+    <rect x="1186" y="424" width="350" height="188" rx="16" class="card"/>
+    <text x="1212" y="456" class="section-label">VERIFICATION</text>
+    <text x="1212" y="490" class="bullet">• Check behavior and edge cases</text>
+    <text x="1212" y="519" class="bullet">• Check responsive states</text>
+    <text x="1212" y="548" class="bullet">• Preserve reproducible evidence</text>
+    <text x="1212" y="577" class="bullet">• Document decisions</text>
+  </g>
+
+  <g aria-label="Human and AI Boundary">
+    <rect x="64" y="640" width="420" height="128" rx="16" class="ai-card"/>
+    <text x="90" y="672" class="section-label" style="fill:#66778d">AI ASSISTS</text>
+    <text x="90" y="706" class="bullet">Explore</text>
+    <text x="184" y="706" class="bullet">Draft</text>
+    <text x="264" y="706" class="bullet">Review</text>
+    <text x="359" y="706" class="bullet">Document</text>
+    <text x="90" y="738" class="flow-note">Accelerates bounded planning, production, and review.</text>
+
+    <rect x="516" y="640" width="568" height="128" rx="16" fill="#f5f9ff" stroke="#4d79b2" stroke-width="2"/>
+    <text x="800" y="676" text-anchor="middle" class="section-label">SHARED PRINCIPLE</text>
+    <text x="800" y="712" text-anchor="middle" class="principle">AI accelerates the work; the owner remains accountable</text>
+    <text x="800" y="737" text-anchor="middle" class="principle">for the reasoning.</text>
+
+    <rect x="1116" y="640" width="420" height="128" rx="16" class="owner-card"/>
+    <text x="1142" y="672" class="section-label">OWNER DECIDES</text>
+    <text x="1142" y="706" class="bullet">Scope</text>
+    <text x="1230" y="706" class="bullet">Architecture</text>
+    <text x="1346" y="706" class="bullet">Trade-offs</text>
+    <text x="1450" y="706" class="bullet">Acceptance</text>
+    <text x="1142" y="738" class="flow-note">Owns final decisions, explanation, and acceptance.</text>
+  </g>
+
+  <g aria-label="Scope Principle">
+    <rect x="64" y="796" width="1472" height="72" rx="14" class="card"/>
+    <rect x="64" y="796" width="8" height="72" rx="4" fill="#4d79b2"/>
+    <text x="94" y="826" class="section-label">SCOPE PRINCIPLE</text>
+    <text x="322" y="841" class="scope-step">Small slice</text>
+    <path d="M411 836H496" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="524" y="841" class="scope-step">Complete loop</text>
+    <path d="M633 836H718" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="746" y="841" class="scope-step">Verify</text>
+    <path d="M798 836H883" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="911" y="841" class="scope-step">Document</text>
+    <path d="M988 836H1073" stroke="#9aabc0" stroke-width="1.8" stroke-linecap="round" marker-end="url(#arrow-soft)"/>
+    <text x="1101" y="841" class="scope-step">Expand only when justified</text>
+  </g>
+</svg>
