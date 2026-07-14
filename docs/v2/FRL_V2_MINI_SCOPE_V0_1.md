@@ -1,5 +1,9 @@
 # FRL v2 Mini Scope v0.1
 
+> **Historical planning document.** This file preserves the original FRL v2 Mini v0.1 proposal and is not the current implementation source of truth. The implemented scope and engineering decisions are documented in [`FRL_V2_DECISIONS.md`](./FRL_V2_DECISIONS.md).
+>
+> Practice history, `localStorage` persistence, `historyService`, and the related persistence flow described below were deferred during scope reconciliation. They are retained here as planning history and are not part of the current `FRLv2` release scope.
+
 ## Current Status
 
 FRL v1 remains the production deployment. This document applies to the `FRLv2` development/release branch; v2 has not been deployed.

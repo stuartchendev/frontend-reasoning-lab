@@ -1,53 +1,50 @@
 # Current Project Status
 
-## Current Phase
+## Production
 
-FRL v1 is completed, frozen, and currently deployed. FRL v2 Mini remains on the `FRLv2` development/release branch and is not deployed to production.
+FRL v1 is completed, frozen, and currently deployed to production.
 
-The current v2 branch has completed Slice 1, responsive verification, minimal responsive fixes, and final verification. The next bounded phase is project cleanup, followed separately by layout polish. Slice 2 has not been scoped or started.
+FRL v2 Mini is implemented on the `FRLv2` development/release branch. It has not yet been merged into `main` or deployed.
 
-## Current Demonstrated Scope
+## FRLv2 Release Status
 
-The deployed v1 tiny proof demonstrates:
-- controlled scope
-- state-driven UI
-- visible data flow
-- evaluator boundary
-- rubric/result separation
-- AI-assisted decision logging
+The branch currently includes:
 
-The current v2 branch additionally demonstrates:
+- a static ten-question frontend reasoning bank
+- controlled search and visual category grouping
+- explicit Overview and Question content selection through `SelectedContent`
+- parent-owned selection, search, answer, and evaluation state
+- derived filtered questions, category groups, and selected-question data
+- a controlled `QuestionNavigator` and separate `OverviewPanel`
+- answer/result reset when selected content changes
+- stale evaluator request invalidation
+- the preserved typed evaluator boundary
+- responsive and keyboard interaction support
+- project introduction, metadata, and presentation polish
 
-- Slice 1A question selection through parent-owned `selectedQuestionId` and a derived selected question
-- Slice 1B controlled search and derived filtered questions
-- Slice 1C visual category grouping without category UI state or collapse behavior
-- a controlled `QuestionNavigator` with selected, hover, and keyboard interaction states
-- the preserved typed evaluator boundary and end-to-end selection/answer/evaluation flow
-- responsive checks at 390px, 980px, and 1280px, followed by minimal responsive fixes
-- successful typecheck, production build, development-server HTTP check, and `git diff --check`
+The current implementation decisions are documented in [`v2/FRL_V2_DECISIONS.md`](./v2/FRL_V2_DECISIONS.md). V2 verification is documented in [`v2/VERIFICATION.md`](./v2/VERIFICATION.md).
 
-## Source Of Truth
+## Remaining Before Merge
 
-`README.md` is the public-facing summary and distinguishes deployed v1 from the current v2 development branch.
+- organize the existing v1 documents into the approved versioned structure
+- move archived planning documents and repair links affected by those moves
+- replace the v1 preview image with the final v2 release preview
+- run the final README and documentation link check
+- verify the production deployment as part of the version-level release
+- align portfolio and public evidence with the released version
 
-Supporting tiny proof documents:
-- `docs/VERIFICATION.md` records manual verification.
-- `docs/EVALUATOR_RUBRIC.md` records the fixed question, rubric expectations, fake evaluator behavior, and future evaluator boundary.
-- `docs/ai-assisted-decision-log.md` records decision evidence from the implementation process.
-- `docs/TINY_PROOF.md` preserves the original owner draft and project intent note.
-- `docs/v2/FRL_V2_MINI_SCOPE.md` records v2 scope guardrails and the completed Slice 1 status.
+These are release-evidence and organization tasks. They do not reopen application feature scope.
 
-## Next Step
+## Deferred Scope
 
-The next work is bounded project cleanup. Layout polish is a separate follow-up, and Slice 2 must be explicitly scoped before implementation.
+The following are not part of the current FRL v2 Mini release:
 
-Current cleanup must not reopen Slice 1 behavior or begin layout polish, component extraction, persistence, routing, or other new features.
+- practice history and `localStorage` persistence
+- authentication, user accounts, and backend storage
+- real AI API integration
+- routing, dashboards, analytics, and admin tooling
+- question-specific scoring and production evaluator behavior
+- dark mode and further visual expansion
+- full learning-platform features
 
-## Deferred Notes
-
-Older planning documents are preserved as future or archived context:
-- `docs/FUTURE_MVP_SCOPE.md` preserves broader MVP product direction that was intentionally deferred.
-- `docs/FUTURE_ARCHITECTURE_NOTES.md` preserves possible later architecture notes that do not describe the completed tiny proof.
-- `docs/ARCHIVED_AI_COLLAB_CONTEXT.md` preserves earlier product and AI-collaboration reasoning.
-
-These documents should not override the deployed v1 boundary or the completed v2 Slice 1 status described in `README.md` and this file.
+The original v0.1 planning document is preserved at [`v2/FRL_V2_MINI_SCOPE_V0_1.md`](./v2/FRL_V2_MINI_SCOPE_V0_1.md). It is historical context and does not override the current decisions or release status.
