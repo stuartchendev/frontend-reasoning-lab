@@ -13,7 +13,7 @@ The project began as a small evaluator proof and has evolved into a controlled q
 - **Frontend Reasoning Workspace** — question navigation, search, category grouping, and structured practice flow
 - **Explicit State Model** — parent-owned content selection and derived selected-question data
 - **Evaluator Boundary** — deterministic async-like evaluation separated from UI rendering
-- **AI-Assisted Decision Log** — scope decisions, AI assistance boundaries, review, and owner responsibility
+- **Engineering Decisions** — implemented scope, trade-offs, AI assistance boundaries, and owner responsibility
 - **Verification Notes** — interaction checks, responsive checks, typecheck, and production build validation
 
 ## Live Demo
@@ -242,11 +242,13 @@ The project scope, state model, component responsibilities, trade-offs, verifica
 
 AI assistance is treated as part of the engineering workflow, not as a substitute for understanding or responsibility.
 
-More detailed decision evidence is recorded in:
+Current v2 decision evidence is recorded in:
 
 ```txt
-docs/ai-assisted-decision-log.md
+docs/v2/FRL_V2_DECISIONS.md
 ```
+
+The original v1 AI-assisted decision log remains preserved as historical evidence.
 
 ## Tech Stack
 
@@ -273,10 +275,10 @@ The current v2 branch has been checked for:
 - development-server response
 - `git diff --check`
 
-Detailed verification notes are recorded in:
+Detailed v2 verification notes are recorded in:
 
 ```txt
-docs/VERIFICATION.md
+docs/v2/VERIFICATION.md
 ```
 
 ## Current Status
@@ -299,9 +301,10 @@ FRL v2 Mini is implemented on the `FRLv2` release branch and currently includes:
 
 Before the version is merged into `main`, the remaining release work is limited to:
 
-- final README review
-- focused v2 decision documentation
-- updated preview screenshots
+- organizing the existing v1 and archived documents into the approved structure
+- repairing links affected by document moves
+- updating the preview image
+- final README and documentation link verification
 - production deployment verification
 - portfolio and public evidence alignment
 
@@ -324,9 +327,12 @@ The project is designed to be small enough to explain clearly while still showin
 
 ## Additional Documentation
 
-- `docs/ai-assisted-decision-log.md` — scope decisions, implementation reasoning, deferred features, owner responsibility, and AI assistance boundaries
-- `docs/EVALUATOR_RUBRIC.md` — evaluator criteria, deterministic behavior, and evaluator boundary
-- `docs/VERIFICATION.md` — manual checks and build verification
+- `docs/README.md` — documentation entry point and reading order
+- `docs/v2/FRL_V2_DECISIONS.md` — current v2 engineering decisions and implemented scope
+- `docs/v2/VERIFICATION.md` — current v2 interaction, responsive, and engineering verification
+- `docs/v2/FRL_V2_MINI_SCOPE_V0_1.md` — historical v0.1 planning context
 - `docs/CURRENT_STATUS.md` — current branch and release status
+- `docs/EVALUATOR_RUBRIC.md` — shared evaluator criteria and boundary
+- `docs/ai-assisted-decision-log.md` — historical v1 AI-assisted decision evidence
+- `docs/VERIFICATION.md` — historical v1 verification
 - `docs/TINY_PROOF.md` — original FRL v1 project direction
-- `docs/v2/FRL_V2_MINI_SCOPE.md` — v2 scope guardrails and implementation history
