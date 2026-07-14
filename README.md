@@ -1,96 +1,248 @@
 # Frontend Reasoning Lab
 
-> **Deployment note:** The live demo currently serves the completed FRL v1 tiny proof. Development of FRL v2 Mini continues on the `FRLv2` branch; v2 has not been deployed to production.
+> **Release note:** FRL v2 Mini is currently being prepared on the `FRLv2` branch. The production deployment still serves the completed FRL v1 tiny proof. The v2 branch, documentation, preview, and deployment will be merged and released together.
 
-Frontend Reasoning Lab is a tiny proof project focused on AI-assisted frontend reasoning within a small, controlled React + TypeScript UI workflow.
+Frontend Reasoning Lab is a React + TypeScript practice workspace designed to make frontend engineering reasoning visible through structured questions, written responses, explicit state ownership, and evaluation feedback.
 
-Rather than building a large product or adding more features, the goal is to demonstrate how I model interactive UI behavior through explicit state, clear data flow, separated responsibility boundaries, and verifiable engineering decisions.
+The project began as a small evaluator proof and has evolved into a controlled question-navigation and practice flow without expanding into a full learning platform.
 
 > Small scope, clear engineering signal.
 
 ## Project Evidence
 
-- **Live Demo** — frontend reasoning loop and state-driven UI behavior
-- **AI-Assisted Decision Log** — scope decisions, AI assistance boundary, and owner review
-- **Evaluator Rubric** — reasoning criteria and evaluator boundary
+- **Frontend Reasoning Workspace** — question navigation, search, category grouping, and structured practice flow
+- **Explicit State Model** — parent-owned content selection and derived selected-question data
+- **Evaluator Boundary** — deterministic async-like evaluation separated from UI rendering
+- **AI-Assisted Decision Log** — scope decisions, AI assistance boundaries, review, and owner responsibility
+- **Verification Notes** — interaction checks, responsive checks, typecheck, and production build validation
 
 ## Live Demo
 
 [View Live Demo](https://frontend-reasoning-lab.netlify.app/)
 
+> The current live demo serves FRL v1. FRL v2 Mini remains on the `FRLv2` release branch until its documentation, preview, and deployment are ready to be merged together.
+
 ## Preview
 
 ![Frontend Reasoning Lab preview](./docs/preview.png)
 
-The production v1 tiny proof demonstrates a controlled frontend reasoning loop: a fixed question, answer input, evaluator boundary, structured result, and visible feedback/data-flow behavior.
+> The preview image will be replaced with the final FRL v2 Mini workspace before release.
 
-The current v2 development branch extends that foundation with a static question bank, question selection, search, and visual category grouping while preserving the evaluator boundary and parent-owned state flow.
+## What the Project Does
+
+FRL v2 Mini provides a small frontend reasoning practice flow:
+
+```txt
+open the workspace
+→ review the project overview
+→ search or browse question categories
+→ select a frontend reasoning question
+→ write an answer
+→ submit through the evaluator boundary
+→ receive structured feedback
+```
+
+The evaluator currently uses a deterministic mock implementation. This keeps the state transitions, async UI behavior, and responsibility boundaries reviewable without depending on an external AI service.
 
 ## Why This Project Exists
 
-Frontend work is not only about rendering UI. It also involves deciding:
+Frontend work is not only about rendering components. It also involves deciding:
 
 - what state should exist
-- what should be derived
-- where evaluation logic belongs
+- what data should be derived
+- which component owns each decision
 - how user actions move through the system
-- how to keep scope small and explainable
+- how async results should update the current UI
+- where service and rendering responsibilities should be separated
+- which features should remain outside the current scope
 
-This project makes those decisions visible.
+This project makes those decisions visible and explainable.
 
-## What It Demonstrates
+## Evolution from FRL v1
 
-> This project demonstrates a small but complete frontend reasoning loop:
->
-> ```txt
-> fixed question + code snippet
-> → user answer
-> → state update
-> → fake async evaluator
-> → structured result
-> → UI feedback
-> → decision notes
-> ```
->
-> The focus is not feature expansion, but making state, data flow, responsibility boundaries, and engineering decisions explainable.
+FRL v1 was intentionally built as a tiny proof of one controlled reasoning loop:
 
-## Core Ideas
+```txt
+fixed question
+→ user answer
+→ fake async evaluator
+→ structured result
+→ UI feedback
+→ documented decisions
+```
 
-### State-Driven UI
+FRL v2 Mini preserves that evaluator foundation and adds a clearer user-facing workspace:
 
-User input updates state, the evaluator produces a result, and the UI renders feedback from that result.
+- a static frontend reasoning question bank
+- a searchable Question Navigator
+- visual category grouping
+- Overview and Question content modes
+- parent-owned selection state
+- selected-question derivation
+- reset and stale-result protection when content changes
+- a more presentation-ready project entry point
 
-The UI does not own the evaluation decision. It reflects the current state and result.
+The goal was not to replace v1 with a larger platform. The goal was to extend the original engineering proof through one bounded, reviewable frontend slice.
+
+## State and Data Flow
+
+The main application owns the state that coordinates the workspace:
+
+```ts
+type SelectedContent =
+  | { type: "overview" }
+  | { type: "question"; questionId: string };
+```
+
+The selected question is derived from:
+
+```txt
+selectedContent
++ fixedQuestions
+→ selectedQuestion
+```
+
+This avoids storing both a selected ID and a duplicated selected question object as separate sources of truth.
+
+The main flow is:
+
+```txt
+QuestionNavigator emits a selection intent
+→ App updates selectedContent
+→ App derives selectedQuestion
+→ App renders Overview or Practice content
+→ answer submission calls the evaluator
+→ evaluator returns a structured result
+→ App state updates the UI
+```
+
+When the selected content changes, the application resets the current answer, loading state, and evaluation result.
+
+Pending evaluator requests are also invalidated so that a response from a previous question cannot update the newly selected view.
+
+## Component Responsibilities
+
+### App
+
+The application root owns cross-component workflow state:
+
+- selected content
+- search text
+- answer text
+- evaluation loading state
+- evaluation result
+- evaluator request version
+
+It also derives the selected question and decides whether to render the Overview or Practice view.
+
+### QuestionNavigator
+
+The navigator is responsible for:
+
+- rendering static navigation items
+- rendering question categories
+- displaying filtered questions
+- handling the controlled search input
+- indicating the active selection
+- emitting one unified selection intent
+
+It does not own the current selection and does not decide what the main content area renders.
+
+### OverviewPanel
+
+The Overview introduces:
+
+- the project purpose
+- the user flow
+- the evaluator data flow
+- the main frontend engineering evidence
+
+### Evaluator
+
+The evaluator accepts a question and user answer and returns a structured result.
+
+It does not render UI and does not own React state.
+
+## Core Engineering Decisions
+
+### Parent-Owned Selection State
+
+Overview and Question selection affect the same main content area, answer state, and evaluator lifecycle.
+
+For that reason, the selection is owned by the nearest common parent rather than stored inside the navigator.
+
+### Unified Selection Intent
+
+The navigator emits a `SelectedContent` value instead of separate callbacks such as:
+
+```txt
+onSelectOverview
+onSelectQuestion
+```
+
+This gives the parent one consistent event boundary while preserving explicit content variants through a discriminated union.
+
+### Derived Question Data
+
+The application stores the selected content identity and derives the corresponding question from the static question collection.
+
+This keeps the question data as the source of truth and avoids duplicated state.
+
+### Stale Evaluation Protection
+
+Changing the current content invalidates pending evaluation requests.
+
+This prevents an older async result from appearing under a different question after the user navigates away.
 
 ### Evaluator Boundary
 
-The evaluator is separated from the UI layer.
+The UI and evaluator remain separate.
 
-The UI presents input and feedback.  
-The evaluator checks input against the rubric and produces a result.
+```txt
+UI collects input
+→ evaluator checks the answer
+→ evaluator returns structured data
+→ UI renders the result
+```
 
-This keeps rendering responsibility separate from evaluation responsibility.
+A real API could later replace the mock evaluator behind the same boundary without requiring the rendering layer to own evaluation logic.
 
-### Rubric vs Result
+## Scope Control
 
-The rubric defines what should be evaluated.  
-The result represents the outcome of that evaluation.
+FRL v2 Mini intentionally does not include:
 
-Keeping them separate makes responsibilities easier to reason about.
+- authentication
+- backend persistence
+- user accounts
+- real AI API integration
+- practice history
+- analytics dashboard
+- complex routing
+- admin tools
+- payments
+- a large design system
+- a full education platform
 
-### Scope Control
+These are possible production extensions, not requirements for the current evidence slice.
 
-This project was intentionally kept small.
+The current goal is to demonstrate a small, coherent frontend system that can be inspected, tested, and explained clearly.
 
-The focus was on completing a tiny proof with a clear boundary and explainable decisions.
+## AI-Assisted Engineering Workflow
 
-### AI-Assisted Engineering Workflow
+AI was used to support:
 
-AI was used as a thinking and implementation assistant during development.
+- planning bounded implementation slices
+- generating small implementation proposals
+- reviewing state and component boundaries
+- checking edge cases
+- improving documentation
+- validating whether changes stayed inside scope
 
-Project scope, architecture, and final decisions were reviewed and owned by me.
+The project scope, state model, component responsibilities, trade-offs, verification criteria, and final implementation decisions were reviewed and owned by me.
 
-Decision notes are documented in:
+AI assistance is treated as part of the engineering workflow, not as a substitute for understanding or responsibility.
+
+More detailed decision evidence is recorded in:
 
 ```txt
 docs/ai-assisted-decision-log.md
@@ -103,40 +255,78 @@ docs/ai-assisted-decision-log.md
 - Vite
 - CSS
 
-## Status
+## Verification
+
+The current v2 branch has been checked for:
+
+- question selection behavior
+- Overview and Question navigation
+- controlled search behavior
+- derived question filtering
+- category grouping
+- answer and result reset after navigation
+- prevention of stale evaluation updates
+- keyboard interaction
+- responsive behavior
+- TypeScript typecheck
+- production build
+- development-server response
+- `git diff --check`
+
+Detailed verification notes are recorded in:
+
+```txt
+docs/VERIFICATION.md
+```
+
+## Current Status
 
 FRL v1 is completed, frozen, and currently deployed.
 
-On the `FRLv2` development/release branch, Slice 1 is complete:
+FRL v2 Mini is implemented on the `FRLv2` release branch and currently includes:
 
-- Slice 1A: question selection and derived selected-question flow
-- Slice 1B: controlled search and derived filtered questions
-- Slice 1C: visual category grouping of filtered questions
-- responsive verification and minimal responsive fixes
-- keyboard, selection, evaluation-flow, typecheck, and production-build verification
+- static frontend reasoning question bank
+- searchable Question Navigator
+- visual category grouping
+- explicit Overview and Question content selection
+- parent-owned `SelectedContent` state
+- derived selected-question flow
+- preserved evaluator boundary
+- stale evaluation result protection
+- doc-style Overview content
+- project metadata and presentation polish
+- responsive and build verification
 
-FRL v2 is not currently deployed. Layout polish, code cleanup, component extraction, and Slice 2 are not part of the completed Slice 1 work.
+Before the version is merged into `main`, the remaining release work is limited to:
 
-Demonstrates:
+- final README review
+- focused v2 decision documentation
+- updated preview screenshots
+- production deployment verification
+- portfolio and public evidence alignment
 
-- controlled scope
-- state-driven UI
-- visible data flow
-- evaluator boundary
-- rubric/result separation
-- AI-assisted decision logging
+Dark mode, additional visual accents, practice history, backend features, and platform expansion remain outside the current release scope.
 
 ## Key Takeaway
 
-Frontend Reasoning Lab demonstrates how I turn a small UI workflow into clear frontend engineering evidence: explicit state modeling, separated responsibilities, documented AI-assisted decisions, and an implementation that can be explained, inspected, and verified.
+Frontend Reasoning Lab demonstrates how I turn a bounded UI workflow into visible frontend engineering evidence:
 
-## Additional Notes
+- explicit state ownership
+- derived data instead of duplicated state
+- predictable one-way data flow
+- separated component responsibilities
+- protected async result handling
+- documented trade-offs
+- controlled AI-assisted implementation
+- clear scope boundaries
 
-This README keeps the deployed v1 scope distinct from the in-development v2 branch.
+The project is designed to be small enough to explain clearly while still showing meaningful React + TypeScript engineering decisions.
 
-For deeper project context, see:
+## Additional Documentation
 
-- `docs/ai-assisted-decision-log.md` — scope decisions, slice rationale, deferred features, owner responsibility, and AI assistance boundary
-- `docs/EVALUATOR_RUBRIC.md` — fixed question context, rubric expectations, manual evaluator checks, and future evaluator boundary
-- `docs/TINY_PROOF.md` — original owner draft for the tiny proof direction
-- `docs/v2/FRL_V2_MINI_SCOPE.md` — v2 scope guardrails and completed Slice 1 status
+- `docs/ai-assisted-decision-log.md` — scope decisions, implementation reasoning, deferred features, owner responsibility, and AI assistance boundaries
+- `docs/EVALUATOR_RUBRIC.md` — evaluator criteria, deterministic behavior, and evaluator boundary
+- `docs/VERIFICATION.md` — manual checks and build verification
+- `docs/CURRENT_STATUS.md` — current branch and release status
+- `docs/TINY_PROOF.md` — original FRL v1 project direction
+- `docs/v2/FRL_V2_MINI_SCOPE.md` — v2 scope guardrails and implementation history
