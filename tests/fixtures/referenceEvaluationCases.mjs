@@ -6,6 +6,11 @@ export const flawedStateOwnershipAnswer =
 export const sufficientStateOwnershipAnswer =
   "App owns the canonical selectedQuestionId. It passes the selected ID and an onSelectQuestion callback to QuestionNavigator. App derives the selected question from the question list and selectedQuestionId, then passes that question to PracticePanel. Neither child stores a second canonical copy of the selection.";
 
+export const revisedStateOwnershipAnswer =
+  "App owns the canonical selectedQuestionId. It passes the ID to QuestionNavigator and PracticePanel. QuestionNavigator requests changes through an onSelectQuestion callback, and neither child stores a second canonical selection.";
+
+export const referenceCandidateQuestionIds = ["project-list-state-data-flow"];
+
 export const validNeedsFollowUpDiagnosis = {
   outcome: "needs-follow-up",
   assessments: [
@@ -51,4 +56,19 @@ export const validSufficientDiagnosis = {
       status: "met",
     },
   ],
+};
+
+export const validResolvedRevisionComparison = {
+  criterionId: reactStateOwnershipCriterionIds.sourceOfTruth,
+  resolution: "resolved",
+  originalEvidence: "PracticePanel can also keep its own selected question",
+  revisedEvidence: "App owns the canonical selectedQuestionId",
+  comparisonSummary:
+    "The revision replaces duplicated child ownership with one application-owned source of truth and callback-driven changes.",
+  nextAction: {
+    kind: "practice-question",
+    questionId: "project-list-state-data-flow",
+    rationale:
+      "Practice applying a single source of truth and explicit data flow in another component tree.",
+  },
 };

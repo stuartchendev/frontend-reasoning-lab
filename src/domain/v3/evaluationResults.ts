@@ -10,6 +10,14 @@ const INITIAL_DIAGNOSIS_OUTCOMES = [
   "sufficient",
 ] as const;
 
+const REVISION_RESOLUTIONS = [
+  "resolved",
+  "partially-resolved",
+  "unresolved",
+] as const;
+
+const BOUNDED_NEXT_ACTION_KINDS = ["practice-question"] as const;
+
 export type CriterionAssessmentStatus =
   (typeof CRITERION_ASSESSMENT_STATUSES)[number];
 
@@ -41,6 +49,25 @@ export type InitialDiagnosisResult =
   | NeedsFollowUpDiagnosisResult
   | SufficientDiagnosisResult;
 
+export type RevisionResolution = (typeof REVISION_RESOLUTIONS)[number];
+
+type BoundedNextActionKind = (typeof BOUNDED_NEXT_ACTION_KINDS)[number];
+
+export type BoundedNextAction = {
+  readonly kind: BoundedNextActionKind;
+  readonly questionId: string;
+  readonly rationale: string;
+};
+
+export type RevisionComparisonResult = {
+  readonly criterionId: string;
+  readonly resolution: RevisionResolution;
+  readonly originalEvidence: string;
+  readonly revisedEvidence: string;
+  readonly comparisonSummary: string;
+  readonly nextAction: BoundedNextAction | null;
+};
+
 const NEEDS_FOLLOW_UP_KEYS = new Set([
   "outcome",
   "assessments",
@@ -55,6 +82,21 @@ const PRIMARY_GAP_KEYS = new Set([
   "explanation",
   "learnerEvidence",
   "whyItMatters",
+]);
+
+const REVISION_COMPARISON_RESULT_KEYS = new Set([
+  "criterionId",
+  "resolution",
+  "originalEvidence",
+  "revisedEvidence",
+  "comparisonSummary",
+  "nextAction",
+]);
+
+const BOUNDED_NEXT_ACTION_KEYS = new Set([
+  "kind",
+  "questionId",
+  "rationale",
 ]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -149,6 +191,20 @@ function assertPrimaryGap(
   );
 }
 
+function assertBoundedNextAction(
+  value: unknown,
+): asserts value is BoundedNextAction {
+  assertRecord(value, "BoundedNextAction");
+  assertExactKeys(value, BOUNDED_NEXT_ACTION_KEYS, "BoundedNextAction");
+
+  if (!isSupportedValue(value.kind, BOUNDED_NEXT_ACTION_KINDS)) {
+    throw new TypeError("BoundedNextAction.kind has an unsupported value.");
+  }
+
+  assertNonEmptyString(value.questionId, "BoundedNextAction.questionId");
+  assertNonEmptyString(value.rationale, "BoundedNextAction.rationale");
+}
+
 export function parseInitialDiagnosisResult(
   input: unknown,
 ): InitialDiagnosisResult {
@@ -176,4 +232,44 @@ export function parseInitialDiagnosisResult(
   }
 
   return input as InitialDiagnosisResult;
+}
+
+export function parseRevisionComparisonResult(
+  input: unknown,
+): RevisionComparisonResult {
+  assertRecord(input, "RevisionComparisonResult");
+  assertExactKeys(
+    input,
+    REVISION_COMPARISON_RESULT_KEYS,
+    "RevisionComparisonResult",
+  );
+  assertNonEmptyString(
+    input.criterionId,
+    "RevisionComparisonResult.criterionId",
+  );
+
+  if (!isSupportedValue(input.resolution, REVISION_RESOLUTIONS)) {
+    throw new TypeError(
+      "RevisionComparisonResult.resolution has an unsupported value.",
+    );
+  }
+
+  assertNonEmptyString(
+    input.originalEvidence,
+    "RevisionComparisonResult.originalEvidence",
+  );
+  assertNonEmptyString(
+    input.revisedEvidence,
+    "RevisionComparisonResult.revisedEvidence",
+  );
+  assertNonEmptyString(
+    input.comparisonSummary,
+    "RevisionComparisonResult.comparisonSummary",
+  );
+
+  if (input.nextAction !== null) {
+    assertBoundedNextAction(input.nextAction);
+  }
+
+  return input as RevisionComparisonResult;
 }

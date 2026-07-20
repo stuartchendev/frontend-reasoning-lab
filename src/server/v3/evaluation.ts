@@ -3,6 +3,8 @@ import { reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts"
 import type {
   CriterionAssessment,
   InitialDiagnosisResult,
+  NeedsFollowUpDiagnosisResult,
+  RevisionComparisonResult,
 } from "../../domain/v3/evaluationResults";
 
 const RUBRIC_CRITERION_ROLES = ["core", "supporting"] as const;
@@ -350,6 +352,53 @@ export function validateInitialDiagnosisResult(
         );
       }
     }
+  }
+
+  return result;
+}
+
+export function validateRevisionComparisonResult(
+  result: RevisionComparisonResult,
+  context: {
+    readonly diagnosis: NeedsFollowUpDiagnosisResult;
+    readonly normalizedOriginalAnswer: string;
+    readonly normalizedRevisedAnswer: string;
+    readonly candidateQuestionIds: readonly string[];
+  },
+): RevisionComparisonResult {
+  if (typeof context.normalizedOriginalAnswer !== "string") {
+    throw new TypeError("normalizedOriginalAnswer must be a string.");
+  }
+
+  if (typeof context.normalizedRevisedAnswer !== "string") {
+    throw new TypeError("normalizedRevisedAnswer must be a string.");
+  }
+
+  if (result.criterionId !== context.diagnosis.primaryGap.criterionId) {
+    throw new TypeError(
+      "Revision comparison criterion must match the diagnosed primary gap.",
+    );
+  }
+
+  if (!context.normalizedOriginalAnswer.includes(result.originalEvidence)) {
+    throw new TypeError(
+      "Original evidence must occur in normalizedOriginalAnswer.",
+    );
+  }
+
+  if (!context.normalizedRevisedAnswer.includes(result.revisedEvidence)) {
+    throw new TypeError(
+      "Revised evidence must occur in normalizedRevisedAnswer.",
+    );
+  }
+
+  if (
+    result.nextAction !== null &&
+    !context.candidateQuestionIds.includes(result.nextAction.questionId)
+  ) {
+    throw new TypeError(
+      "Practice-question recommendation must reference a candidate question ID.",
+    );
   }
 
   return result;
