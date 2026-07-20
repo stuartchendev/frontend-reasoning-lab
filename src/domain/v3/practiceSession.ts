@@ -1,7 +1,13 @@
+import type {
+  NeedsFollowUpDiagnosisResult,
+  RevisionComparisonResult,
+  SufficientDiagnosisResult,
+} from "./evaluationResults";
+
 type SessionIdentity = {
-  sessionId: string;
-  questionId: string;
-  questionVersion: number;
+  readonly sessionId: string;
+  readonly questionId: string;
+  readonly questionVersion: number;
 };
 
 export type PracticeSessionFailureCode =
@@ -16,83 +22,60 @@ export type PracticeSessionFailureCode =
   | "server-error";
 
 export type PracticeSessionFailure = {
-  code: PracticeSessionFailureCode;
-  message: string;
-  retryable: boolean;
-};
-
-export type NeedsFollowUpDiagnosis = {
-  outcome: "needs-follow-up";
-  primaryGap: {
-    criterionId: string;
-    explanation: string;
-    learnerEvidence: string;
-    whyItMatters: string;
-  };
-  followUpQuestion: string;
-};
-
-export type SufficientDiagnosis = {
-  outcome: "sufficient";
-  coveredCriterionIds: string[];
-};
-
-export type RevisionComparison = {
-  resolution: "resolved" | "partially-resolved" | "unresolved";
-  originalEvidence: string;
-  revisedEvidence: string;
-  comparisonSummary: string;
+  readonly code: PracticeSessionFailureCode;
+  readonly message: string;
+  readonly retryable: boolean;
 };
 
 export type PracticeSessionState =
   | (SessionIdentity & {
-      phase: "answering";
-      answerDraft: string;
+      readonly phase: "answering";
+      readonly answerDraft: string;
     })
   | (SessionIdentity & {
-      phase: "diagnosing";
-      originalAnswer: string;
-      requestId: string;
+      readonly phase: "diagnosing";
+      readonly originalAnswer: string;
+      readonly requestId: string;
     })
   | (SessionIdentity & {
-      phase: "diagnosis-failed";
-      originalAnswer: string;
-      failure: PracticeSessionFailure;
+      readonly phase: "diagnosis-failed";
+      readonly originalAnswer: string;
+      readonly failure: PracticeSessionFailure;
       // Reducer invariant: editing after diagnosis-failed seeds answerDraft from originalAnswer.
     })
   | (SessionIdentity & {
-      phase: "revising";
-      originalAnswer: string;
-      diagnosis: NeedsFollowUpDiagnosis;
-      revisionDraft: string;
+      readonly phase: "revising";
+      readonly originalAnswer: string;
+      readonly diagnosis: NeedsFollowUpDiagnosisResult;
+      readonly revisionDraft: string;
       // Reducer invariant: entering revising seeds revisionDraft from originalAnswer.
     })
   | (SessionIdentity & {
-      phase: "reviewing-revision";
-      originalAnswer: string;
-      diagnosis: NeedsFollowUpDiagnosis;
-      revisedAnswer: string;
-      requestId: string;
+      readonly phase: "reviewing-revision";
+      readonly originalAnswer: string;
+      readonly diagnosis: NeedsFollowUpDiagnosisResult;
+      readonly revisedAnswer: string;
+      readonly requestId: string;
     })
   | (SessionIdentity & {
-      phase: "revision-review-failed";
-      originalAnswer: string;
-      diagnosis: NeedsFollowUpDiagnosis;
-      revisedAnswer: string;
-      failure: PracticeSessionFailure;
+      readonly phase: "revision-review-failed";
+      readonly originalAnswer: string;
+      readonly diagnosis: NeedsFollowUpDiagnosisResult;
+      readonly revisedAnswer: string;
+      readonly failure: PracticeSessionFailure;
       // Reducer invariant: editing after revision-review-failed seeds revisionDraft from revisedAnswer.
     })
   | (SessionIdentity & {
-      phase: "complete";
-      completionKind: "initial-sufficient";
-      originalAnswer: string;
-      diagnosis: SufficientDiagnosis;
+      readonly phase: "complete";
+      readonly completionKind: "initial-sufficient";
+      readonly originalAnswer: string;
+      readonly diagnosis: SufficientDiagnosisResult;
     })
   | (SessionIdentity & {
-      phase: "complete";
-      completionKind: "revision-reviewed";
-      originalAnswer: string;
-      diagnosis: NeedsFollowUpDiagnosis;
-      revisedAnswer: string;
-      comparison: RevisionComparison;
+      readonly phase: "complete";
+      readonly completionKind: "revision-reviewed";
+      readonly originalAnswer: string;
+      readonly diagnosis: NeedsFollowUpDiagnosisResult;
+      readonly revisedAnswer: string;
+      readonly comparison: RevisionComparisonResult;
     });
