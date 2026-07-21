@@ -1,4 +1,4 @@
-const QUESTION_CONTENT_CATEGORIES = ["Data Flow"] as const;
+const QUESTION_CONTENT_CATEGORIES = ["Data Flow", "State Modeling"] as const;
 const QUESTION_CONTENT_DIFFICULTIES = ["Junior"] as const;
 const QUESTION_LANGUAGE_CONTEXTS = ["React + TypeScript"] as const;
 const QUESTION_EVALUATION_MODES = ["reasoning"] as const;
@@ -168,3 +168,32 @@ export const reactStateOwnershipQuestion = {
     "derived-selected-question",
   ],
 } as const satisfies QuestionContent;
+
+export const projectListStateDataFlowQuestion = {
+  id: "project-list-state-data-flow",
+  version: 1,
+  title: "Project List State and Data Flow",
+  category: "State Modeling",
+  difficulty: "Junior",
+  prompt:
+    "A project list UI receives projects from an API. The user can search by project name, choose a sort order, and select one active project to inspect in a detail panel. Explain what should be stored as state, what should be derived during render or memoized from existing data, and why. Include how search text, sort order, filtered and sorted projects, and the active selected project should relate to each other.",
+  languageContext: "React + TypeScript",
+  evaluationMode: "reasoning",
+  syntaxPolicy: "syntax-not-evaluated",
+  targetConceptIds: [
+    "source-state-vs-derived-data",
+    "filter-and-sort-data-flow",
+    "selected-identity-derived-entity",
+  ],
+} as const satisfies QuestionContent;
+
+export const v3PracticeQuestions = [
+  reactStateOwnershipQuestion,
+  projectListStateDataFlowQuestion,
+] as const satisfies readonly QuestionContent[];
+
+export function getV3PracticeQuestion(
+  questionId: string,
+): QuestionContent | undefined {
+  return v3PracticeQuestions.find((question) => question.id === questionId);
+}

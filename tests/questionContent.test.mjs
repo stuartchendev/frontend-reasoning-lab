@@ -2,14 +2,44 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  getV3PracticeQuestion,
   parseQuestionContent,
+  projectListStateDataFlowQuestion,
   reactStateOwnershipQuestion,
+  v3PracticeQuestions,
 } from "../src/domain/v3/questionContent.ts";
+import {
+  validResolvedRevisionComparison,
+} from "./fixtures/referenceEvaluationCases.mjs";
 
-test("accepts the reference question without cloning", () => {
+test("accepts both bounded v3 questions without cloning", () => {
+  for (const question of v3PracticeQuestions) {
+    assert.strictEqual(parseQuestionContent(question), question);
+  }
+});
+
+test("looks up only registered v3 practice questions", () => {
   assert.strictEqual(
-    parseQuestionContent(reactStateOwnershipQuestion),
+    getV3PracticeQuestion(reactStateOwnershipQuestion.id),
     reactStateOwnershipQuestion,
+  );
+  assert.strictEqual(
+    getV3PracticeQuestion(projectListStateDataFlowQuestion.id),
+    projectListStateDataFlowQuestion,
+  );
+  assert.equal(getV3PracticeQuestion("unknown-question"), undefined);
+  assert.equal(
+    new Set(v3PracticeQuestions.map((question) => question.id)).size,
+    v3PracticeQuestions.length,
+  );
+});
+
+test("resolves the validated reference recommendation to the project-list question", () => {
+  assert.strictEqual(
+    getV3PracticeQuestion(
+      validResolvedRevisionComparison.nextAction.questionId,
+    ),
+    projectListStateDataFlowQuestion,
   );
 });
 

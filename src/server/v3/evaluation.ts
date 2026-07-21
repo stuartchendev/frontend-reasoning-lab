@@ -1,5 +1,5 @@
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts";
+import { projectListStateDataFlowQuestion, reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts";
 import type {
   CriterionAssessment,
   InitialDiagnosisResult,
@@ -445,6 +445,66 @@ export const reactStateOwnershipEvaluationSpec = {
       requiredForSufficient: false,
       prerequisiteCriterionIds: [
         reactStateOwnershipCriterionIds.sourceOfTruth,
+      ],
+      allowsNotApplicable: false,
+    },
+  ],
+} as const satisfies QuestionEvaluationSpec;
+
+export const projectListStateDataFlowCriterionIds = {
+  sourceState: "identify-project-list-source-state",
+  visibleProjects: "derive-filtered-sorted-projects",
+  selectedProject: "derive-selected-project",
+  avoidDuplicatedDerivedState: "avoid-duplicated-derived-state",
+} as const;
+
+export const projectListStateDataFlowEvaluationSpec = {
+  questionId: projectListStateDataFlowQuestion.id,
+  questionVersion: projectListStateDataFlowQuestion.version,
+  criteria: [
+    {
+      id: projectListStateDataFlowCriterionIds.sourceState,
+      label: "Canonical source state",
+      role: "core",
+      evaluationGuidance:
+        "The answer keeps API project data, search text, sort order, and selected project ID as the canonical inputs that can change independently.",
+      requiredForSufficient: true,
+      prerequisiteCriterionIds: [],
+      allowsNotApplicable: false,
+    },
+    {
+      id: projectListStateDataFlowCriterionIds.visibleProjects,
+      label: "Derived visible projects",
+      role: "core",
+      evaluationGuidance:
+        "The answer derives filtered and sorted projects from canonical project data, search text, and sort order instead of synchronizing a second state copy.",
+      requiredForSufficient: true,
+      prerequisiteCriterionIds: [
+        projectListStateDataFlowCriterionIds.sourceState,
+      ],
+      allowsNotApplicable: false,
+    },
+    {
+      id: projectListStateDataFlowCriterionIds.selectedProject,
+      label: "Derived selected project",
+      role: "core",
+      evaluationGuidance:
+        "The answer stores selected project identity and derives the active project from that ID and the canonical project collection.",
+      requiredForSufficient: true,
+      prerequisiteCriterionIds: [
+        projectListStateDataFlowCriterionIds.sourceState,
+      ],
+      allowsNotApplicable: false,
+    },
+    {
+      id: projectListStateDataFlowCriterionIds.avoidDuplicatedDerivedState,
+      label: "Avoid duplicated derived state",
+      role: "supporting",
+      evaluationGuidance:
+        "The answer explains that storing filtered, sorted, or selected project objects as independently synchronized state can become stale.",
+      requiredForSufficient: false,
+      prerequisiteCriterionIds: [
+        projectListStateDataFlowCriterionIds.sourceState,
       ],
       allowsNotApplicable: false,
     },

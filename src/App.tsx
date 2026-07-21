@@ -7,7 +7,10 @@ import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
 import { ProjectFooter } from "./components/ProjectFooter";
 import { V3PracticeWorkspace } from "./components/V3PracticeWorkspace";
-import { reactStateOwnershipQuestion } from "./domain/v3/questionContent";
+import {
+  getV3PracticeQuestion,
+  reactStateOwnershipQuestion,
+} from "./domain/v3/questionContent";
 import { usePracticeSession } from "./hooks/v3/usePracticeSession";
 import { createDiagnoseInitialAnswerService } from "./lib/v3/diagnoseInitialAnswerService";
 import { createHttpPracticeEvaluationAdapter } from "./lib/v3/httpPracticeEvaluationAdapter";
@@ -40,9 +43,10 @@ export default function App() {
         (question) => question.id === selectedContent.questionId,
       )
       : undefined;
-  const isV3ReferenceSelected =
-    selectedContent.type === "question" &&
-    selectedContent.questionId === reactStateOwnershipQuestion.id;
+  const selectedV3Question =
+    selectedContent.type === "question"
+      ? getV3PracticeQuestion(selectedContent.questionId)
+      : undefined;
 
   // for QuestionNavigator Search filter
   const filteredQuestions = fixedQuestions.filter((question) => {
@@ -65,12 +69,19 @@ export default function App() {
     setIsEvaluating(false);
     setEvaluationResult(null);
 
-    if (
-      content.type === "question" &&
-      content.questionId === reactStateOwnershipQuestion.id
-    ) {
-      practiceSession.startQuestion(reactStateOwnershipQuestion);
+    if (content.type === "question") {
+      const nextV3Question = getV3PracticeQuestion(content.questionId);
+
+      if (nextV3Question) {
+        practiceSession.startQuestion(nextV3Question);
+      }
     }
+  };
+
+  const handleSelectRecommendedQuestion = (questionId: string) => {
+    if (!getV3PracticeQuestion(questionId)) return;
+
+    handleSelectContent({ type: "question", questionId });
   };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -108,10 +119,10 @@ export default function App() {
     if (selectedContent.type === "overview") {
       return <OverviewPanel />;
     }
-    if (isV3ReferenceSelected) {
+    if (selectedV3Question) {
       return (
         <V3PracticeWorkspace
-          question={reactStateOwnershipQuestion}
+          question={selectedV3Question}
           state={practiceSession.state}
           setAnswerDraft={practiceSession.setAnswerDraft}
           submitAnswer={practiceSession.submitAnswer}
@@ -125,6 +136,7 @@ export default function App() {
           editAfterRevisionReviewFailure={
             practiceSession.editAfterRevisionReviewFailure
           }
+          selectRecommendedQuestion={handleSelectRecommendedQuestion}
         />
       );
     }

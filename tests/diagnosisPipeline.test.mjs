@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { reactStateOwnershipQuestion } from "../src/domain/v3/questionContent.ts";
+import { projectListStateDataFlowQuestion, reactStateOwnershipQuestion } from "../src/domain/v3/questionContent.ts";
 import {
   DiagnosisPipelineError,
   MAX_NORMALIZED_ANSWER_BYTES,
@@ -9,6 +9,8 @@ import {
   runInitialDiagnosisPipeline,
 } from "../src/server/v3/diagnosisPipeline.ts";
 import {
+  projectListStateDataFlowCriterionIds,
+  projectListStateDataFlowEvaluationSpec,
   reactStateOwnershipCriterionIds,
   reactStateOwnershipEvaluationSpec,
 } from "../src/server/v3/evaluation.ts";
@@ -25,6 +27,13 @@ const validModelMeta = {
     inputTokens: 300,
     outputTokens: 140,
   },
+};
+
+const validProjectListSufficientDiagnosis = {
+  outcome: "sufficient",
+  assessments: Object.values(projectListStateDataFlowCriterionIds).map(
+    (criterionId) => ({ criterionId, status: "met" }),
+  ),
 };
 
 function createRequest(overrides = {}) {
@@ -71,6 +80,41 @@ test("looks up the canonical reference diagnosis context", () => {
   assert.strictEqual(
     context.evaluationSpec,
     reactStateOwnershipEvaluationSpec,
+  );
+});
+
+test("looks up and runs the bounded project-list diagnosis package", async () => {
+  const context = getCanonicalDiagnosisContext(
+    projectListStateDataFlowQuestion.id,
+  );
+  let capturedInput;
+
+  assert.strictEqual(context.question, projectListStateDataFlowQuestion);
+  assert.strictEqual(
+    context.evaluationSpec,
+    projectListStateDataFlowEvaluationSpec,
+  );
+
+  const success = await runInitialDiagnosisPipeline(
+    createRequest({
+      questionId: projectListStateDataFlowQuestion.id,
+      questionVersion: projectListStateDataFlowQuestion.version,
+      answer:
+        "Keep projects, search text, sort order, and selected project ID as state. Derive the filtered and sorted projects and selected project from those values.",
+    }),
+    createModelBoundary(validProjectListSufficientDiagnosis, (input) => {
+      capturedInput = input;
+    }),
+  );
+
+  assert.strictEqual(success.result, validProjectListSufficientDiagnosis);
+  assert.equal(
+    capturedInput.questionContent.id,
+    projectListStateDataFlowQuestion.id,
+  );
+  assert.deepEqual(
+    capturedInput.evaluationPolicy.criteria,
+    projectListStateDataFlowEvaluationSpec.criteria,
   );
 });
 

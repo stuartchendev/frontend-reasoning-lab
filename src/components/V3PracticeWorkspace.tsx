@@ -9,6 +9,7 @@ import {
   selectCanSubmitRevision,
 } from "../domain/v3/practiceSessionSelectors";
 import type { QuestionContent } from "../domain/v3/questionContent";
+import { reactStateOwnershipQuestion } from "../domain/v3/questionContent";
 
 type V3PracticeWorkspaceProps = {
   readonly question: QuestionContent;
@@ -21,6 +22,7 @@ type V3PracticeWorkspaceProps = {
   readonly submitRevision: () => Promise<void>;
   readonly retryRevisionReview: () => Promise<void>;
   readonly editAfterRevisionReviewFailure: () => void;
+  readonly selectRecommendedQuestion: (questionId: string) => void;
 };
 
 type AnswerSnapshotProps = {
@@ -54,7 +56,11 @@ export function V3PracticeWorkspace({
   submitRevision,
   retryRevisionReview,
   editAfterRevisionReviewFailure,
+  selectRecommendedQuestion,
 }: V3PracticeWorkspaceProps) {
+  const hasReferenceDemoAnswers =
+    question.id === reactStateOwnershipQuestion.id;
+
   function handleAnswerSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     consumeCommand(submitAnswer);
@@ -79,13 +85,15 @@ export function V3PracticeWorkspace({
               rows={7}
             />
             <div className="practice-actions">
-              <button
-                type="button"
-                className="practice-action practice-action--secondary"
-                onClick={() => setAnswerDraft(flawedStateOwnershipAnswer)}
-              >
-                Load demo answer
-              </button>
+              {hasReferenceDemoAnswers && (
+                <button
+                  type="button"
+                  className="practice-action practice-action--secondary"
+                  onClick={() => setAnswerDraft(flawedStateOwnershipAnswer)}
+                >
+                  Load demo answer
+                </button>
+              )}
               <button
                 type="submit"
                 className="practice-action"
@@ -145,15 +153,17 @@ export function V3PracticeWorkspace({
                 rows={8}
               />
               <div className="practice-actions">
-                <button
-                  type="button"
-                  className="practice-action practice-action--secondary"
-                  onClick={() =>
-                    setRevisionDraft(revisedStateOwnershipAnswer)
-                  }
-                >
-                  Load improved answer
-                </button>
+                {hasReferenceDemoAnswers && (
+                  <button
+                    type="button"
+                    className="practice-action practice-action--secondary"
+                    onClick={() =>
+                      setRevisionDraft(revisedStateOwnershipAnswer)
+                    }
+                  >
+                    Load improved answer
+                  </button>
+                )}
                 <button
                   type="submit"
                   className="practice-action"
@@ -285,6 +295,8 @@ export function V3PracticeWorkspace({
           );
         }
 
+        const nextAction = state.comparison.nextAction;
+
         return (
           <>
             <div className="v3-snapshot-grid">
@@ -314,14 +326,23 @@ export function V3PracticeWorkspace({
                 <q>{state.comparison.revisedEvidence}</q>
               </p>
               <p>{state.comparison.comparisonSummary}</p>
-              {state.comparison.nextAction && (
+              {nextAction && (
                 <div className="v3-next-action">
                   <h3>Next practice action</h3>
                   <p>
                     <strong>Question ID:</strong>{" "}
-                    <code>{state.comparison.nextAction.questionId}</code>
+                    <code>{nextAction.questionId}</code>
                   </p>
-                  <p>{state.comparison.nextAction.rationale}</p>
+                  <p>{nextAction.rationale}</p>
+                  <button
+                    type="button"
+                    className="practice-action"
+                    onClick={() =>
+                      selectRecommendedQuestion(nextAction.questionId)
+                    }
+                  >
+                    Start recommended question
+                  </button>
                 </div>
               )}
             </section>
@@ -366,8 +387,10 @@ export function V3PracticeWorkspace({
           </section>
 
           <p className="v3-demo-note">
-            Live diagnosis and revision review — sample answers are available
-            for repeatable testing.
+            Live diagnosis and revision review
+            {hasReferenceDemoAnswers &&
+              " — sample answers are available for repeatable testing"}
+            .
           </p>
 
           <div className="practice-workflow">{renderPhase()}</div>

@@ -11,7 +11,7 @@ import type {
   CanonicalDiagnosisContext,
 } from "./diagnosisPipeline";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { fixedQuestions } from "../../data/fixedQuestions.ts";
+import { reactStateOwnershipQuestion, v3PracticeQuestions } from "../../domain/v3/questionContent.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseInitialDiagnosisResult } from "../../domain/v3/evaluationResults.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
@@ -23,7 +23,7 @@ import { getCanonicalDiagnosisContext } from "./diagnosisPipeline.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { MAX_NORMALIZED_ANSWER_BYTES } from "./diagnosisPipeline.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { reactStateOwnershipCriterionIds } from "./evaluation.ts";
+import { projectListStateDataFlowCriterionIds, reactStateOwnershipCriterionIds } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { validateInitialDiagnosisResult } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
@@ -124,21 +124,34 @@ export type Call2ModelBoundary = (
   input: Call2ModelInput,
 ) => Promise<Call2ModelInvocation>;
 
-type ReactStateOwnershipCriterionId =
-  (typeof reactStateOwnershipCriterionIds)[keyof typeof reactStateOwnershipCriterionIds];
+type RevisionRecommendationCriterionId =
+  | (typeof reactStateOwnershipCriterionIds)[keyof typeof reactStateOwnershipCriterionIds]
+  | (typeof projectListStateDataFlowCriterionIds)[keyof typeof projectListStateDataFlowCriterionIds];
 
 const CANDIDATE_QUESTION_IDS_BY_CRITERION = {
   [reactStateOwnershipCriterionIds.sourceOfTruth]: [
     "project-list-state-data-flow",
   ],
   [reactStateOwnershipCriterionIds.dataFlow]: [
-    "question-navigator-selected-question",
+    "project-list-state-data-flow",
   ],
   [reactStateOwnershipCriterionIds.avoidDuplicatedState]: [
     "project-list-state-data-flow",
   ],
+  [projectListStateDataFlowCriterionIds.sourceState]: [
+    reactStateOwnershipQuestion.id,
+  ],
+  [projectListStateDataFlowCriterionIds.visibleProjects]: [
+    reactStateOwnershipQuestion.id,
+  ],
+  [projectListStateDataFlowCriterionIds.selectedProject]: [
+    reactStateOwnershipQuestion.id,
+  ],
+  [projectListStateDataFlowCriterionIds.avoidDuplicatedDerivedState]: [
+    reactStateOwnershipQuestion.id,
+  ],
 } as const satisfies Record<
-  ReactStateOwnershipCriterionId,
+  RevisionRecommendationCriterionId,
   readonly string[]
 >;
 
@@ -320,7 +333,7 @@ export function selectRevisionRecommendationCandidates(
 ): readonly RevisionRecommendationCandidate[] {
   const candidateQuestionIds =
     CANDIDATE_QUESTION_IDS_BY_CRITERION[
-      criterionId as ReactStateOwnershipCriterionId
+      criterionId as RevisionRecommendationCriterionId
     ];
 
   if (!candidateQuestionIds) {
@@ -328,7 +341,7 @@ export function selectRevisionRecommendationCandidates(
   }
 
   const questionsById = new Map(
-    fixedQuestions.map((question) => [question.id, question]),
+    v3PracticeQuestions.map((question) => [question.id, question]),
   );
 
   return candidateQuestionIds.map((candidateQuestionId) => {

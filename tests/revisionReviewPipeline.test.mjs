@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { fixedQuestions } from "../src/data/fixedQuestions.ts";
-import { reactStateOwnershipQuestion } from "../src/domain/v3/questionContent.ts";
+import { projectListStateDataFlowQuestion, reactStateOwnershipQuestion, v3PracticeQuestions } from "../src/domain/v3/questionContent.ts";
 import {
+  projectListStateDataFlowCriterionIds,
+  projectListStateDataFlowEvaluationSpec,
   reactStateOwnershipCriterionIds,
   reactStateOwnershipEvaluationSpec,
 } from "../src/server/v3/evaluation.ts";
@@ -28,6 +29,57 @@ const validModelMeta = {
   usage: {
     inputTokens: 480,
     outputTokens: 160,
+  },
+};
+
+const projectListOriginalAnswer =
+  "Keep projects, search text, and sort order as state. Store filtered and sorted projects in state so the list can render them. Keep the selected project object in state.";
+const projectListRevisedAnswer =
+  "Keep projects, search text, sort order, and selectedProjectId as state. Then derive filtered and sorted projects from the source inputs and derive the selected project from its ID.";
+const validProjectListDiagnosis = {
+  outcome: "needs-follow-up",
+  assessments: [
+    {
+      criterionId: projectListStateDataFlowCriterionIds.sourceState,
+      status: "met",
+    },
+    {
+      criterionId: projectListStateDataFlowCriterionIds.visibleProjects,
+      status: "missing",
+    },
+    {
+      criterionId: projectListStateDataFlowCriterionIds.selectedProject,
+      status: "partially-met",
+    },
+    {
+      criterionId:
+        projectListStateDataFlowCriterionIds.avoidDuplicatedDerivedState,
+      status: "missing",
+    },
+  ],
+  primaryGap: {
+    criterionId: projectListStateDataFlowCriterionIds.visibleProjects,
+    explanation:
+      "The answer stores a value that can be derived from canonical inputs.",
+    learnerEvidence: "Store filtered and sorted projects in state",
+    whyItMatters:
+      "A synchronized copy can become stale when projects or controls change.",
+  },
+  followUpQuestion:
+    "How can the visible projects be derived from projects, search text, and sort order?",
+};
+const validProjectListComparison = {
+  criterionId: projectListStateDataFlowCriterionIds.visibleProjects,
+  resolution: "resolved",
+  originalEvidence: "Store filtered and sorted projects in state",
+  revisedEvidence: "derive filtered and sorted projects",
+  comparisonSummary:
+    "The revision replaces synchronized visible-project state with a derivation from canonical inputs.",
+  nextAction: {
+    kind: "practice-question",
+    questionId: reactStateOwnershipQuestion.id,
+    rationale:
+      "Practice the same source-of-truth reasoning in a parent-child selection flow.",
   },
 };
 
@@ -77,6 +129,18 @@ test("looks up the canonical reference revision-review context", () => {
   assert.strictEqual(
     context.evaluationSpec,
     reactStateOwnershipEvaluationSpec,
+  );
+});
+
+test("looks up the bounded project-list revision-review context", () => {
+  const context = getCanonicalRevisionReviewContext(
+    projectListStateDataFlowQuestion.id,
+  );
+
+  assert.strictEqual(context.question, projectListStateDataFlowQuestion);
+  assert.strictEqual(
+    context.evaluationSpec,
+    projectListStateDataFlowEvaluationSpec,
   );
 });
 
@@ -288,35 +352,35 @@ test("revalidates diagnosis semantics against canonical policy and original answ
 });
 
 test("selects recommendation candidates deterministically on the server", () => {
-  const sourceOfTruthCandidates = selectRevisionRecommendationCandidates(
-    reactStateOwnershipCriterionIds.sourceOfTruth,
+  const referenceCandidates = Object.values(
+    reactStateOwnershipCriterionIds,
+  ).flatMap((criterionId) =>
+    selectRevisionRecommendationCandidates(criterionId),
   );
-  const dataFlowCandidates = selectRevisionRecommendationCandidates(
-    reactStateOwnershipCriterionIds.dataFlow,
-  );
-  const duplicatedStateCandidates = selectRevisionRecommendationCandidates(
-    reactStateOwnershipCriterionIds.avoidDuplicatedState,
+  const projectListCandidates = Object.values(
+    projectListStateDataFlowCriterionIds,
+  ).flatMap((criterionId) =>
+    selectRevisionRecommendationCandidates(criterionId),
   );
 
   assert.deepEqual(
-    sourceOfTruthCandidates.map((candidate) => candidate.id),
-    ["project-list-state-data-flow"],
+    referenceCandidates.map((candidate) => candidate.id),
+    Array(referenceCandidates.length).fill(
+      projectListStateDataFlowQuestion.id,
+    ),
   );
   assert.deepEqual(
-    dataFlowCandidates.map((candidate) => candidate.id),
-    ["question-navigator-selected-question"],
-  );
-  assert.deepEqual(
-    duplicatedStateCandidates.map((candidate) => candidate.id),
-    ["project-list-state-data-flow"],
+    projectListCandidates.map((candidate) => candidate.id),
+    Array(projectListCandidates.length).fill(
+      reactStateOwnershipQuestion.id,
+    ),
   );
 
   for (const candidate of [
-    ...sourceOfTruthCandidates,
-    ...dataFlowCandidates,
-    ...duplicatedStateCandidates,
+    ...referenceCandidates,
+    ...projectListCandidates,
   ]) {
-    const bankQuestion = fixedQuestions.find(
+    const bankQuestion = v3PracticeQuestions.find(
       (question) => question.id === candidate.id,
     );
 
@@ -325,6 +389,22 @@ test("selects recommendation candidates deterministically on the server", () => 
     assert.equal(candidate.category, bankQuestion.category);
     assert.equal(candidate.prompt, bankQuestion.prompt);
   }
+});
+
+test("runs Call 2 for the bounded project-list package", async () => {
+  const success = await runRevisionReviewPipeline(
+    createRequest({
+      questionId: projectListStateDataFlowQuestion.id,
+      questionVersion: projectListStateDataFlowQuestion.version,
+      originalAnswer: projectListOriginalAnswer,
+      revisedAnswer: projectListRevisedAnswer,
+      diagnosis: validProjectListDiagnosis,
+    }),
+    createModelBoundary(validProjectListComparison),
+  );
+
+  assert.strictEqual(success.result, validProjectListComparison);
+  assert.strictEqual(success.meta, validModelMeta);
 });
 
 test("builds model input only from canonical server policy and candidates", () => {

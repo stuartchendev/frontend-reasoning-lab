@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { practiceSessionReducer } from "../src/domain/v3/practiceSessionReducer.ts";
+import { projectListStateDataFlowQuestion } from "../src/domain/v3/questionContent.ts";
 import {
   flawedStateOwnershipAnswer,
   revisedStateOwnershipAnswer,
@@ -248,14 +249,14 @@ test("starts a fresh answering session and clears populated session data", () =>
     const fresh = practiceSessionReducer(populatedState, {
       type: "start-question",
       sessionId: "session-2",
-      questionId: "project-list-state-data-flow",
-      questionVersion: 2,
+      questionId: projectListStateDataFlowQuestion.id,
+      questionVersion: projectListStateDataFlowQuestion.version,
     });
 
     assert.deepEqual(fresh, {
       sessionId: "session-2",
-      questionId: "project-list-state-data-flow",
-      questionVersion: 2,
+      questionId: projectListStateDataFlowQuestion.id,
+      questionVersion: projectListStateDataFlowQuestion.version,
       phase: "answering",
       answerDraft: "",
     });

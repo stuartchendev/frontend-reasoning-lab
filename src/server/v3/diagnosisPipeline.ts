@@ -11,11 +11,11 @@ import { parseInitialDiagnosisResult } from "../../domain/v3/evaluationResults.t
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseQuestionContent } from "../../domain/v3/questionContent.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts";
+import { projectListStateDataFlowQuestion, reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseQuestionEvaluationSpec } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { reactStateOwnershipEvaluationSpec } from "./evaluation.ts";
+import { projectListStateDataFlowEvaluationSpec, reactStateOwnershipEvaluationSpec } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { validateInitialDiagnosisResult } from "./evaluation.ts";
 
@@ -110,12 +110,18 @@ export type Call1ModelBoundary = (
   input: Call1ModelInput,
 ) => Promise<Call1ModelInvocation>;
 
-const REFERENCE_DIAGNOSIS_REGISTRY = {
+const DIAGNOSIS_REGISTRY: Readonly<
+  Record<string, CanonicalDiagnosisContext>
+> = {
   [reactStateOwnershipQuestion.id]: {
     question: reactStateOwnershipQuestion,
     evaluationSpec: reactStateOwnershipEvaluationSpec,
   },
-} as const;
+  [projectListStateDataFlowQuestion.id]: {
+    question: projectListStateDataFlowQuestion,
+    evaluationSpec: projectListStateDataFlowEvaluationSpec,
+  },
+};
 
 const CALL_1_RESULT_CONTRACT = {
   assessmentStatuses: [
@@ -258,13 +264,13 @@ function validateCall1ModelInvocation(
 export function getCanonicalDiagnosisContext(
   questionId: string,
 ): CanonicalDiagnosisContext {
-  if (questionId !== reactStateOwnershipQuestion.id) {
+  const registeredContext = DIAGNOSIS_REGISTRY[questionId];
+
+  if (!registeredContext) {
     return fail(QUESTION_NOT_FOUND_FAILURE);
   }
 
   try {
-    const registeredContext =
-      REFERENCE_DIAGNOSIS_REGISTRY[reactStateOwnershipQuestion.id];
     const question = parseQuestionContent(registeredContext.question);
     const evaluationSpec = parseQuestionEvaluationSpec(
       registeredContext.evaluationSpec,

@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { parseInitialDiagnosisResult } from "../src/domain/v3/evaluationResults.ts";
-import { reactStateOwnershipQuestion } from "../src/domain/v3/questionContent.ts";
+import { projectListStateDataFlowQuestion, reactStateOwnershipQuestion } from "../src/domain/v3/questionContent.ts";
 import {
   parseQuestionEvaluationSpec,
+  projectListStateDataFlowCriterionIds,
+  projectListStateDataFlowEvaluationSpec,
   reactStateOwnershipCriterionIds,
   reactStateOwnershipEvaluationSpec,
   validateInitialDiagnosisResult,
@@ -18,6 +20,9 @@ import {
 
 const parsedReferenceSpec = parseQuestionEvaluationSpec(
   reactStateOwnershipEvaluationSpec,
+);
+const parsedProjectListSpec = parseQuestionEvaluationSpec(
+  projectListStateDataFlowEvaluationSpec,
 );
 
 function parseAndValidateDiagnosis(input, normalizedAnswer) {
@@ -38,6 +43,25 @@ test("validates the reference spec and question identity", () => {
   assert.equal(
     parsedReferenceSpec.questionVersion,
     reactStateOwnershipQuestion.version,
+  );
+});
+
+test("validates the project-list spec and question identity", () => {
+  assert.strictEqual(
+    parsedProjectListSpec,
+    projectListStateDataFlowEvaluationSpec,
+  );
+  assert.equal(
+    parsedProjectListSpec.questionId,
+    projectListStateDataFlowQuestion.id,
+  );
+  assert.equal(
+    parsedProjectListSpec.questionVersion,
+    projectListStateDataFlowQuestion.version,
+  );
+  assert.deepEqual(
+    parsedProjectListSpec.criteria.map((criterion) => criterion.id),
+    Object.values(projectListStateDataFlowCriterionIds),
   );
 });
 
