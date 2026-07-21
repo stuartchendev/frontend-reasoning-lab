@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState, type FormEvent } from "react";
+﻿import { useRef, useState, type FormEvent } from "react";
 import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
@@ -9,9 +9,14 @@ import { ProjectFooter } from "./components/ProjectFooter";
 import { V3PracticeWorkspace } from "./components/V3PracticeWorkspace";
 import { reactStateOwnershipQuestion } from "./domain/v3/questionContent";
 import { usePracticeSession } from "./hooks/v3/usePracticeSession";
-import { createDeterministicPracticeEvaluationAdapter } from "./lib/v3/practiceEvaluationAdapter";
+import { createDiagnoseInitialAnswerService } from "./lib/v3/diagnoseInitialAnswerService";
+import { createHttpPracticeEvaluationAdapter } from "./lib/v3/httpPracticeEvaluationAdapter";
 import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
+
+const practiceEvaluationAdapter = createHttpPracticeEvaluationAdapter(
+  createDiagnoseInitialAnswerService(),
+);
 
 export default function App() {
   const [selectedContent, setSelectedContent] =
@@ -22,14 +27,6 @@ export default function App() {
   const [evaluationResult, setEvaluationResult] =
     useState<EvaluationResult | null>(null);
   const evaluationRequestVersionRef = useRef(0);
-  const practiceEvaluationAdapter = useMemo(
-    () =>
-      createDeterministicPracticeEvaluationAdapter({
-        diagnosisPath: "needs-follow-up",
-        revisionPath: "resolved",
-      }),
-    [],
-  );
   const practiceSession = usePracticeSession({
     initialQuestion: reactStateOwnershipQuestion,
     adapter: practiceEvaluationAdapter,
@@ -217,4 +214,3 @@ export default function App() {
     </main>
   );
 }
-

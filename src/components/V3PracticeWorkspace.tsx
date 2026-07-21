@@ -366,8 +366,8 @@ export function V3PracticeWorkspace({
           </section>
 
           <p className="v3-demo-note">
-            Deterministic reference demo — use the provided sample answers to
-            exercise the verified flow.
+            Live initial diagnosis — sample answers are available for
+            repeatable testing. Revision review arrives in the next slice.
           </p>
 
           <div className="practice-workflow">{renderPhase()}</div>
