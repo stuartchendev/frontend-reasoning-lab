@@ -353,6 +353,27 @@ test("maps rate-limited pipeline failure to 429 and preserves safe failure", asy
   assert.deepEqual(body.error, failure);
 });
 
+test("maps operation-unavailable pipeline failure to 501", async () => {
+  const failure = {
+    code: "operation-unavailable",
+    message: "Revision review is not available yet.",
+    retryable: false,
+  };
+  const harness = createHarness({
+    async runPreparedPipeline() {
+      throw new DiagnosisPipelineError(failure);
+    },
+  });
+  const response = await harness.handler(postJson(createRequest()));
+
+  const body = await assertErrorResponse(
+    response,
+    501,
+    "operation-unavailable",
+  );
+  assert.deepEqual(body.error, failure);
+});
+
 test("generates one deterministic trace ID and invokes the model once", async () => {
   let traceIdCount = 0;
   let boundaryFactoryCount = 0;

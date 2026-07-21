@@ -47,6 +47,7 @@ export type DiagnoseInitialAnswerHttpDependencies = {
 const FAILURE_STATUS_BY_CODE = {
   "invalid-request": 400,
   "unsupported-contract-version": 400,
+  "operation-unavailable": 501,
   "payload-too-large": 413,
   "question-not-found": 404,
   "question-version-mismatch": 409,

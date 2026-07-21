@@ -84,6 +84,22 @@ test("accepts a valid error envelope", () => {
   assert.strictEqual(parseDiagnoseInitialAnswerResponse(validError), validError);
 });
 
+test("accepts the stable operation-unavailable failure code", () => {
+  const operationUnavailable = {
+    ...validError,
+    error: {
+      code: "operation-unavailable",
+      message: "Revision review is not available yet.",
+      retryable: false,
+    },
+  };
+
+  assert.strictEqual(
+    parseDiagnoseInitialAnswerResponse(operationUnavailable),
+    operationUnavailable,
+  );
+});
+
 test("rejects invalid error failure and metadata fields", () => {
   const invalidErrors = [
     {

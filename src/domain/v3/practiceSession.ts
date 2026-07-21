@@ -13,6 +13,7 @@ type SessionIdentity = {
 export const PRACTICE_SESSION_FAILURE_CODES = [
   "invalid-request",
   "unsupported-contract-version",
+  "operation-unavailable",
   "payload-too-large",
   "question-not-found",
   "question-version-mismatch",
