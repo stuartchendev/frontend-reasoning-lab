@@ -100,6 +100,12 @@ export type InitialDiagnosisPipelineSuccess = {
   readonly meta: Call1ModelMeta;
 };
 
+export type PreparedInitialDiagnosis = {
+  readonly context: CanonicalDiagnosisContext;
+  readonly normalizedAnswer: string;
+  readonly modelInput: Call1ModelInput;
+};
+
 export type Call1ModelBoundary = (
   input: Call1ModelInput,
 ) => Promise<Call1ModelInvocation>;
@@ -342,10 +348,9 @@ export function buildCall1ModelInput(
   };
 }
 
-export async function runInitialDiagnosisPipeline(
+export function prepareInitialDiagnosisPipeline(
   request: DiagnoseInitialAnswerRequest,
-  invokeModel: Call1ModelBoundary,
-): Promise<InitialDiagnosisPipelineSuccess> {
+): PreparedInitialDiagnosis {
   const context = getCanonicalDiagnosisContext(request.questionId);
 
   if (request.questionVersion !== context.question.version) {
@@ -353,7 +358,19 @@ export async function runInitialDiagnosisPipeline(
   }
 
   const normalizedAnswer = normalizeAndValidateAnswer(request.answer);
-  const modelInput = buildCall1ModelInput(context, normalizedAnswer);
+
+  return {
+    context,
+    normalizedAnswer,
+    modelInput: buildCall1ModelInput(context, normalizedAnswer),
+  };
+}
+
+export async function runPreparedInitialDiagnosisPipeline(
+  prepared: PreparedInitialDiagnosis,
+  invokeModel: Call1ModelBoundary,
+): Promise<InitialDiagnosisPipelineSuccess> {
+  const { context, normalizedAnswer, modelInput } = prepared;
 
   let invocation: Call1ModelInvocation;
 
@@ -381,4 +398,14 @@ export async function runInitialDiagnosisPipeline(
   } catch {
     return fail(INVALID_MODEL_OUTPUT_FAILURE);
   }
+}
+
+export async function runInitialDiagnosisPipeline(
+  request: DiagnoseInitialAnswerRequest,
+  invokeModel: Call1ModelBoundary,
+): Promise<InitialDiagnosisPipelineSuccess> {
+  return runPreparedInitialDiagnosisPipeline(
+    prepareInitialDiagnosisPipeline(request),
+    invokeModel,
+  );
 }

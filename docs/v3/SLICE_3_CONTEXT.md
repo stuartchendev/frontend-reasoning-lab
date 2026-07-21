@@ -33,7 +33,8 @@
 
 ## Runtime and Temporary Call 2 Decisions
 
-- A later checkpoint will add `@netlify/vite-plugin` for the local Netlify runtime.
+- Slice 3D keeps `npm run dev` as the local command and uses `@netlify/vite-plugin` to discover functions under `netlify/functions`.
+- Call 1 is exposed at `/.netlify/functions/diagnose-initial-answer`; no custom public redirect exists.
 - At final Call 1 application cutover, `compareRevision` will fail explicitly with a non-retryable `operation-unavailable` adapter failure until Slice 4. That failure is not implemented in Slice 3A.
 
 ## Checkpoints
