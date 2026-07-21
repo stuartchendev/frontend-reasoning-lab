@@ -10,16 +10,20 @@ type SessionIdentity = {
   readonly questionVersion: number;
 };
 
+export const PRACTICE_SESSION_FAILURE_CODES = [
+  "invalid-request",
+  "unsupported-contract-version",
+  "payload-too-large",
+  "question-not-found",
+  "question-version-mismatch",
+  "rate-limited",
+  "model-unavailable",
+  "invalid-model-output",
+  "server-error",
+] as const;
+
 export type PracticeSessionFailureCode =
-  | "invalid-request"
-  | "unsupported-contract-version"
-  | "payload-too-large"
-  | "question-not-found"
-  | "question-version-mismatch"
-  | "rate-limited"
-  | "model-unavailable"
-  | "invalid-model-output"
-  | "server-error";
+  (typeof PRACTICE_SESSION_FAILURE_CODES)[number];
 
 export type PracticeSessionFailure = {
   readonly code: PracticeSessionFailureCode;
