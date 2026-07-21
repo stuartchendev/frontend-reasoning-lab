@@ -49,6 +49,7 @@
 
 - No Call 2 implementation, UI redesign, reducer/session rewrite, provider abstraction, fixture-based production fallback, API-key exposure, reliability hardening, or non-reference-question migration.
 
-## Unresolved Decision
+## Model Decision
 
-- Select and pin the Call 1 model only after evaluating the reference question for schema support, diagnosis quality, latency, and cost.
+- Slice 3C pins Call 1 to `gpt-5.6-luna`, the smallest current GPT-5.6 tier with Responses API Structured Outputs support.
+- Re-evaluate `gpt-5.6-terra` only if the reference evaluation shows a material diagnosis-quality gap.
