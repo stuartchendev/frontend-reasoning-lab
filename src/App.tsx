@@ -11,11 +11,13 @@ import { reactStateOwnershipQuestion } from "./domain/v3/questionContent";
 import { usePracticeSession } from "./hooks/v3/usePracticeSession";
 import { createDiagnoseInitialAnswerService } from "./lib/v3/diagnoseInitialAnswerService";
 import { createHttpPracticeEvaluationAdapter } from "./lib/v3/httpPracticeEvaluationAdapter";
+import { createReviewRevisedAnswerService } from "./lib/v3/reviewRevisedAnswerService";
 import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
 const practiceEvaluationAdapter = createHttpPracticeEvaluationAdapter(
   createDiagnoseInitialAnswerService(),
+  createReviewRevisedAnswerService(),
 );
 
 export default function App() {

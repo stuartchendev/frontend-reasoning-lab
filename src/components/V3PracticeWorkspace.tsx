@@ -366,8 +366,8 @@ export function V3PracticeWorkspace({
           </section>
 
           <p className="v3-demo-note">
-            Live initial diagnosis — sample answers are available for
-            repeatable testing. Revision review arrives in the next slice.
+            Live diagnosis and revision review — sample answers are available
+            for repeatable testing.
           </p>
 
           <div className="practice-workflow">{renderPhase()}</div>
