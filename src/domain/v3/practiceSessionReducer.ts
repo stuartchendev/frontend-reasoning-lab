@@ -6,6 +6,12 @@ import type {
   PracticeSessionFailure,
   PracticeSessionState,
 } from "./practiceSession";
+import type { QuestionContent } from "./questionContent";
+
+type AnsweringPracticeSessionState = Extract<
+  PracticeSessionState,
+  { readonly phase: "answering" }
+>;
 
 type CorrelatedResponseIdentity = {
   readonly sessionId: string;
@@ -72,16 +78,53 @@ function assertNonEmptyString(value: string, fieldName: string): void {
   }
 }
 
-function assertPositiveQuestionVersion(questionVersion: number): void {
+function assertPositiveQuestionVersion(
+  questionVersion: number,
+  fieldName: string,
+): void {
   if (
     typeof questionVersion !== "number" ||
     !Number.isInteger(questionVersion) ||
     questionVersion <= 0
   ) {
     throw new TypeError(
-      "start-question.questionVersion must be a positive integer.",
+      fieldName + " must be a positive integer.",
     );
   }
+}
+
+function createAnsweringPracticeSessionState(
+  sessionId: string,
+  questionId: string,
+  questionVersion: number,
+  fieldPrefix: string,
+): AnsweringPracticeSessionState {
+  assertNonEmptyString(sessionId, fieldPrefix + "sessionId");
+  assertNonEmptyString(questionId, fieldPrefix + "questionId");
+  assertPositiveQuestionVersion(
+    questionVersion,
+    fieldPrefix + "questionVersion",
+  );
+
+  return {
+    sessionId,
+    questionId,
+    questionVersion,
+    phase: "answering",
+    answerDraft: "",
+  };
+}
+
+export function createPracticeSessionState(
+  sessionId: string,
+  question: QuestionContent,
+): AnsweringPracticeSessionState {
+  return createAnsweringPracticeSessionState(
+    sessionId,
+    question.id,
+    question.version,
+    "",
+  );
 }
 
 function invalidTransition(
@@ -115,9 +158,12 @@ export function practiceSessionReducer(
   action: PracticeSessionAction,
 ): PracticeSessionState {
   if (action.type === "start-question") {
-    assertNonEmptyString(action.sessionId, "start-question.sessionId");
-    assertNonEmptyString(action.questionId, "start-question.questionId");
-    assertPositiveQuestionVersion(action.questionVersion);
+    const nextState = createAnsweringPracticeSessionState(
+      action.sessionId,
+      action.questionId,
+      action.questionVersion,
+      "start-question.",
+    );
 
     if (action.sessionId === state.sessionId) {
       throw new TypeError(
@@ -125,13 +171,7 @@ export function practiceSessionReducer(
       );
     }
 
-    return {
-      sessionId: action.sessionId,
-      questionId: action.questionId,
-      questionVersion: action.questionVersion,
-      phase: "answering",
-      answerDraft: "",
-    };
+    return nextState;
   }
 
   if (
