@@ -318,6 +318,9 @@ export function buildCall1ModelInput(
       "Assess every canonical criterion exactly once and respect prerequisite and sufficient policies.",
       "For needs-follow-up, identify one missing or partially-met primary gap whose learnerEvidence is an exact substring of learnerSubmission.normalizedAnswer.",
       "Return only one object matching an allowed resultContract variant.",
+      "Use not-applicable only when the criterion explicitly allows it.",
+      "The criterion selected as primaryGap must have assessment status missing or partially-met.",
+      "Never select a met or not-applicable criterion as primaryGap.",
     ],
     questionContent: {
       id: context.question.id,

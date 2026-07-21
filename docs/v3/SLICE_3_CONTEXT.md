@@ -54,3 +54,8 @@
 
 - Slice 3C pins Call 1 to `gpt-5.6-luna`, the smallest current GPT-5.6 tier with Responses API Structured Outputs support.
 - Re-evaluate `gpt-5.6-terra` only if the reference evaluation shows a material diagnosis-quality gap.
+- Local LM Studio spike succeeded with qwen3.6-35b-a3b.
+Non-thinking mode required chat_template_kwargs.enable_thinking=false.
+A first structurally valid response failed semantic validation; tightening
+canonical primary-gap instructions produced a valid needs-follow-up result.
+Observed latency: 16.3s. Local development only; not a production fallback.
