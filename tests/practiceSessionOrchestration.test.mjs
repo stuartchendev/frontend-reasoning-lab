@@ -227,6 +227,42 @@ test("returns explicit diagnosis and revision fixtures by reference", async () =
   );
 });
 
+test("rejects arbitrary deterministic diagnosis input without retry", async () => {
+  const failure = await captureAdapterFailure(
+    createAdapter().diagnose(
+      createDiagnosisInput("unsupported-diagnosis", {
+        originalAnswer: "App should probably own some state.",
+      }),
+    ),
+    "invalid-request",
+  );
+
+  assert.deepEqual(failure, {
+    code: "invalid-request",
+    message:
+      "This deterministic demo supports the provided reference example only.",
+    retryable: false,
+  });
+});
+
+test("rejects arbitrary deterministic revision inputs without retry", async () => {
+  const adapter = createAdapter();
+
+  for (const overrides of [
+    { originalAnswer: "An unsupported original answer." },
+    { revisedAnswer: "An unsupported revised answer." },
+  ]) {
+    const failure = await captureAdapterFailure(
+      adapter.compareRevision(
+        createRevisionInput("unsupported-revision", overrides),
+      ),
+      "invalid-request",
+    );
+
+    assert.equal(failure.retryable, false);
+  }
+});
+
 test("rejects unsupported reference question identity with stable failures", async () => {
   const adapter = createAdapter();
   const missingQuestionFailure = await captureAdapterFailure(
@@ -278,12 +314,48 @@ test("scopes fail-once behavior by adapter operation and session", async () => {
     );
   }
 
-  const separateAdapter = createAdapter({
+  const boundaryAdapter = createAdapter({
     diagnosisPath: "fail-once-then-needs-follow-up",
+    revisionPath: "fail-once-then-resolved",
   });
+  const unsupportedDiagnosisInput = createDiagnosisInput(
+    "fixture-boundary-session",
+    { originalAnswer: "Unsupported diagnosis input." },
+  );
   await captureAdapterFailure(
-    separateAdapter.diagnose(createDiagnosisInput("session-1")),
+    boundaryAdapter.diagnose(unsupportedDiagnosisInput),
     "model-unavailable",
+  );
+  const diagnosisBoundaryFailure = await captureAdapterFailure(
+    boundaryAdapter.diagnose(unsupportedDiagnosisInput),
+    "invalid-request",
+  );
+  assert.equal(diagnosisBoundaryFailure.retryable, false);
+  assert.strictEqual(
+    await boundaryAdapter.diagnose(
+      createDiagnosisInput("fixture-boundary-session"),
+    ),
+    validNeedsFollowUpDiagnosis,
+  );
+
+  const unsupportedRevisionInput = createRevisionInput(
+    "fixture-boundary-session",
+    { revisedAnswer: "Unsupported revision input." },
+  );
+  await captureAdapterFailure(
+    boundaryAdapter.compareRevision(unsupportedRevisionInput),
+    "invalid-model-output",
+  );
+  const revisionBoundaryFailure = await captureAdapterFailure(
+    boundaryAdapter.compareRevision(unsupportedRevisionInput),
+    "invalid-request",
+  );
+  assert.equal(revisionBoundaryFailure.retryable, false);
+  assert.strictEqual(
+    await boundaryAdapter.compareRevision(
+      createRevisionInput("fixture-boundary-session"),
+    ),
+    validResolvedRevisionComparison,
   );
 });
 

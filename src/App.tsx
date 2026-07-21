@@ -1,4 +1,4 @@
-﻿import { useRef, useState, type FormEvent } from "react";
+﻿import { useMemo, useRef, useState, type FormEvent } from "react";
 import { fixedQuestions } from "./data/fixedQuestions";
 import { rubricCriteria } from "./data/rubricCriteria";
 import { fakeEvaluator } from "./lib/fakeEvaluator";
@@ -6,6 +6,10 @@ import { OverviewPanel } from "./components/OverviewPanel";
 import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
 import { ProjectFooter } from "./components/ProjectFooter";
+import { V3PracticeWorkspace } from "./components/V3PracticeWorkspace";
+import { reactStateOwnershipQuestion } from "./domain/v3/questionContent";
+import { usePracticeSession } from "./hooks/v3/usePracticeSession";
+import { createDeterministicPracticeEvaluationAdapter } from "./lib/v3/practiceEvaluationAdapter";
 import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
@@ -18,6 +22,18 @@ export default function App() {
   const [evaluationResult, setEvaluationResult] =
     useState<EvaluationResult | null>(null);
   const evaluationRequestVersionRef = useRef(0);
+  const practiceEvaluationAdapter = useMemo(
+    () =>
+      createDeterministicPracticeEvaluationAdapter({
+        diagnosisPath: "needs-follow-up",
+        revisionPath: "resolved",
+      }),
+    [],
+  );
+  const practiceSession = usePracticeSession({
+    initialQuestion: reactStateOwnershipQuestion,
+    adapter: practiceEvaluationAdapter,
+  });
 
   const selectedQuestion =
     selectedContent.type === "question"
@@ -25,6 +41,9 @@ export default function App() {
         (question) => question.id === selectedContent.questionId,
       )
       : undefined;
+  const isV3ReferenceSelected =
+    selectedContent.type === "question" &&
+    selectedContent.questionId === reactStateOwnershipQuestion.id;
 
   // for QuestionNavigator Search filter
   const filteredQuestions = fixedQuestions.filter((question) => {
@@ -46,6 +65,13 @@ export default function App() {
     setAnswerText("");
     setIsEvaluating(false);
     setEvaluationResult(null);
+
+    if (
+      content.type === "question" &&
+      content.questionId === reactStateOwnershipQuestion.id
+    ) {
+      practiceSession.startQuestion(reactStateOwnershipQuestion);
+    }
   };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -82,6 +108,26 @@ export default function App() {
   function renderSelectedContent() {
     if (selectedContent.type === "overview") {
       return <OverviewPanel />;
+    }
+    if (isV3ReferenceSelected) {
+      return (
+        <V3PracticeWorkspace
+          question={reactStateOwnershipQuestion}
+          state={practiceSession.state}
+          setAnswerDraft={practiceSession.setAnswerDraft}
+          submitAnswer={practiceSession.submitAnswer}
+          retryDiagnosis={practiceSession.retryDiagnosis}
+          editAfterDiagnosisFailure={
+            practiceSession.editAfterDiagnosisFailure
+          }
+          setRevisionDraft={practiceSession.setRevisionDraft}
+          submitRevision={practiceSession.submitRevision}
+          retryRevisionReview={practiceSession.retryRevisionReview}
+          editAfterRevisionReviewFailure={
+            practiceSession.editAfterRevisionReviewFailure
+          }
+        />
+      );
     }
     if (!selectedQuestion) {
       return <p role="alert">The selected question could not be found.</p>

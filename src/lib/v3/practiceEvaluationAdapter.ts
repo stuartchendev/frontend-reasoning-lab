@@ -10,6 +10,9 @@ import { reactStateOwnershipQuestion } from "../../domain/v3/questionContent.ts"
 import * as referencePracticeFixtures from "../../data/v3/referencePracticeFixtures.ts";
 
 const {
+  flawedStateOwnershipAnswer,
+  revisedStateOwnershipAnswer,
+  sufficientStateOwnershipAnswer,
   validNeedsFollowUpDiagnosis,
   validResolvedRevisionComparison,
   validSufficientDiagnosis,
@@ -88,6 +91,13 @@ const QUESTION_VERSION_MISMATCH_FAILURE = {
   retryable: false,
 } as const satisfies PracticeSessionFailure;
 
+const UNSUPPORTED_DEMO_INPUT_FAILURE = {
+  code: "invalid-request",
+  message:
+    "This deterministic demo supports the provided reference example only.",
+  retryable: false,
+} as const satisfies PracticeSessionFailure;
+
 export class PracticeEvaluationAdapterError extends Error {
   readonly failure: PracticeSessionFailure;
 
@@ -131,6 +141,17 @@ export function createDeterministicPracticeEvaluationAdapter(
         throw new PracticeEvaluationAdapterError(DIAGNOSIS_FAILURE);
       }
 
+      const expectedOriginalAnswer =
+        options.diagnosisPath === "initial-sufficient"
+          ? sufficientStateOwnershipAnswer
+          : flawedStateOwnershipAnswer;
+
+      if (input.originalAnswer !== expectedOriginalAnswer) {
+        throw new PracticeEvaluationAdapterError(
+          UNSUPPORTED_DEMO_INPUT_FAILURE,
+        );
+      }
+
       if (options.diagnosisPath === "initial-sufficient") {
         return validSufficientDiagnosis;
       }
@@ -147,6 +168,15 @@ export function createDeterministicPracticeEvaluationAdapter(
       ) {
         revisionFailuresBySession.add(input.sessionId);
         throw new PracticeEvaluationAdapterError(REVISION_FAILURE);
+      }
+
+      if (
+        input.originalAnswer !== flawedStateOwnershipAnswer ||
+        input.revisedAnswer !== revisedStateOwnershipAnswer
+      ) {
+        throw new PracticeEvaluationAdapterError(
+          UNSUPPORTED_DEMO_INPUT_FAILURE,
+        );
       }
 
       return validResolvedRevisionComparison;

@@ -120,7 +120,8 @@ select {
   color: #1f2937;
 }
 
-.answer-form button {
+.answer-form button,
+.practice-action {
   width: fit-content;
   border: 0;
   border-radius: 0.5rem;
@@ -130,7 +131,8 @@ select {
   cursor: pointer;
 }
 
-.answer-form button:disabled {
+.answer-form button:disabled,
+.practice-action:disabled {
   background: #94a3b8;
   cursor: not-allowed;
 }
@@ -452,6 +454,140 @@ select {
   color: #475569;
   font-size: 0.825rem;
   line-height: 1.4;
+}
+
+.practice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.practice-action--secondary,
+.answer-form .practice-action--secondary {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.v3-question-meta {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.v3-question-context {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  color: #475569;
+  font-size: 0.825rem;
+}
+
+.v3-question-context div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+}
+
+.v3-question-context dt {
+  font-weight: 700;
+}
+
+.v3-question-context dd {
+  margin: 0;
+}
+
+.v3-code-block {
+  overflow-x: auto;
+  margin: 0;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.v3-demo-note {
+  margin: 0 0 1.25rem;
+  border-left: 3px solid #60a5fa;
+  padding: 0.625rem 0.75rem;
+  background: #eff6ff;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.v3-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 0.75rem;
+}
+
+.v3-snapshot {
+  display: grid;
+  gap: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+  background: #ffffff;
+}
+
+.v3-snapshot h2,
+.v3-snapshot p {
+  margin: 0;
+}
+
+.v3-snapshot h2 {
+  color: #1d4ed8;
+  font-size: 1rem;
+}
+
+.v3-snapshot p {
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.v3-diagnosis q,
+.result-block q {
+  overflow-wrap: anywhere;
+}
+
+.v3-failure {
+  display: grid;
+  gap: 0.625rem;
+  border-left: 3px solid #dc2626;
+  padding: 0.875rem 1rem;
+  background: #fef2f2;
+}
+
+.v3-failure h2,
+.v3-failure p {
+  margin: 0;
+}
+
+.v3-failure h2 {
+  font-size: 1.1rem;
+}
+
+.v3-assessment-list {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.v3-next-action {
+  display: grid;
+  gap: 0.5rem;
+  border-top: 1px solid #d9dee8;
+  padding-top: 0.875rem;
+}
+
+.v3-next-action h3,
+.v3-next-action p {
+  margin: 0;
+}
+
+.v3-next-action h3 {
+  font-size: 1rem;
 }
 
 /* footer */

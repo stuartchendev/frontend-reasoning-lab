@@ -45,12 +45,17 @@ export function QuestionNavigator({
 
             <nav className="question-navigator__nav">
                 {staticNavigationItems.map((item) => {
-
-                    const isActive = selectedContent.type === item.content.type;
+                    const isActive = item.content.type === "overview"
+                        ? selectedContent.type === "overview"
+                        : selectedContent.type === "question" &&
+                        selectedContent.questionId === item.content.questionId;
+                    const itemKey = item.content.type === "overview"
+                        ? item.content.type
+                        : `${item.content.type}:${item.content.questionId}`;
 
                     return (
                         <button
-                            key={item.content.type}
+                            key={itemKey}
                             type="button"
                             className={`question-navigator__link question-navigator__link--static${isActive ? " is-active" : ""
                                 }`}
