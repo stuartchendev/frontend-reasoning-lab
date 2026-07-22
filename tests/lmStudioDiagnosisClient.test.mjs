@@ -13,16 +13,26 @@ import {
   LmStudioCall1ResponseError,
   createLmStudioCall1ModelBoundaryFromEnvironment,
   createLmStudioCall1Transport,
+  createLmStudioCall2ModelBoundaryFromEnvironment,
+  createLmStudioCall2Transport,
   loadLmStudioCall1Configuration,
 } from "../src/server/v3/lmStudioDiagnosisClient.ts";
+import {
+  createOpenAICall2ModelBoundary,
+} from "../src/server/v3/openaiRevisionReviewClient.ts";
 import {
   prepareInitialDiagnosisPipeline,
   runInitialDiagnosisPipeline,
 } from "../src/server/v3/diagnosisPipeline.ts";
 import {
+  prepareRevisionReviewPipeline,
+  runRevisionReviewPipeline,
+} from "../src/server/v3/revisionReviewPipeline.ts";
+import {
   flawedStateOwnershipAnswer,
   sufficientStateOwnershipAnswer,
   validNeedsFollowUpDiagnosis,
+  validResolvedRevisionComparison,
   validSufficientDiagnosis,
 } from "./fixtures/referenceEvaluationCases.mjs";
 
@@ -91,6 +101,41 @@ async function captureAcceptedSourceRequest(
       return {
         status: "completed",
         output_text: JSON.stringify({ result: validNeedsFollowUpDiagnosis }),
+        output: [],
+      };
+    },
+  });
+
+  await captureBoundary(prepared.modelInput);
+  assert.ok(sourceRequest);
+  return sourceRequest;
+}
+
+function createRevisionPipelineRequest() {
+  return {
+    contractVersion: "1",
+    questionId: "react-state-ownership-01",
+    questionVersion: 1,
+    originalAnswer: flawedStateOwnershipAnswer,
+    revisedAnswer:
+      "App owns the canonical selectedQuestionId. It passes the ID down, and QuestionNavigator requests changes through a callback.",
+    diagnosis: validNeedsFollowUpDiagnosis,
+  };
+}
+
+async function captureAcceptedCall2SourceRequest() {
+  const prepared = prepareRevisionReviewPipeline(
+    createRevisionPipelineRequest(),
+  );
+  let sourceRequest;
+  const captureBoundary = createOpenAICall2ModelBoundary({
+    async createResponse(request) {
+      sourceRequest = request;
+      return {
+        status: "completed",
+        output_text: JSON.stringify({
+          result: validResolvedRevisionComparison,
+        }),
         output: [],
       };
     },
@@ -422,4 +467,58 @@ test("safe response errors do not expose completion or learner content", async (
     assert.equal(error.message.includes(flawedStateOwnershipAnswer), false);
     return true;
   });
+});
+
+test("translates Call 2 through the same bounded LM Studio adapter", async () => {
+  const sourceRequest = await captureAcceptedCall2SourceRequest();
+  const fake = createFakeClient(
+    createCompletion({ result: validResolvedRevisionComparison }),
+  );
+  const transport = createLmStudioCall2Transport(
+    LOCAL_CONFIGURATION,
+    fake.client,
+  );
+
+  await transport.createResponse(sourceRequest);
+
+  assert.equal(fake.requests.length, 1);
+  const chatRequest = fake.requests[0];
+  assert.equal(chatRequest.model, LOCAL_CONFIGURATION.model);
+  assert.equal(chatRequest.response_format.type, "json_schema");
+  assert.equal(chatRequest.response_format.json_schema.name, "revision_review");
+  assert.equal(chatRequest.response_format.json_schema.strict, true);
+  assert.equal(
+    chatRequest.messages[2].content.includes(
+      "App owns the canonical selectedQuestionId",
+    ),
+    true,
+  );
+  assert.deepEqual(chatRequest.chat_template_kwargs, {
+    enable_thinking: false,
+  });
+});
+
+test("passes a valid Call 2 result through the LM Studio boundary and pipeline", async () => {
+  const fake = createFakeClient(
+    createCompletion({ result: validResolvedRevisionComparison }),
+  );
+  const boundary = createLmStudioCall2ModelBoundaryFromEnvironment(
+    {
+      LM_STUDIO_BASE_URL: LOCAL_CONFIGURATION.baseURL,
+      LM_STUDIO_MODEL: LOCAL_CONFIGURATION.model,
+    },
+    () => fake.client,
+  );
+
+  const success = await runRevisionReviewPipeline(
+    createRevisionPipelineRequest(),
+    boundary,
+  );
+
+  assert.deepEqual(success.result, validResolvedRevisionComparison);
+  assert.deepEqual(success.meta.usage, {
+    inputTokens: 300,
+    outputTokens: 140,
+  });
+  assert.equal(fake.requests.length, 1);
 });

@@ -6,8 +6,16 @@ import type {
 import type {
   Call1OpenAITransport,
 } from "./openaiDiagnosisClient";
+import type {
+  Call2ModelBoundary,
+} from "./revisionReviewPipeline";
+import type {
+  Call2OpenAITransport,
+} from "./openaiRevisionReviewClient";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { createOpenAICall1ModelBoundary } from "./openaiDiagnosisClient.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { createOpenAICall2ModelBoundary } from "./openaiRevisionReviewClient.ts";
 
 type LmStudioEnvironment = {
   readonly LM_STUDIO_BASE_URL?: string;
@@ -325,6 +333,13 @@ export function createLmStudioCall1Transport(
   };
 }
 
+export function createLmStudioCall2Transport(
+  configuration: LmStudioCall1Configuration,
+  client: LmStudioChatCompletionsClient,
+): Call2OpenAITransport {
+  return createLmStudioCall1Transport(configuration, client);
+}
+
 export function createLmStudioCall1ModelBoundaryFromEnvironment(
   environment: LmStudioEnvironment,
   createClient: LmStudioChatCompletionsClientFactory =
@@ -335,4 +350,16 @@ export function createLmStudioCall1ModelBoundaryFromEnvironment(
   const transport = createLmStudioCall1Transport(configuration, client);
 
   return createOpenAICall1ModelBoundary(transport);
+}
+
+export function createLmStudioCall2ModelBoundaryFromEnvironment(
+  environment: LmStudioEnvironment,
+  createClient: LmStudioChatCompletionsClientFactory =
+    createLmStudioChatCompletionsClient,
+): Call2ModelBoundary {
+  const configuration = loadLmStudioCall1Configuration(environment);
+  const client = createClient(configuration);
+  const transport = createLmStudioCall2Transport(configuration, client);
+
+  return createOpenAICall2ModelBoundary(transport);
 }

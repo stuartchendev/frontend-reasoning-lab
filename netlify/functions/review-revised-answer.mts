@@ -1,12 +1,19 @@
 import type { Context } from "@netlify/functions";
 // @ts-expect-error Netlify bundles the TypeScript source extension.
+import { createLmStudioCall2ModelBoundaryFromEnvironment } from "../../src/server/v3/lmStudioDiagnosisClient.ts";
+// @ts-expect-error Netlify bundles the TypeScript source extension.
 import { createOpenAICall2ModelBoundaryFromEnvironment } from "../../src/server/v3/openaiRevisionReviewClient.ts";
 // @ts-expect-error Netlify bundles the TypeScript source extension.
 import { createReviewRevisedAnswerHttpHandler } from "../../src/server/v3/reviewRevisedAnswerHttp.ts";
 
 const handleRequest = createReviewRevisedAnswerHttpHandler({
-  createModelBoundary: () =>
-    createOpenAICall2ModelBoundaryFromEnvironment(process.env),
+  createModelBoundary: () => {
+    if (process.env.LM_STUDIO_BASE_URL || process.env.LM_STUDIO_MODEL) {
+      return createLmStudioCall2ModelBoundaryFromEnvironment(process.env);
+    }
+
+    return createOpenAICall2ModelBoundaryFromEnvironment(process.env);
+  },
 });
 
 export default async function handler(
