@@ -255,6 +255,43 @@ The original v1 AI-assisted decision log remains preserved as historical evidenc
 - Vite
 - CSS
 
+## Local LM Studio Development
+
+The v3 evaluation path can use a local LM Studio server. The browser does not
+own or modify runtime configuration and never receives provider credentials.
+
+1. Start LM Studio, load the model you want to use, and start its local
+   OpenAI-compatible server.
+2. Copy the committed environment template:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. In `.env`, keep the loopback base URL and replace the model placeholder with
+   the exact identifier reported by LM Studio:
+
+   ```env
+   LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
+   LM_STUDIO_MODEL=your-loaded-model-identifier
+   ```
+
+4. Start the Vite development server with Netlify Functions enabled:
+
+   ```bash
+   npm run dev:netlify
+   ```
+
+5. Open the local URL printed by Vite. The development-only **Local AI
+   Runtime** panel reports the configured endpoint and model. Use **Test
+   connection** to refresh its `Connected` or `Unavailable` status.
+
+The settings are read by the server runtime when development starts. Restart
+`npm run dev:netlify` after changing `.env`. Do not rename these variables with
+a `VITE_` prefix: credentials and model runtime configuration must remain
+server-owned. The status panel and status endpoint are unavailable in
+production.
+
 ## Verification
 
 The released v2 workspace has been checked for:

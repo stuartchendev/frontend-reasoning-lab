@@ -208,6 +208,112 @@ select {
   margin: 0;
 }
 
+/* Development-only local runtime status */
+.ai-runtime-panel {
+  display: grid;
+  gap: 1rem;
+  margin: -1rem 0 2rem;
+  border: 1px solid #d9dee8;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.ai-runtime-panel__header,
+.ai-runtime-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+
+.ai-runtime-panel h2,
+.ai-runtime-panel p,
+.ai-runtime-panel dl,
+.ai-runtime-panel dd {
+  margin: 0;
+}
+
+.ai-runtime-panel h2 {
+  font-size: 1.05rem;
+}
+
+.ai-runtime-panel__eyebrow {
+  margin-bottom: 0.2rem;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ai-runtime-panel__status {
+  border-radius: 999px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ai-runtime-panel__status--connected {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.ai-runtime-panel__status--unavailable {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.ai-runtime-panel__metadata {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ai-runtime-panel__metadata div {
+  min-width: 0;
+}
+
+.ai-runtime-panel__metadata dt {
+  margin-bottom: 0.2rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ai-runtime-panel__metadata dd {
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+
+.ai-runtime-panel__actions p,
+.ai-runtime-panel__note {
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.ai-runtime-panel__actions button {
+  width: fit-content;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: #ffffff;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.ai-runtime-panel__actions button:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.ai-runtime-panel__actions button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 /* QuestionNavigator */
 .question-navigator {
   top: 1.5rem;
@@ -658,6 +764,10 @@ select {
   .project-intro__links {
     justify-content: flex-start;
     white-space: normal;
+  }
+
+  .ai-runtime-panel__metadata {
+    grid-template-columns: 1fr;
   }
 
 }

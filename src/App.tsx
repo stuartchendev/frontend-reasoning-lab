@@ -7,6 +7,7 @@ import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
 import { ProjectFooter } from "./components/ProjectFooter";
 import { V3PracticeWorkspace } from "./components/V3PracticeWorkspace";
+import { AiRuntimeStatusPanel } from "./components/AiRuntimeStatusPanel";
 import {
   getV3PracticeQuestion,
   reactStateOwnershipQuestion,
@@ -214,6 +215,7 @@ export default function App() {
       <section className="project-intro">
         <ProjectIntro />
       </section>
+      {import.meta.env.DEV && <AiRuntimeStatusPanel />}
       <div className="workspace-layout">
         <QuestionNavigator
           questions={filteredQuestions}
