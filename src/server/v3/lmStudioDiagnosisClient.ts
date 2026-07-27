@@ -22,6 +22,8 @@ type LmStudioEnvironment = {
   readonly LM_STUDIO_MODEL?: string;
 };
 
+export const LM_STUDIO_REQUEST_TIMEOUT_MS = 25_000;
+
 type LmStudioChatCompletionRequest =
   ChatCompletionCreateParamsNonStreaming & {
     readonly chat_template_kwargs: {
@@ -309,6 +311,7 @@ function createLmStudioChatCompletionsClient(
     baseURL: configuration.baseURL,
     apiKey: "lm-studio",
     maxRetries: 0,
+    timeout: LM_STUDIO_REQUEST_TIMEOUT_MS,
   });
 
   return {
