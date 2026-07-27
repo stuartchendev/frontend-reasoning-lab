@@ -7,6 +7,8 @@ import type { PracticeSessionFailure } from "../../domain/v3/practiceSession";
 import type { QuestionContent } from "../../domain/v3/questionContent";
 import type { QuestionEvaluationSpec } from "./evaluation";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { ModelBoundaryError } from "./modelBoundaryError.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseInitialDiagnosisResult } from "../../domain/v3/evaluationResults.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseQuestionContent } from "../../domain/v3/questionContent.ts";
@@ -183,6 +185,12 @@ const MODEL_UNAVAILABLE_FAILURE = {
   retryable: true,
 } as const satisfies PracticeSessionFailure;
 
+const RATE_LIMITED_FAILURE = {
+  code: "rate-limited",
+  message: "The reasoning diagnosis is temporarily rate limited.",
+  retryable: true,
+} as const satisfies PracticeSessionFailure;
+
 const INVALID_MODEL_OUTPUT_FAILURE = {
   code: "invalid-model-output",
   message: "The reasoning diagnosis could not be validated.",
@@ -207,6 +215,22 @@ export class DiagnosisPipelineError extends Error {
 
 function fail(failure: PracticeSessionFailure): never {
   throw new DiagnosisPipelineError(failure);
+}
+
+function failModelBoundary(error: unknown): never {
+  if (error instanceof ModelBoundaryError) {
+    if (error.failureCode === "rate-limited") {
+      return fail(RATE_LIMITED_FAILURE);
+    }
+
+    if (error.failureCode === "invalid-model-output") {
+      return fail(INVALID_MODEL_OUTPUT_FAILURE);
+    }
+
+    return fail(MODEL_UNAVAILABLE_FAILURE);
+  }
+
+  throw error;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -385,8 +409,8 @@ export async function runPreparedInitialDiagnosisPipeline(
 
   try {
     invocation = await invokeModel(modelInput);
-  } catch {
-    return fail(MODEL_UNAVAILABLE_FAILURE);
+  } catch (error) {
+    return failModelBoundary(error);
   }
 
   const validatedInvocation = validateCall1ModelInvocation(invocation);

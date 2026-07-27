@@ -12,6 +12,7 @@ import {
   MAX_DIAGNOSE_INITIAL_ANSWER_RAW_BODY_BYTES,
   createDiagnoseInitialAnswerHttpHandler,
 } from "../src/server/v3/diagnoseInitialAnswerHttp.ts";
+import { ModelBoundaryError } from "../src/server/v3/modelBoundaryError.ts";
 import {
   flawedStateOwnershipAnswer,
   sufficientStateOwnershipAnswer,
@@ -263,7 +264,10 @@ test("preserves the pipeline normalized-answer 8 KiB limit as 413", async () => 
 });
 
 test("maps a model-boundary rejection to 503", async () => {
-  const providerError = new Error("provider detail must remain private");
+  const providerError = new ModelBoundaryError(
+    "model-unavailable",
+    "provider detail must remain private",
+  );
   let invocationCount = 0;
   const harness = createHarness({
     modelBoundary: async () => {

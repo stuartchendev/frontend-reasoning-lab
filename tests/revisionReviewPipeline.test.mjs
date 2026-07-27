@@ -16,6 +16,7 @@ import {
   runRevisionReviewPipeline,
   selectRevisionRecommendationCandidates,
 } from "../src/server/v3/revisionReviewPipeline.ts";
+import { ModelBoundaryError } from "../src/server/v3/modelBoundaryError.ts";
 import {
   flawedStateOwnershipAnswer,
   revisedStateOwnershipAnswer,
@@ -584,7 +585,10 @@ test("maps semantically invalid comparison fields to invalid-model-output", asyn
 test("maps model boundary rejection to model-unavailable", async () => {
   await assertPipelineFailure(
     runRevisionReviewPipeline(createRequest(), async () => {
-      throw new Error("provider detail that must remain private");
+      throw new ModelBoundaryError(
+        "model-unavailable",
+        "provider detail that must remain private",
+      );
     }),
     "model-unavailable",
   );

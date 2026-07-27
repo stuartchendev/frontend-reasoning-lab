@@ -12,6 +12,7 @@ import {
   MAX_REVIEW_REVISED_ANSWER_RAW_BODY_BYTES,
   createReviewRevisedAnswerHttpHandler,
 } from "../src/server/v3/reviewRevisedAnswerHttp.ts";
+import { ModelBoundaryError } from "../src/server/v3/modelBoundaryError.ts";
 import {
   flawedStateOwnershipAnswer,
   revisedStateOwnershipAnswer,
@@ -287,7 +288,10 @@ test("revalidates diagnosis evidence against the original answer", async () => {
 });
 
 test("maps a model-boundary rejection to 503 without leaking details", async () => {
-  const providerError = new Error("provider detail must remain private");
+  const providerError = new ModelBoundaryError(
+    "model-unavailable",
+    "provider detail must remain private",
+  );
   let invocationCount = 0;
   const harness = createHarness({
     modelBoundary: async () => {

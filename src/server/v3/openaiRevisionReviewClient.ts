@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import OpenAI, { APIConnectionError } from "openai";
 import type {
   Response,
   ResponseCreateParamsNonStreaming,
@@ -8,9 +8,12 @@ import type {
   Call2ModelInput,
   Call2ModelInvocation,
 } from "./revisionReviewPipeline";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { ModelBoundaryError } from "./modelBoundaryError.ts";
 
 export const OPENAI_CALL_2_MODEL = "gpt-5.6-luna";
 export const OPENAI_CALL_2_MAX_OUTPUT_TOKENS = 900;
+export const OPENAI_CALL_2_TIMEOUT_MS = 45_000;
 
 type OpenAIEnvironment = {
   readonly OPENAI_API_KEY?: string;
@@ -42,9 +45,9 @@ export class OpenAICall2ConfigurationError extends Error {
   }
 }
 
-export class OpenAICall2ResponseError extends Error {
+export class OpenAICall2ResponseError extends ModelBoundaryError {
   constructor(message: string) {
-    super(message);
+    super("invalid-model-output", message);
     this.name = "OpenAICall2ResponseError";
   }
 }
@@ -65,6 +68,7 @@ function createOpenAITransport(apiKey: string): Call2OpenAITransport {
   const client = new OpenAI({
     apiKey,
     maxRetries: 0,
+    timeout: OPENAI_CALL_2_TIMEOUT_MS,
   });
 
   return {
@@ -187,16 +191,95 @@ function createResponsesRequest(
   };
 }
 
-function hasRefusal(response: Call2OpenAIResponse): boolean {
-  return response.output.some(
-    (item) =>
-      item.type === "message" &&
-      item.content.some((content) => content.type === "refusal"),
-  );
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function hasRefusal(response: Call2OpenAIResponse): boolean {
+  if (!isRecord(response) || !Array.isArray(response.output)) {
+    throw new OpenAICall2ResponseError(
+      "The revision-review model response had an invalid output envelope.",
+    );
+  }
+
+  let refused = false;
+
+  for (const item of response.output) {
+    if (!isRecord(item) || typeof item.type !== "string") {
+      throw new OpenAICall2ResponseError(
+        "The revision-review model response had an invalid output envelope.",
+      );
+    }
+
+    if (item.type !== "message") continue;
+
+    if (!Array.isArray(item.content)) {
+      throw new OpenAICall2ResponseError(
+        "The revision-review model response had invalid message content.",
+      );
+    }
+
+    for (const content of item.content) {
+      if (!isRecord(content) || typeof content.type !== "string") {
+        throw new OpenAICall2ResponseError(
+          "The revision-review model response had invalid message content.",
+        );
+      }
+
+      if (content.type === "refusal") {
+        if (typeof content.refusal !== "string") {
+          throw new OpenAICall2ResponseError(
+            "The revision-review model response had invalid message content.",
+          );
+        }
+
+        refused = true;
+        continue;
+      }
+
+      if (content.type !== "output_text" || typeof content.text !== "string") {
+        throw new OpenAICall2ResponseError(
+          "The revision-review model response had invalid message content.",
+        );
+      }
+    }
+  }
+
+  return refused;
+}
+
+function mapTransportError(error: unknown): ModelBoundaryError | null {
+  if (error instanceof APIConnectionError) {
+    return new ModelBoundaryError(
+      "model-unavailable",
+      "The revision-review model request failed.",
+    );
+  }
+
+  if (!isRecord(error) || typeof error.status !== "number") {
+    return null;
+  }
+
+  if (error.status === 429) {
+    return new ModelBoundaryError(
+      "rate-limited",
+      "The revision-review model request failed.",
+    );
+  }
+
+  if (
+    error.status === 408 ||
+    (Number.isInteger(error.status) &&
+      error.status >= 500 &&
+      error.status <= 599)
+  ) {
+    return new ModelBoundaryError(
+      "model-unavailable",
+      "The revision-review model request failed.",
+    );
+  }
+
+  return null;
 }
 
 function extractStructuredOutput(response: Call2OpenAIResponse): unknown {
@@ -279,7 +362,18 @@ export function createOpenAICall2ModelBoundary(
   return async (input): Promise<Call2ModelInvocation> => {
     const request = createResponsesRequest(input);
     const startedAt = now();
-    const response = await transport.createResponse(request);
+    let response: Call2OpenAIResponse;
+
+    try {
+      response = await transport.createResponse(request);
+    } catch (error) {
+      const mappedError = mapTransportError(error);
+
+      if (mappedError) throw mappedError;
+
+      throw error;
+    }
+
     const completedAt = now();
 
     return {

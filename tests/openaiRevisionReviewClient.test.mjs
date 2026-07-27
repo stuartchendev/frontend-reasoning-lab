@@ -1,16 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { APIConnectionTimeoutError } from "openai";
 
 import { parseRevisionComparisonResult } from "../src/domain/v3/evaluationResults.ts";
 import {
   OPENAI_CALL_2_MAX_OUTPUT_TOKENS,
   OPENAI_CALL_2_MODEL,
+  OPENAI_CALL_2_TIMEOUT_MS,
   OpenAICall2ConfigurationError,
   OpenAICall2ResponseError,
   createOpenAICall2ModelBoundary,
   createOpenAICall2ModelBoundaryFromEnvironment,
   loadOpenAICall2ApiKey,
 } from "../src/server/v3/openaiRevisionReviewClient.ts";
+import {
+  ModelBoundaryError,
+} from "../src/server/v3/modelBoundaryError.ts";
 import {
   prepareRevisionReviewPipeline,
 } from "../src/server/v3/revisionReviewPipeline.ts";
@@ -77,6 +82,11 @@ function createClock(startedAt = 1_000, completedAt = 1_140) {
 
 test("uses the explicit cost-sensitive Call 2 model", () => {
   assert.equal(OPENAI_CALL_2_MODEL, "gpt-5.6-luna");
+});
+
+test("keeps the OpenAI timeout below the Netlify function limit", () => {
+  assert.equal(OPENAI_CALL_2_TIMEOUT_MS, 45_000);
+  assert.equal(OPENAI_CALL_2_TIMEOUT_MS < 60_000, true);
 });
 
 test("invokes the Responses API once with strict bounded configuration", async () => {
@@ -331,8 +341,29 @@ test("rejects invalid JSON and malformed structured wrappers", async () => {
   }
 });
 
-test("preserves transport rejection without retrying", async () => {
-  const providerError = new Error("private provider detail");
+test("rejects malformed provider response envelopes", async () => {
+  for (const overrides of [
+    { output: undefined },
+    { output: [{ type: "message", content: undefined }] },
+  ]) {
+    const boundary = createOpenAICall2ModelBoundary(
+      createTransport(
+        createResponse(validResolvedRevisionComparison, overrides),
+      ),
+      { now: createClock() },
+    );
+
+    await assert.rejects(
+      boundary(createModelInput()),
+      OpenAICall2ResponseError,
+    );
+  }
+});
+
+test("classifies transport rejection without retrying or leaking details", async () => {
+  const providerError = new APIConnectionTimeoutError({
+    message: "private provider detail",
+  });
   let invocationCount = 0;
   const boundary = createOpenAICall2ModelBoundary({
     async createResponse() {
@@ -342,7 +373,9 @@ test("preserves transport rejection without retrying", async () => {
   });
 
   await assert.rejects(boundary(createModelInput()), (error) => {
-    assert.strictEqual(error, providerError);
+    assert.equal(error instanceof ModelBoundaryError, true);
+    assert.equal(error.failureCode, "model-unavailable");
+    assert.equal(error.message.includes(providerError.message), false);
     return true;
   });
   assert.equal(invocationCount, 1);

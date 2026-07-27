@@ -292,6 +292,50 @@ a `VITE_` prefix: credentials and model runtime configuration must remain
 server-owned. The status panel and status endpoint are unavailable in
 production.
 
+## OpenAI Runtime and Verification
+
+The same two-call v3 evaluation path can use the OpenAI Responses API. Provider
+selection remains server-owned:
+
+- If either `LM_STUDIO_BASE_URL` or `LM_STUDIO_MODEL` is present, the Netlify
+  Functions select LM Studio and require both values to be valid.
+- If neither LM Studio variable is present, the Functions select OpenAI and
+  require `OPENAI_API_KEY`.
+
+For local OpenAI verification, create a local `.env` that contains the
+server-only key and does not contain either `LM_STUDIO_*` variable:
+
+```env
+OPENAI_API_KEY=replace-with-your-local-secret
+```
+
+Never add the key to a `VITE_*` variable, committed file, browser code, or test
+fixture. Start the local Netlify runtime with `npm run dev:netlify`, then follow
+the normal diagnosis and revision-review flow in the browser.
+
+Both OpenAI clients use a 45-second request timeout, below Netlify's 60-second
+synchronous Function limit, so FRL retains time to validate model output and
+return a versioned safe envelope. SDK retries remain disabled with
+`maxRetries: 0`; each learner submission performs at most one model call.
+Provider rate limits map to `rate-limited`, transport/timeout failures map to
+`model-unavailable`, and malformed structured responses map to
+`invalid-model-output`.
+
+The focused OpenAI reliability path does not require a real API key:
+
+```bash
+node --test \
+  tests/openaiDiagnosisClient.test.mjs \
+  tests/openaiRevisionReviewClient.test.mjs \
+  tests/openaiReliabilityHttp.test.mjs
+```
+
+These tests use injected fake transports while exercising the real OpenAI
+request boundary, server pipeline, semantic validation, HTTP status mapping,
+safe envelopes, and trace IDs for Call 1 and Call 2. A successful automated run
+is not evidence of a live OpenAI or browser E2E. Public deployment also remains
+blocked on minimum rate limiting and usage protection.
+
 ## Verification
 
 The released v2 workspace has been checked for:

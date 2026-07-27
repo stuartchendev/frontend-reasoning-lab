@@ -14,6 +14,7 @@ import {
   reactStateOwnershipCriterionIds,
   reactStateOwnershipEvaluationSpec,
 } from "../src/server/v3/evaluation.ts";
+import { ModelBoundaryError } from "../src/server/v3/modelBoundaryError.ts";
 import {
   flawedStateOwnershipAnswer,
   sufficientStateOwnershipAnswer,
@@ -438,7 +439,10 @@ test("validates learner evidence against the exact normalized answer", async () 
 test("maps model boundary rejection to model-unavailable", async () => {
   await assertPipelineFailure(
     runInitialDiagnosisPipeline(createRequest(), async () => {
-      throw new Error("provider detail that must remain private");
+      throw new ModelBoundaryError(
+        "model-unavailable",
+        "provider detail that must remain private",
+      );
     }),
     "model-unavailable",
   );

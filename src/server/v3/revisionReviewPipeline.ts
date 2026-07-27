@@ -11,6 +11,8 @@ import type {
   CanonicalDiagnosisContext,
 } from "./diagnosisPipeline";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { ModelBoundaryError } from "./modelBoundaryError.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { reactStateOwnershipQuestion, v3PracticeQuestions } from "../../domain/v3/questionContent.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { parseInitialDiagnosisResult } from "../../domain/v3/evaluationResults.ts";
@@ -185,6 +187,12 @@ const MODEL_UNAVAILABLE_FAILURE = {
   retryable: true,
 } as const satisfies PracticeSessionFailure;
 
+const RATE_LIMITED_FAILURE = {
+  code: "rate-limited",
+  message: "The revision review is temporarily rate limited.",
+  retryable: true,
+} as const satisfies PracticeSessionFailure;
+
 const INVALID_MODEL_OUTPUT_FAILURE = {
   code: "invalid-model-output",
   message: "The revision review could not be validated.",
@@ -209,6 +217,22 @@ export class RevisionReviewPipelineError extends Error {
 
 function fail(failure: PracticeSessionFailure): never {
   throw new RevisionReviewPipelineError(failure);
+}
+
+function failModelBoundary(error: unknown): never {
+  if (error instanceof ModelBoundaryError) {
+    if (error.failureCode === "rate-limited") {
+      return fail(RATE_LIMITED_FAILURE);
+    }
+
+    if (error.failureCode === "invalid-model-output") {
+      return fail(INVALID_MODEL_OUTPUT_FAILURE);
+    }
+
+    return fail(MODEL_UNAVAILABLE_FAILURE);
+  }
+
+  throw error;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -479,8 +503,8 @@ export async function runPreparedRevisionReviewPipeline(
 
   try {
     invocation = await invokeModel(prepared.modelInput);
-  } catch {
-    return fail(MODEL_UNAVAILABLE_FAILURE);
+  } catch (error) {
+    return failModelBoundary(error);
   }
 
   const validatedInvocation = validateCall2ModelInvocation(invocation);
