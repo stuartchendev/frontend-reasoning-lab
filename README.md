@@ -336,6 +336,99 @@ safe envelopes, and trace IDs for Call 1 and Call 2. A successful automated run
 is not evidence of a live OpenAI or browser E2E. Public deployment also remains
 blocked on minimum rate limiting and usage protection.
 
+### OpenAI live two-call HTTP smoke
+
+The live HTTP smoke setup covers the actual local Netlify Function endpoints:
+
+```txt
+reference initial answer
+→ diagnose-initial-answer
+→ validated needs-follow-up diagnosis
+→ reference revised answer
+→ review-revised-answer
+→ validated revision comparison
+```
+
+This setup is complete, but it is separate from the fake-transport tests above
+and does not count as a passed live run until it is executed with a real
+`OPENAI_API_KEY`. It does not execute the browser service, HTTP adapter, hook,
+reducer, or UI. The resulting `complete / revision-reviewed` reducer state is
+recorded only as an architectural expectation, not as live browser evidence.
+
+When using WSL, confirm that both `node` and `npm` resolve to the Linux/WSL-native
+Node 24 toolchain before running the commands below:
+
+```bash
+command -v node
+command -v npm
+node -v
+npm -v
+```
+
+Prepare a local `.env` with only the OpenAI key, then build and start the local
+Netlify runtime:
+
+```bash
+npm run build
+npm run dev:netlify
+```
+
+In a second terminal, run:
+
+```bash
+npm run smoke:openai-live
+```
+
+The command loads `.env` when present, uses `OPENAI_LIVE_SMOKE_BASE_URL` when
+provided, otherwise defaults to `http://127.0.0.1:5173`, and refuses to send a
+model request when:
+
+- `OPENAI_API_KEY` is missing
+- either `LM_STUDIO_BASE_URL` or `LM_STUDIO_MODEL` would select LM Studio
+- the running Netlify server cannot be reached or its provider state cannot be
+  verified
+- the target is not a loopback HTTP origin
+- the production bundle contains the exact runtime key or the server-only
+  `OPENAI_API_KEY` marker
+
+A passed live HTTP smoke requires exactly HTTP 200 and valid version `"1"`
+success envelopes for both calls, a `needs-follow-up` Call 1 result, and a valid
+Call 2 resolution. The expected reducer outcome is not part of the live pass
+criteria. A passed command writes redacted machine-readable JSON and
+human-readable Markdown under:
+
+```txt
+tmp/openai-live-smoke/<timestamp>/
+```
+
+To save the evidence somewhere else:
+
+```bash
+npm run smoke:openai-live -- --output-dir /absolute/safe/evidence/path
+```
+
+The command refuses to overwrite an existing output directory. It writes both
+evidence files into a fresh staging directory and publishes that directory only
+after both writes succeed, so failed or not-run commands do not publish new
+passed evidence in the requested final location.
+
+The evidence records HTTP status, contract version, result kind, trace ID,
+model latency, nullable token usage, `browserExecutionStatus: "not-run"`, the
+architectural `expectedReducerOutcome`, and the bundle safety result. It does
+not store the API key, raw provider details, prompts, learner answers, or full
+model output. Keep generated evidence out of Git until it has been reviewed for
+the intended audience.
+
+The setup slice itself does not use a real API key, so its honest status is:
+
+```txt
+setup: complete
+fake-transport tests: separate
+live execution: not run
+live execution passed: not claimed
+browser execution: not run
+```
+
 ## Verification
 
 The released v2 workspace has been checked for:

@@ -10,7 +10,8 @@
     "typecheck": "tsc -b",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "smoke:lm-studio": "node scripts/smokeLmStudioDiagnosis.mjs"
+    "smoke:lm-studio": "node scripts/smokeLmStudioDiagnosis.mjs",
+    "smoke:openai-live": "node --env-file-if-exists=.env scripts/smokeOpenAILiveE2E.mjs"
   },
   "dependencies": {
     "@netlify/functions": "^5.3.0",
