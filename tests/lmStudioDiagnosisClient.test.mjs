@@ -8,6 +8,7 @@ import {
   createOpenAICall1ModelBoundary,
 } from "../src/server/v3/openaiDiagnosisClient.ts";
 import {
+  LM_STUDIO_REQUEST_TIMEOUT_MS,
   LmStudioCall1ConfigurationError,
   LmStudioCall1RequestError,
   LmStudioCall1ResponseError,
@@ -16,6 +17,7 @@ import {
   createLmStudioCall2ModelBoundaryFromEnvironment,
   createLmStudioCall2Transport,
   loadLmStudioCall1Configuration,
+  loadLmStudioRequestTimeoutMs,
 } from "../src/server/v3/lmStudioDiagnosisClient.ts";
 import {
   createOpenAICall2ModelBoundary,
@@ -39,6 +41,7 @@ import {
 const LOCAL_CONFIGURATION = {
   baseURL: "http://127.0.0.1:1234/v1",
   model: "local-reasoning-model",
+  requestTimeoutMs: LM_STUDIO_REQUEST_TIMEOUT_MS,
 };
 
 function createPipelineRequest(answer = flawedStateOwnershipAnswer) {
@@ -185,8 +188,74 @@ test("trims configuration and accepts only explicit loopback HTTP URLs", () => {
         LM_STUDIO_BASE_URL: baseURL,
         LM_STUDIO_MODEL: LOCAL_CONFIGURATION.model,
       }),
-      { baseURL, model: LOCAL_CONFIGURATION.model },
+      {
+        baseURL,
+        model: LOCAL_CONFIGURATION.model,
+        requestTimeoutMs: LM_STUDIO_REQUEST_TIMEOUT_MS,
+      },
     );
+  }
+});
+
+test("loads a positive integer LM Studio timeout and keeps the existing default", () => {
+  for (const environment of [
+    {},
+    { LM_STUDIO_TIMEOUT_MS: "" },
+    { LM_STUDIO_TIMEOUT_MS: "   " },
+  ]) {
+    assert.equal(
+      loadLmStudioRequestTimeoutMs(environment),
+      LM_STUDIO_REQUEST_TIMEOUT_MS,
+    );
+  }
+
+  assert.equal(
+    loadLmStudioRequestTimeoutMs({ LM_STUDIO_TIMEOUT_MS: " 90000 " }),
+    90_000,
+  );
+});
+
+test("falls back to the default for invalid LM Studio timeout values", () => {
+  for (const value of [
+    "0",
+    "-1",
+    "1.5",
+    "9e4",
+    "NaN",
+    "Infinity",
+    "90000ms",
+    String(Number.MAX_SAFE_INTEGER + 1),
+  ]) {
+    assert.equal(
+      loadLmStudioRequestTimeoutMs({ LM_STUDIO_TIMEOUT_MS: value }),
+      LM_STUDIO_REQUEST_TIMEOUT_MS,
+    );
+  }
+});
+
+test("passes the configured LM Studio timeout to both client factories", () => {
+  const environment = {
+    LM_STUDIO_BASE_URL: LOCAL_CONFIGURATION.baseURL,
+    LM_STUDIO_MODEL: LOCAL_CONFIGURATION.model,
+    LM_STUDIO_TIMEOUT_MS: "90000",
+  };
+  const observedConfigurations = [];
+  const createClient = (configuration) => {
+    observedConfigurations.push(configuration);
+    return { createCompletion: async () => createCompletion() };
+  };
+
+  createLmStudioCall1ModelBoundaryFromEnvironment(environment, createClient);
+  createLmStudioCall2ModelBoundaryFromEnvironment(environment, createClient);
+
+  assert.equal(observedConfigurations.length, 2);
+
+  for (const configuration of observedConfigurations) {
+    assert.deepEqual(configuration, {
+      baseURL: LOCAL_CONFIGURATION.baseURL,
+      model: LOCAL_CONFIGURATION.model,
+      requestTimeoutMs: 90_000,
+    });
   }
 });
 

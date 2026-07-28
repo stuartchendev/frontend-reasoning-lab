@@ -20,6 +20,7 @@ import { createOpenAICall2ModelBoundary } from "./openaiRevisionReviewClient.ts"
 type LmStudioEnvironment = {
   readonly LM_STUDIO_BASE_URL?: string;
   readonly LM_STUDIO_MODEL?: string;
+  readonly LM_STUDIO_TIMEOUT_MS?: string;
 };
 
 export const LM_STUDIO_REQUEST_TIMEOUT_MS = 25_000;
@@ -34,6 +35,7 @@ type LmStudioChatCompletionRequest =
 export type LmStudioCall1Configuration = {
   readonly baseURL: string;
   readonly model: string;
+  readonly requestTimeoutMs: number;
 };
 
 export type LmStudioChatCompletionsClient = {
@@ -175,7 +177,33 @@ export function loadLmStudioCall1Configuration(
     return failConfiguration();
   }
 
-  return { baseURL, model };
+  return {
+    baseURL,
+    model,
+    requestTimeoutMs: loadLmStudioRequestTimeoutMs(environment),
+  };
+}
+
+export function loadLmStudioRequestTimeoutMs(
+  environment: LmStudioEnvironment,
+): number {
+  const rawTimeoutMs = environment.LM_STUDIO_TIMEOUT_MS;
+
+  if (!isNonEmptyString(rawTimeoutMs)) {
+    return LM_STUDIO_REQUEST_TIMEOUT_MS;
+  }
+
+  const normalizedTimeoutMs = rawTimeoutMs.trim();
+
+  if (!/^\d+$/.test(normalizedTimeoutMs)) {
+    return LM_STUDIO_REQUEST_TIMEOUT_MS;
+  }
+
+  const timeoutMs = Number(normalizedTimeoutMs);
+
+  return Number.isSafeInteger(timeoutMs) && timeoutMs > 0
+    ? timeoutMs
+    : LM_STUDIO_REQUEST_TIMEOUT_MS;
 }
 
 function parseAcceptedCall1SourceRequest(
@@ -311,7 +339,7 @@ function createLmStudioChatCompletionsClient(
     baseURL: configuration.baseURL,
     apiKey: "lm-studio",
     maxRetries: 0,
-    timeout: LM_STUDIO_REQUEST_TIMEOUT_MS,
+    timeout: configuration.requestTimeoutMs,
   });
 
   return {

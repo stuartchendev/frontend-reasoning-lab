@@ -274,6 +274,7 @@ own or modify runtime configuration and never receives provider credentials.
    ```env
    LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
    LM_STUDIO_MODEL=your-loaded-model-identifier
+   LM_STUDIO_TIMEOUT_MS=90000
    ```
 
 4. Start the Vite development server with Netlify Functions enabled:
@@ -290,7 +291,10 @@ The settings are read by the server runtime when development starts. Restart
 `npm run dev:netlify` after changing `.env`. Do not rename these variables with
 a `VITE_` prefix: credentials and model runtime configuration must remain
 server-owned. The status panel and status endpoint are unavailable in
-production.
+production. `LM_STUDIO_TIMEOUT_MS` is optional and accepts a positive integer
+number of milliseconds. It defaults to 25 seconds when missing or invalid; the
+90-second example is intended for a slower local architecture proof and does
+not change the separate 45-second OpenAI timeouts.
 
 ## OpenAI Runtime and Verification
 
