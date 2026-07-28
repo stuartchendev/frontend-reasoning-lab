@@ -315,7 +315,9 @@ OPENAI_API_KEY=replace-with-your-local-secret
 
 Never add the key to a `VITE_*` variable, committed file, browser code, or test
 fixture. Start the local Netlify runtime with `npm run dev:netlify`, then follow
-the normal diagnosis and revision-review flow in the browser.
+the normal diagnosis and revision-review flow in the browser. `OPENAI_API_KEY`
+is the only OpenAI environment setting currently read by FRL; the model and
+request timeout remain fixed in the server-side clients.
 
 Both OpenAI clients use a 45-second request timeout, below Netlify's 60-second
 synchronous Function limit, so FRL retains time to validate model output and
