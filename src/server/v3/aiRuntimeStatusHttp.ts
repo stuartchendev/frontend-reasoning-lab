@@ -1,5 +1,7 @@
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
-import { loadLmStudioCall1Configuration } from "./lmStudioDiagnosisClient.ts";
+import { AiProviderConfigurationError, resolveAiProvider, type ResolvedAiProvider } from "./aiProvider.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { OPENAI_CALL_1_MODEL } from "./openaiDiagnosisClient.ts";
 
 const AI_RUNTIME_STATUS_TIMEOUT_MS = 3_000;
 
@@ -8,10 +10,13 @@ export type AiRuntimeStatusEnvironment = {
   readonly NETLIFY_LOCAL?: string;
   readonly LM_STUDIO_BASE_URL?: string;
   readonly LM_STUDIO_MODEL?: string;
+  readonly LM_STUDIO_TIMEOUT_MS?: string;
+  readonly OPENAI_API_KEY?: string;
 };
 
-export type AiRuntimeStatusReason =
-  | "missing-configuration"
+export type LmStudioRuntimeStatusReason =
+  | "incomplete-configuration"
+  | "invalid-configuration"
   | "connection-failed"
   | "model-unavailable";
 
@@ -27,12 +32,27 @@ export type AiRuntimeUnavailable = {
   readonly endpoint: string | null;
   readonly model: string | null;
   readonly status: "unavailable";
-  readonly reason: AiRuntimeStatusReason;
+  readonly reason: LmStudioRuntimeStatusReason;
+};
+
+export type OpenAiRuntimeConfigured = {
+  readonly provider: "openai";
+  readonly model: string;
+  readonly status: "configured";
+};
+
+export type OpenAiRuntimeUnavailable = {
+  readonly provider: "openai";
+  readonly model: string;
+  readonly status: "unavailable";
+  readonly reason: "missing-configuration";
 };
 
 export type AiRuntimeStatusResponse =
   | AiRuntimeConnected
-  | AiRuntimeUnavailable;
+  | AiRuntimeUnavailable
+  | OpenAiRuntimeConfigured
+  | OpenAiRuntimeUnavailable;
 
 export type AiRuntimeStatusFetch = (
   input: string,
@@ -88,7 +108,7 @@ function listsConfiguredModel(
 }
 
 function unavailable(
-  reason: AiRuntimeStatusReason,
+  reason: LmStudioRuntimeStatusReason,
   configuration?: { readonly baseURL: string; readonly model: string },
 ): AiRuntimeUnavailable {
   return {
@@ -97,6 +117,15 @@ function unavailable(
     model: configuration?.model ?? null,
     status: "unavailable",
     reason,
+  };
+}
+
+function openAiUnavailable(): OpenAiRuntimeUnavailable {
+  return {
+    provider: "openai",
+    model: OPENAI_CALL_1_MODEL,
+    status: "unavailable",
+    reason: "missing-configuration",
   };
 }
 
@@ -118,13 +147,37 @@ export function createAiRuntimeStatusHttpHandler({
       return response;
     }
 
-    let configuration: { readonly baseURL: string; readonly model: string };
+    let resolution: ResolvedAiProvider;
 
     try {
-      configuration = loadLmStudioCall1Configuration(environment);
-    } catch {
-      return jsonResponse(unavailable("missing-configuration"));
+      resolution = resolveAiProvider(environment);
+    } catch (error) {
+      if (error instanceof AiProviderConfigurationError) {
+        if (error.provider === "openai") {
+          return jsonResponse(openAiUnavailable());
+        }
+
+        return jsonResponse(
+          unavailable(
+            error.reason === "incomplete-lm-studio-configuration"
+              ? "incomplete-configuration"
+              : "invalid-configuration",
+          ),
+        );
+      }
+
+      return jsonResponse({ error: "status-unavailable" }, 500);
     }
+
+    if (resolution.provider === "openai") {
+      return jsonResponse({
+        provider: "openai",
+        model: OPENAI_CALL_1_MODEL,
+        status: "configured",
+      } satisfies OpenAiRuntimeConfigured);
+    }
+
+    const configuration = resolution.configuration;
 
     try {
       const modelsEndpoint =

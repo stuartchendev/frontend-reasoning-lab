@@ -1,27 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   createAiRuntimeStatusService,
-  type AiRuntimeStatus,
 } from "../lib/v3/aiRuntimeStatusService";
-
-type PanelState =
-  | { readonly phase: "checking"; readonly previous: AiRuntimeStatus | null }
-  | { readonly phase: "ready"; readonly status: AiRuntimeStatus }
-  | { readonly phase: "failed" };
+import {
+  createAiRuntimePanelView,
+  type AiRuntimePanelState,
+} from "./aiRuntimeStatusPanelView";
 
 const runtimeStatusService = createAiRuntimeStatusService();
 
-const unavailableMessages = {
-  "missing-configuration":
-    "Check that both LM Studio settings are present and that the endpoint uses the documented loopback URL, then restart the development server.",
-  "connection-failed":
-    "LM Studio did not respond. Check that its local server is running.",
-  "model-unavailable":
-    "The configured model is not currently available in LM Studio.",
-} as const;
-
 export function AiRuntimeStatusPanel() {
-  const [panelState, setPanelState] = useState<PanelState>({
+  const [panelState, setPanelState] = useState<AiRuntimePanelState>({
     phase: "checking",
     previous: null,
   });
@@ -62,26 +51,7 @@ export function AiRuntimeStatusPanel() {
     };
   }, [testConnection]);
 
-  const currentStatus =
-    panelState.phase === "ready"
-      ? panelState.status
-      : panelState.phase === "checking"
-        ? panelState.previous
-        : null;
-  const statusLabel =
-    panelState.phase === "checking"
-      ? "Checking…"
-      : currentStatus?.status === "connected"
-        ? "Connected"
-        : "Unavailable";
-  const statusMessage =
-    panelState.phase === "checking"
-      ? "Checking the configured LM Studio runtime."
-      : panelState.phase === "failed"
-        ? "The local status endpoint returned an invalid response."
-        : panelState.status.status === "unavailable"
-          ? unavailableMessages[panelState.status.reason]
-          : "The configured model is available for local evaluation.";
+  const view = createAiRuntimePanelView(panelState);
 
   return (
     <aside
@@ -91,46 +61,42 @@ export function AiRuntimeStatusPanel() {
       <div className="ai-runtime-panel__header">
         <div>
           <p className="ai-runtime-panel__eyebrow">Development only</p>
-          <h2 id="ai-runtime-panel-title">Local AI Runtime</h2>
+          <h2 id="ai-runtime-panel-title">AI Runtime</h2>
         </div>
         <span
-          className={`ai-runtime-panel__status ai-runtime-panel__status--${
-            currentStatus?.status === "connected"
-              ? "connected"
-              : "unavailable"
-          }`}
+          className={`ai-runtime-panel__status ai-runtime-panel__status--${view.statusTone}`}
         >
-          {statusLabel}
+          {view.statusLabel}
         </span>
       </div>
 
       <dl className="ai-runtime-panel__metadata">
         <div>
           <dt>Provider</dt>
-          <dd>LM Studio</dd>
+          <dd>{view.providerLabel}</dd>
         </div>
-        <div>
-          <dt>Endpoint</dt>
-          <dd>{currentStatus?.endpoint ?? "Not configured"}</dd>
-        </div>
+        {view.endpointLabel !== null && (
+          <div>
+            <dt>Endpoint</dt>
+            <dd>{view.endpointLabel}</dd>
+          </div>
+        )}
         <div>
           <dt>Model</dt>
-          <dd>{currentStatus?.model ?? "Not configured"}</dd>
+          <dd>{view.modelLabel}</dd>
         </div>
       </dl>
 
       <div className="ai-runtime-panel__actions">
         <p role="status" aria-live="polite">
-          {statusMessage}
+          {view.statusMessage}
         </p>
         <button
           type="button"
           onClick={() => void testConnection()}
           disabled={panelState.phase === "checking"}
         >
-          {panelState.phase === "checking"
-            ? "Testing connection…"
-            : "Test connection"}
+          {view.actionLabel}
         </button>
       </div>
 

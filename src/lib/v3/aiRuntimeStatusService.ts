@@ -14,9 +14,21 @@ export type AiRuntimeStatus =
       readonly model: string | null;
       readonly status: "unavailable";
       readonly reason:
-        | "missing-configuration"
+        | "incomplete-configuration"
+        | "invalid-configuration"
         | "connection-failed"
         | "model-unavailable";
+    }
+  | {
+      readonly provider: "openai";
+      readonly model: string;
+      readonly status: "configured";
+    }
+  | {
+      readonly provider: "openai";
+      readonly model: string;
+      readonly status: "unavailable";
+      readonly reason: "missing-configuration";
     };
 
 export type AiRuntimeStatusFetch = (
@@ -28,7 +40,7 @@ export type AiRuntimeStatusService = () => Promise<AiRuntimeStatus>;
 
 export class AiRuntimeStatusServiceError extends Error {
   constructor() {
-    super("The local AI runtime status could not be checked.");
+    super("The development AI runtime status could not be checked.");
     this.name = "AiRuntimeStatusServiceError";
   }
 }
@@ -44,9 +56,15 @@ const UNAVAILABLE_KEYS = new Set([
   "reason",
 ]);
 const UNAVAILABLE_REASONS = new Set([
-  "missing-configuration",
+  "incomplete-configuration",
+  "invalid-configuration",
   "connection-failed",
   "model-unavailable",
+]);
+const OPENAI_CONFIGURED_KEYS = new Set(["provider", "model", "status"]);
+const OPENAI_UNAVAILABLE_KEYS = new Set([
+  ...OPENAI_CONFIGURED_KEYS,
+  "reason",
 ]);
 
 function defaultFetch(
@@ -81,7 +99,34 @@ function failService(): never {
 }
 
 export function parseAiRuntimeStatus(value: unknown): AiRuntimeStatus {
-  if (!isRecord(value) || value.provider !== "lm-studio") {
+  if (!isRecord(value)) {
+    return failService();
+  }
+
+  if (value.provider === "openai") {
+    if (
+      value.status === "configured" &&
+      hasExactKeys(value, OPENAI_CONFIGURED_KEYS) &&
+      typeof value.model === "string" &&
+      Boolean(value.model.trim())
+    ) {
+      return value as AiRuntimeStatus;
+    }
+
+    if (
+      value.status === "unavailable" &&
+      hasExactKeys(value, OPENAI_UNAVAILABLE_KEYS) &&
+      typeof value.model === "string" &&
+      Boolean(value.model.trim()) &&
+      value.reason === "missing-configuration"
+    ) {
+      return value as AiRuntimeStatus;
+    }
+
+    return failService();
+  }
+
+  if (value.provider !== "lm-studio") {
     return failService();
   }
 

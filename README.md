@@ -283,9 +283,10 @@ own or modify runtime configuration and never receives provider credentials.
    npm run dev:netlify
    ```
 
-5. Open the local URL printed by Vite. The development-only **Local AI
-   Runtime** panel reports the configured endpoint and model. Use **Test
-   connection** to refresh its `Connected` or `Unavailable` status.
+5. Open the local URL printed by Vite. The development-only **AI Runtime**
+   panel reports the selected provider and model. For LM Studio it also reports
+   the configured endpoint and can refresh its `Connected` or `Unavailable`
+   status.
 
 The settings are read by the server runtime when development starts. Restart
 `npm run dev:netlify` after changing `.env`. Do not rename these variables with
@@ -301,10 +302,13 @@ not change the separate 45-second OpenAI timeouts.
 The same two-call v3 evaluation path can use the OpenAI Responses API. Provider
 selection remains server-owned:
 
-- If either `LM_STUDIO_BASE_URL` or `LM_STUDIO_MODEL` is present, the Netlify
-  Functions select LM Studio and require both values to be valid.
-- If neither LM Studio variable is present, the Functions select OpenAI and
-  require `OPENAI_API_KEY`.
+- Complete, non-blank `LM_STUDIO_BASE_URL` and `LM_STUDIO_MODEL` settings select
+  LM Studio. When complete LM Studio settings and `OPENAI_API_KEY` are both
+  present, LM Studio has explicit precedence.
+- A partial or blank LM Studio pair is a configuration error and never silently
+  falls through to OpenAI.
+- If neither LM Studio variable is defined, the Functions select OpenAI and
+  require a non-blank `OPENAI_API_KEY`.
 
 For local OpenAI verification, create a local `.env` that contains the
 server-only key and does not contain either `LM_STUDIO_*` variable:
@@ -318,6 +322,12 @@ fixture. Start the local Netlify runtime with `npm run dev:netlify`, then follow
 the normal diagnosis and revision-review flow in the browser. `OPENAI_API_KEY`
 is the only OpenAI environment setting currently read by FRL; the model and
 request timeout remain fixed in the server-side clients.
+
+In local development, the **AI Runtime** panel uses the same provider resolver
+as Call 1 and Call 2. OpenAI-only configuration displays `Provider: OpenAI`,
+model `gpt-5.6-luna`, and `Configured`. This is a configuration status only: the
+panel does not call the OpenAI API or verify credentials/model access, so it
+does not produce completion tokens or provider fees.
 
 Both OpenAI clients use a 45-second request timeout, below Netlify's 60-second
 synchronous Function limit, so FRL retains time to validate model output and
@@ -390,7 +400,7 @@ provided, otherwise defaults to `http://127.0.0.1:5173`, and refuses to send a
 model request when:
 
 - `OPENAI_API_KEY` is missing
-- either `LM_STUDIO_BASE_URL` or `LM_STUDIO_MODEL` would select LM Studio
+- either `LM_STUDIO_BASE_URL` or `LM_STUDIO_MODEL` is defined
 - the running Netlify server cannot be reached or its provider state cannot be
   verified
 - the target is not a loopback HTTP origin

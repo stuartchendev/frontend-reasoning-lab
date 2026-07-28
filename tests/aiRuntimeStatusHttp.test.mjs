@@ -12,6 +12,10 @@ const CONFIGURATION = {
   LM_STUDIO_BASE_URL: "http://127.0.0.1:1234/v1",
   LM_STUDIO_MODEL: "local-reasoning-model",
 };
+const OPENAI_CONFIGURATION = {
+  NETLIFY_LOCAL: "true",
+  OPENAI_API_KEY: "private-server-key",
+};
 
 function createFetchHarness({ body, ok = true, rejection } = {}) {
   const calls = [];
@@ -75,20 +79,80 @@ test("reports connected only when LM Studio lists the configured model", async (
   assert.ok(harness.calls[0].init.signal instanceof AbortSignal);
 });
 
-test("returns safe missing-configuration metadata without making a request", async () => {
-  const invalidEnvironments = [
-    { NETLIFY_LOCAL: "true" },
+test("reports OpenAI configured without making a provider request", async () => {
+  const harness = createFetchHarness();
+  const handler = createAiRuntimeStatusHttpHandler({
+    environment: OPENAI_CONFIGURATION,
+    fetchImplementation: harness.fetchImplementation,
+  });
+  const response = await handler(new Request(ENDPOINT));
+  const serializedBody = JSON.stringify(await readJson(response));
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(JSON.parse(serializedBody), {
+    provider: "openai",
+    model: "gpt-5.6-luna",
+    status: "configured",
+  });
+  assert.equal(serializedBody.includes("private-server-key"), false);
+  assert.equal(harness.calls.length, 0);
+});
+
+test("returns safe provider-specific configuration failures without a request", async () => {
+  const cases = [
     {
-      NETLIFY_LOCAL: "true",
-      LM_STUDIO_BASE_URL: CONFIGURATION.LM_STUDIO_BASE_URL,
+      environment: { NETLIFY_LOCAL: "true" },
+      expected: {
+        provider: "openai",
+        model: "gpt-5.6-luna",
+        status: "unavailable",
+        reason: "missing-configuration",
+      },
     },
     {
-      ...CONFIGURATION,
-      LM_STUDIO_BASE_URL: "https://provider.example/v1?secret=value",
+      environment: {
+        ...OPENAI_CONFIGURATION,
+        LM_STUDIO_BASE_URL: CONFIGURATION.LM_STUDIO_BASE_URL,
+      },
+      expected: {
+        provider: "lm-studio",
+        endpoint: null,
+        model: null,
+        status: "unavailable",
+        reason: "incomplete-configuration",
+      },
+    },
+    {
+      environment: {
+        ...OPENAI_CONFIGURATION,
+        LM_STUDIO_BASE_URL: "",
+        LM_STUDIO_MODEL: CONFIGURATION.LM_STUDIO_MODEL,
+      },
+      expected: {
+        provider: "lm-studio",
+        endpoint: null,
+        model: null,
+        status: "unavailable",
+        reason: "incomplete-configuration",
+      },
+    },
+    {
+      environment: {
+        ...CONFIGURATION,
+        OPENAI_API_KEY: "private-server-key",
+        LM_STUDIO_BASE_URL: "https://provider.example/v1?secret=value",
+      },
+      expected: {
+        provider: "lm-studio",
+        endpoint: null,
+        model: null,
+        status: "unavailable",
+        reason: "invalid-configuration",
+      },
     },
   ];
 
-  for (const environment of invalidEnvironments) {
+  for (const { environment, expected } of cases) {
     const harness = createFetchHarness();
     const handler = createAiRuntimeStatusHttpHandler({
       environment,
@@ -97,15 +161,31 @@ test("returns safe missing-configuration metadata without making a request", asy
     const response = await handler(new Request(ENDPOINT));
 
     assert.equal(response.status, 200);
-    assert.deepEqual(await readJson(response), {
-      provider: "lm-studio",
-      endpoint: null,
-      model: null,
-      status: "unavailable",
-      reason: "missing-configuration",
-    });
+    const serializedBody = JSON.stringify(await readJson(response));
+
+    assert.deepEqual(JSON.parse(serializedBody), expected);
+    assert.equal(serializedBody.includes("private-server-key"), false);
+    assert.equal(serializedBody.includes("secret=value"), false);
     assert.equal(harness.calls.length, 0);
   }
+});
+
+test("keeps LM Studio precedence when both providers are configured", async () => {
+  const harness = createFetchHarness({
+    body: { data: [{ id: CONFIGURATION.LM_STUDIO_MODEL }] },
+  });
+  const handler = createAiRuntimeStatusHttpHandler({
+    environment: {
+      ...CONFIGURATION,
+      OPENAI_API_KEY: "private-server-key",
+    },
+    fetchImplementation: harness.fetchImplementation,
+  });
+  const response = await handler(new Request(ENDPOINT));
+
+  assert.equal(response.status, 200);
+  assert.equal((await readJson(response)).provider, "lm-studio");
+  assert.equal(harness.calls.length, 1);
 });
 
 test("maps unreachable or invalid model-list responses to safe fixed reasons", async () => {

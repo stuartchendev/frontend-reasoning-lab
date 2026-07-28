@@ -1,5 +1,7 @@
 import type { Context } from "@netlify/functions";
 // @ts-expect-error Netlify bundles the TypeScript source extension.
+import { resolveAiProvider } from "../../src/server/v3/aiProvider.ts";
+// @ts-expect-error Netlify bundles the TypeScript source extension.
 import { createLmStudioCall2ModelBoundaryFromEnvironment } from "../../src/server/v3/lmStudioDiagnosisClient.ts";
 // @ts-expect-error Netlify bundles the TypeScript source extension.
 import { createOpenAICall2ModelBoundaryFromEnvironment } from "../../src/server/v3/openaiRevisionReviewClient.ts";
@@ -8,7 +10,9 @@ import { createReviewRevisedAnswerHttpHandler } from "../../src/server/v3/review
 
 const handleRequest = createReviewRevisedAnswerHttpHandler({
   createModelBoundary: () => {
-    if (process.env.LM_STUDIO_BASE_URL || process.env.LM_STUDIO_MODEL) {
+    const resolution = resolveAiProvider(process.env);
+
+    if (resolution.provider === "lm-studio") {
       return createLmStudioCall2ModelBoundaryFromEnvironment(process.env);
     }
 

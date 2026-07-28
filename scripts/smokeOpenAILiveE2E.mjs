@@ -30,6 +30,10 @@ import {
   getCanonicalDiagnosisContext,
 } from "../src/server/v3/diagnosisPipeline.ts";
 import {
+  AiProviderConfigurationError,
+  resolveAiProvider,
+} from "../src/server/v3/aiProvider.ts";
+import {
   selectRevisionRecommendationCandidates,
 } from "../src/server/v3/revisionReviewPipeline.ts";
 import {
@@ -72,7 +76,28 @@ function getOutputDirectory() {
 }
 
 function loadConfiguration() {
-  if (process.env.LM_STUDIO_BASE_URL || process.env.LM_STUDIO_MODEL) {
+  let resolution;
+
+  try {
+    resolution = resolveAiProvider(process.env);
+  } catch (error) {
+    if (
+      error instanceof AiProviderConfigurationError &&
+      error.provider === "lm-studio"
+    ) {
+      return fail(
+        "invalid-lm-studio-configuration",
+        "Remove both LM_STUDIO_BASE_URL and LM_STUDIO_MODEL before running the OpenAI live two-call HTTP smoke.",
+      );
+    }
+
+    return fail(
+      "missing-openai-api-key",
+      "OPENAI_API_KEY is required for a live OpenAI HTTP smoke. No model request was sent.",
+    );
+  }
+
+  if (resolution.provider === "lm-studio") {
     return fail(
       "lm-studio-provider-selected",
       "Remove LM_STUDIO_BASE_URL and LM_STUDIO_MODEL before running the OpenAI live two-call HTTP smoke.",
@@ -205,17 +230,16 @@ async function verifyLocalServer(baseUrl) {
     );
   }
 
-  const lmStudioIsUnconfigured =
+  const openAiIsConfigured =
     statusResponse.ok &&
-    runtimeStatus.status === "unavailable" &&
-    runtimeStatus.reason === "missing-configuration" &&
-    runtimeStatus.endpoint === null &&
-    runtimeStatus.model === null;
+    runtimeStatus.provider === "openai" &&
+    runtimeStatus.status === "configured" &&
+    runtimeStatus.model === "gpt-5.6-luna";
 
-  if (!lmStudioIsUnconfigured) {
+  if (!openAiIsConfigured) {
     return fail(
-      "lm-studio-provider-selected",
-      "The running Netlify server reports LM Studio configuration. Restart it without LM_STUDIO_*.",
+      "runtime-provider-unverifiable",
+      "The running Netlify server did not report the expected configured OpenAI provider. Restart it with OpenAI-only environment settings.",
     );
   }
 }

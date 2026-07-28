@@ -19,6 +19,16 @@ const UNAVAILABLE = {
   status: "unavailable",
   reason: "model-unavailable",
 };
+const OPENAI_CONFIGURED = {
+  provider: "openai",
+  model: "gpt-5.6-luna",
+  status: "configured",
+};
+const OPENAI_UNAVAILABLE = {
+  ...OPENAI_CONFIGURED,
+  status: "unavailable",
+  reason: "missing-configuration",
+};
 
 function createFetchHarness({ body, ok = true, rejection } = {}) {
   const calls = [];
@@ -49,22 +59,8 @@ function createFetchHarness({ body, ok = true, rejection } = {}) {
 test("accepts the exact connected and unavailable status shapes", () => {
   assert.strictEqual(parseAiRuntimeStatus(CONNECTED), CONNECTED);
   assert.strictEqual(parseAiRuntimeStatus(UNAVAILABLE), UNAVAILABLE);
-  assert.deepEqual(
-    parseAiRuntimeStatus({
-      provider: "lm-studio",
-      endpoint: null,
-      model: null,
-      status: "unavailable",
-      reason: "missing-configuration",
-    }),
-    {
-      provider: "lm-studio",
-      endpoint: null,
-      model: null,
-      status: "unavailable",
-      reason: "missing-configuration",
-    },
-  );
+  assert.strictEqual(parseAiRuntimeStatus(OPENAI_CONFIGURED), OPENAI_CONFIGURED);
+  assert.strictEqual(parseAiRuntimeStatus(OPENAI_UNAVAILABLE), OPENAI_UNAVAILABLE);
 });
 
 test("rejects malformed, unknown, and over-broad status responses", () => {
@@ -76,6 +72,9 @@ test("rejects malformed, unknown, and over-broad status responses", () => {
     { ...CONNECTED, apiKey: "must-not-enter-browser-state" },
     { ...UNAVAILABLE, reason: "raw-provider-error" },
     { ...UNAVAILABLE, stack: "private stack" },
+    { ...OPENAI_CONFIGURED, endpoint: "https://api.openai.com" },
+    { ...OPENAI_CONFIGURED, apiKey: "must-not-enter-browser-state" },
+    { ...OPENAI_UNAVAILABLE, reason: "raw-provider-error" },
   ];
 
   for (const response of invalidResponses) {
