@@ -259,37 +259,50 @@ The original v1 AI-assisted decision log remains preserved as historical evidenc
 
 The public deployment provides an interactive walkthrough using captured,
 validated responses from a real local model run. To evaluate arbitrary answers
-with a live model, run FRL locally with LM Studio or OpenAI. The browser does
-not own or modify runtime configuration and never receives provider
-credentials.
+with a live model:
 
-1. Start LM Studio, load the model you want to use, and start its local
-   OpenAI-compatible server.
-2. Copy the committed environment template:
+1. Clone the repository and install its dependencies:
+
+   ```bash
+   git clone https://github.com/stuartchendev/frontend-reasoning-lab.git
+   cd frontend-reasoning-lab
+   npm install
+   ```
+
+2. Copy the committed environment template to a local `.env` file:
 
    ```bash
    cp .env.example .env
    ```
 
-3. In `.env`, keep the loopback base URL and replace the model placeholder with
-   the exact identifier reported by LM Studio:
-
-   ```env
-   LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
-   LM_STUDIO_MODEL=your-loaded-model-identifier
-   LM_STUDIO_TIMEOUT_MS=90000
-   ```
-
+3. Configure either [LM Studio](#local-lm-studio-setup) or
+   [OpenAI](#openai-runtime-and-verification) in `.env`. Keep this file
+   uncommitted.
 4. Start the Vite development server with Netlify Functions enabled:
 
    ```bash
    npm run dev:netlify
    ```
 
-5. Open the local URL printed by Vite. The development-only **AI Runtime**
-   panel reports the selected provider and model. For LM Studio it also reports
-   the configured endpoint and can refresh its `Connected` or `Unavailable`
-   status.
+The browser does not own or modify runtime configuration and never receives
+provider credentials. The provider-specific details below remain the source of
+truth for local configuration.
+
+## Local LM Studio Setup
+
+Start LM Studio, load the model you want to use, and start its local
+OpenAI-compatible server. In `.env`, keep the loopback base URL and replace the
+model placeholder with the exact identifier reported by LM Studio:
+
+```env
+LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
+LM_STUDIO_MODEL=your-loaded-model-identifier
+LM_STUDIO_TIMEOUT_MS=90000
+```
+
+Open the local URL printed by Vite. The development-only **AI Runtime** panel
+reports the selected provider and model. For LM Studio it also reports the
+configured endpoint and can refresh its `Connected` or `Unavailable` status.
 
 The settings are read by the server runtime when development starts. Restart
 `npm run dev:netlify` after changing `.env`. Do not rename these variables with

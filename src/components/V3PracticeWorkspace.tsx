@@ -21,7 +21,7 @@ import { QuestionBrief } from "./QuestionBrief";
 const BROWSER_EVIDENCE_URL =
   "https://github.com/stuartchendev/frontend-reasoning-lab/blob/main/docs/v3/evidence/README.md";
 const LIVE_AI_SETUP_URL =
-  "https://github.com/stuartchendev/frontend-reasoning-lab#run-with-live-ai-locally";
+  "https://github.com/stuartchendev/frontend-reasoning-lab/blob/main/README.md#run-with-live-ai-locally";
 
 type V3PracticeWorkspaceProps = {
   readonly question: QuestionContent;
