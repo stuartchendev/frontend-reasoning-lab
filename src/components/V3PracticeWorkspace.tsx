@@ -10,7 +10,18 @@ import {
 } from "../domain/v3/practiceSessionSelectors";
 import type { QuestionContent } from "../domain/v3/questionContent";
 import { reactStateOwnershipQuestion } from "../domain/v3/questionContent";
+import {
+  canRunPracticeAnswer,
+  canRunPracticeRevision,
+  executePracticeCommandIfAllowed,
+  type PracticeExecutionMode,
+} from "../lib/v3/publicWalkthroughAdapter";
 import { QuestionBrief } from "./QuestionBrief";
+
+const BROWSER_EVIDENCE_URL =
+  "https://github.com/stuartchendev/frontend-reasoning-lab/blob/main/docs/v3/evidence/README.md";
+const LIVE_AI_SETUP_URL =
+  "https://github.com/stuartchendev/frontend-reasoning-lab#run-with-live-ai-locally";
 
 type V3PracticeWorkspaceProps = {
   readonly question: QuestionContent;
@@ -25,6 +36,7 @@ type V3PracticeWorkspaceProps = {
   readonly editAfterRevisionReviewFailure: () => void;
   readonly selectRecommendedQuestion: (questionId: string) => void;
   readonly evaluationGuide: readonly string[];
+  readonly executionMode: PracticeExecutionMode;
 };
 
 type AnswerSnapshotProps = {
@@ -65,7 +77,9 @@ export function V3PracticeWorkspace({
   editAfterRevisionReviewFailure,
   selectRecommendedQuestion,
   evaluationGuide,
+  executionMode,
 }: V3PracticeWorkspaceProps) {
+  const isPublicWalkthrough = executionMode === "public-walkthrough";
   const hasReferenceDemoAnswers =
     question.id === reactStateOwnershipQuestion.id;
   const activeStep =
@@ -79,17 +93,55 @@ export function V3PracticeWorkspace({
 
   function handleAnswerSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    consumeCommand(submitAnswer);
+
+    const isAllowed =
+      state.phase === "answering" &&
+      selectCanSubmitAnswer(state) &&
+      canRunPracticeAnswer(
+        executionMode,
+        question.id,
+        state.answerDraft,
+      );
+
+    executePracticeCommandIfAllowed(
+      isAllowed,
+      () => consumeCommand(submitAnswer),
+    );
   }
 
   function handleRevisionSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    consumeCommand(submitRevision);
+
+    const isAllowed =
+      state.phase === "revising" &&
+      selectCanSubmitRevision(state) &&
+      canRunPracticeRevision(
+        executionMode,
+        question.id,
+        state.originalAnswer,
+        state.revisionDraft,
+      );
+
+    executePracticeCommandIfAllowed(
+      isAllowed,
+      () => consumeCommand(submitRevision),
+    );
   }
 
   function renderPhase() {
     switch (state.phase) {
       case "answering":
+        const canRunGuidedAnalysis = canRunPracticeAnswer(
+          executionMode,
+          question.id,
+          state.answerDraft,
+        );
+        const answerHint = !hasReferenceDemoAnswers
+          ? "This walkthrough starts with Question Navigator State Ownership. Select it to run the verified flow."
+          : state.answerDraft
+            ? "Reset to the verified demo answer to continue the walkthrough. Live evaluation is available locally."
+            : "Load the verified demo answer to start the public walkthrough.";
+
         return (
           <form className="answer-form" onSubmit={handleAnswerSubmit}>
             <label htmlFor="v3-answer">Your answer:</label>
@@ -107,17 +159,37 @@ export function V3PracticeWorkspace({
                   className="practice-action practice-action--secondary"
                   onClick={() => setAnswerDraft(flawedStateOwnershipAnswer)}
                 >
-                  Load demo answer
+                  {isPublicWalkthrough && state.answerDraft
+                    ? "Reset demo answer"
+                    : "Load demo answer"}
                 </button>
               )}
               <button
                 type="submit"
                 className="practice-action"
-                disabled={!selectCanSubmitAnswer(state)}
+                disabled={
+                  !canRunGuidedAnalysis ||
+                  !selectCanSubmitAnswer(state)
+                }
+                aria-describedby={
+                  isPublicWalkthrough && !canRunGuidedAnalysis
+                    ? "public-walkthrough-answer-hint"
+                    : undefined
+                }
               >
-                Analyze reasoning
+                {isPublicWalkthrough
+                  ? "Run guided analysis"
+                  : "Analyze reasoning"}
               </button>
             </div>
+            {isPublicWalkthrough && !canRunGuidedAnalysis && (
+              <p
+                id="public-walkthrough-answer-hint"
+                className="walkthrough-input-hint"
+              >
+                {answerHint}
+              </p>
+            )}
           </form>
         );
 
@@ -135,6 +207,13 @@ export function V3PracticeWorkspace({
         );
 
       case "revising":
+        const canRunGuidedReview = canRunPracticeRevision(
+          executionMode,
+          question.id,
+          state.originalAnswer,
+          state.revisionDraft,
+        );
+
         return (
           <>
             <section
@@ -182,17 +261,39 @@ export function V3PracticeWorkspace({
                       setRevisionDraft(revisedStateOwnershipAnswer)
                     }
                   >
-                    Load improved answer
+                    {isPublicWalkthrough &&
+                    state.revisionDraft !== flawedStateOwnershipAnswer
+                      ? "Reset demo revision"
+                      : "Load demo revision"}
                   </button>
                 )}
                 <button
                   type="submit"
                   className="practice-action"
-                  disabled={!selectCanSubmitRevision(state)}
+                  disabled={
+                    !canRunGuidedReview ||
+                    !selectCanSubmitRevision(state)
+                  }
+                  aria-describedby={
+                    isPublicWalkthrough && !canRunGuidedReview
+                      ? "public-walkthrough-revision-hint"
+                      : undefined
+                  }
                 >
-                  Review revision
+                  {isPublicWalkthrough
+                    ? "Run guided review"
+                    : "Review revision"}
                 </button>
               </div>
+              {isPublicWalkthrough && !canRunGuidedReview && (
+                <p
+                  id="public-walkthrough-revision-hint"
+                  className="walkthrough-input-hint"
+                >
+                  Reset to the verified demo revision to continue the
+                  walkthrough. Live evaluation is available locally.
+                </p>
+              )}
             </form>
           </>
         );
@@ -232,6 +333,13 @@ export function V3PracticeWorkspace({
                     type="button"
                     className="practice-action"
                     onClick={() => consumeCommand(retryDiagnosis)}
+                    disabled={
+                      !canRunPracticeAnswer(
+                        executionMode,
+                        question.id,
+                        state.originalAnswer,
+                      )
+                    }
                   >
                     Retry
                   </button>
@@ -270,6 +378,14 @@ export function V3PracticeWorkspace({
                     type="button"
                     className="practice-action"
                     onClick={() => consumeCommand(retryRevisionReview)}
+                    disabled={
+                      !canRunPracticeRevision(
+                        executionMode,
+                        question.id,
+                        state.originalAnswer,
+                        state.revisedAnswer,
+                      )
+                    }
                   >
                     Retry
                   </button>
@@ -412,6 +528,39 @@ export function V3PracticeWorkspace({
                 Review
               </li>
             </ol>
+            {isPublicWalkthrough && (
+              <aside
+                className="public-walkthrough"
+                aria-labelledby="public-walkthrough-title"
+              >
+                <p className="public-walkthrough__eyebrow">
+                  Public walkthrough
+                </p>
+                <h2 id="public-walkthrough-title">Verified AI workflow</h2>
+                <p>
+                  This walkthrough replays validated responses captured from
+                  a real local AI run. Application state, phase transitions,
+                  revision comparison, and recommendation navigation run live
+                  in your browser.
+                </p>
+                <div className="public-walkthrough__links">
+                  <a
+                    href={BROWSER_EVIDENCE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View real-model evidence <span aria-hidden="true">→</span>
+                  </a>
+                  <a
+                    href={LIVE_AI_SETUP_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Run with live AI locally <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </aside>
+            )}
             {renderPhase()}
           </div>
         </div>

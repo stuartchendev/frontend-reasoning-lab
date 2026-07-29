@@ -15,16 +15,13 @@ import {
   v3PracticeQuestions,
 } from "./domain/v3/questionContent";
 import { usePracticeSession } from "./hooks/v3/usePracticeSession";
-import { createDiagnoseInitialAnswerService } from "./lib/v3/diagnoseInitialAnswerService";
-import { createHttpPracticeEvaluationAdapter } from "./lib/v3/httpPracticeEvaluationAdapter";
-import { createReviewRevisedAnswerService } from "./lib/v3/reviewRevisedAnswerService";
+import { createPracticeEvaluationComposition } from "./lib/v3/practiceEvaluationComposition";
 import type { SelectedContent } from "./types/navigation";
 import type { EvaluationResult, UserAnswer } from "./types/reasoning";
 
-const practiceEvaluationAdapter = createHttpPracticeEvaluationAdapter(
-  createDiagnoseInitialAnswerService(),
-  createReviewRevisedAnswerService(),
-);
+const practiceEvaluation = createPracticeEvaluationComposition({
+  isDevelopment: import.meta.env.DEV,
+});
 
 export default function App() {
   const [selectedContent, setSelectedContent] =
@@ -36,7 +33,7 @@ export default function App() {
   const evaluationRequestVersionRef = useRef(0);
   const practiceSession = usePracticeSession({
     initialQuestion: reactStateOwnershipQuestion,
-    adapter: practiceEvaluationAdapter,
+    adapter: practiceEvaluation.adapter,
   });
 
   const selectedQuestion =
@@ -126,6 +123,7 @@ export default function App() {
           }
           selectRecommendedQuestion={handleSelectRecommendedQuestion}
           evaluationGuide={rubricCriteria}
+          executionMode={practiceEvaluation.mode}
         />
       );
     }

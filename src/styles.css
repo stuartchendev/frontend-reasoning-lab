@@ -85,6 +85,65 @@ select {
   background: #f5f8fc;
 }
 
+.public-walkthrough {
+  display: grid;
+  gap: 0.625rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.625rem;
+  padding: 1rem;
+  background: #eff6ff;
+}
+
+.public-walkthrough__eyebrow,
+.public-walkthrough h2,
+.public-walkthrough p {
+  margin: 0;
+}
+
+.public-walkthrough__eyebrow {
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.public-walkthrough h2 {
+  color: #1e3a8a;
+  font-size: 1.05rem;
+}
+
+.public-walkthrough p {
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.public-walkthrough__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem 1rem;
+}
+
+.public-walkthrough a {
+  width: fit-content;
+  color: #1d4ed8;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.public-walkthrough a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.walkthrough-input-hint {
+  margin: -0.25rem 0 0;
+  color: #475569;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 .answer-form {
   display: grid;
   gap: 1rem;

@@ -255,10 +255,13 @@ The original v1 AI-assisted decision log remains preserved as historical evidenc
 - Vite
 - CSS
 
-## Local LM Studio Development
+## Run with Live AI Locally
 
-The v3 evaluation path can use a local LM Studio server. The browser does not
-own or modify runtime configuration and never receives provider credentials.
+The public deployment provides an interactive walkthrough using captured,
+validated responses from a real local model run. To evaluate arbitrary answers
+with a live model, run FRL locally with LM Studio or OpenAI. The browser does
+not own or modify runtime configuration and never receives provider
+credentials.
 
 1. Start LM Studio, load the model you want to use, and start its local
    OpenAI-compatible server.
@@ -328,6 +331,26 @@ as Call 1 and Call 2. OpenAI-only configuration displays `Provider: OpenAI`,
 model `gpt-5.6-luna`, and `Configured`. This is a configuration status only: the
 panel does not call the OpenAI API or verify credentials/model access, so it
 does not produce completion tokens or provider fees.
+
+### Hosted deployment boundary
+
+The local `.env` file and Netlify site environment variables are independent
+configuration boundaries. `.env` must remain uncommitted and is not
+automatically deployed to Netlify.
+
+The public deployment does not require `OPENAI_API_KEY`. It composes the
+existing application workflow with a deterministic replay adapter whose Call 1
+and Call 2 results were captured from a real local model run and passed through
+the existing structural and semantic validation pipelines. The reducer, phase
+transitions, revision flow, comparison, recommendation navigation, and new
+session reset still run live in the browser; only model inference is replayed.
+
+The walkthrough accepts only the verified demo answer and revision. Editing
+either input requires resetting it before replay can continue, so fixed
+feedback is never presented as an evaluation of arbitrary text. The public UI
+links to the real-model browser evidence and this local live-AI setup. It does
+not claim a hosted production model E2E, expose runtime configuration, or
+require a committed `.env` file.
 
 Both OpenAI clients use a 45-second request timeout, below Netlify's 60-second
 synchronous Function limit, so FRL retains time to validate model output and
