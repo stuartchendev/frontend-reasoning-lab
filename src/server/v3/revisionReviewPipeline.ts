@@ -30,6 +30,8 @@ import { projectListStateDataFlowCriterionIds, reactStateOwnershipCriterionIds }
 import { validateInitialDiagnosisResult } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { validateRevisionComparisonResult } from "./evaluation.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { MODEL_FEEDBACK_VOICE_INSTRUCTIONS } from "./modelFeedbackVoice.ts";
 
 export const MAX_NORMALIZED_REVISION_ANSWER_BYTES =
   MAX_NORMALIZED_ANSWER_BYTES;
@@ -402,6 +404,7 @@ export function buildCall2ModelInput(
       "Choose resolved, partially-resolved, or unresolved from the result contract without producing a numeric score.",
       "Return nextAction as null or one practice-question whose questionId appears in resultContract.nextAction.candidateQuestionIds.",
       "Do not invent recommendation candidates or change the validated diagnosis.",
+      ...MODEL_FEEDBACK_VOICE_INSTRUCTIONS,
     ],
     questionContent: {
       id: context.question.id,

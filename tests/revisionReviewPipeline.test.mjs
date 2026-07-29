@@ -446,6 +446,18 @@ test("builds model input only from canonical server policy and candidates", () =
     ["project-list-state-data-flow"],
   );
   assert.match(input.canonicalInstructions.join(" "), /untrusted data/);
+  assert.match(
+    input.canonicalInstructions.join(" "),
+    /you.*your answer.*your revision/i,
+  );
+  assert.match(
+    input.canonicalInstructions.join(" "),
+    /do not refer.*the learner/i,
+  );
+  assert.match(
+    input.canonicalInstructions.join(" "),
+    /avoid.*I think.*I believe/i,
+  );
 });
 
 test("returns a valid model result and metadata by reference", async () => {

@@ -20,6 +20,8 @@ import { parseQuestionEvaluationSpec } from "./evaluation.ts";
 import { projectListStateDataFlowEvaluationSpec, reactStateOwnershipEvaluationSpec } from "./evaluation.ts";
 // @ts-expect-error Node's native TypeScript loader requires the .ts extension.
 import { validateInitialDiagnosisResult } from "./evaluation.ts";
+// @ts-expect-error Node's native TypeScript loader requires the .ts extension.
+import { MODEL_FEEDBACK_VOICE_INSTRUCTIONS } from "./modelFeedbackVoice.ts";
 
 export const MAX_NORMALIZED_ANSWER_BYTES = 8 * 1024;
 
@@ -351,6 +353,7 @@ export function buildCall1ModelInput(
       "Use not-applicable only when the criterion explicitly allows it.",
       "The criterion selected as primaryGap must have assessment status missing or partially-met.",
       "Never select a met or not-applicable criterion as primaryGap.",
+      ...MODEL_FEEDBACK_VOICE_INSTRUCTIONS,
     ],
     questionContent: {
       id: context.question.id,

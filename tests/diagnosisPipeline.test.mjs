@@ -259,6 +259,18 @@ test("builds model input from canonical server question and policy data", async 
     capturedInput.canonicalInstructions.join(" "),
     /untrusted data/,
   );
+  assert.match(
+    capturedInput.canonicalInstructions.join(" "),
+    /you.*your answer.*your revision/i,
+  );
+  assert.match(
+    capturedInput.canonicalInstructions.join(" "),
+    /do not refer.*the learner/i,
+  );
+  assert.match(
+    capturedInput.canonicalInstructions.join(" "),
+    /avoid.*I think.*I believe/i,
+  );
 });
 
 test("ignores browser-supplied canonical question and rubric fields", async () => {
