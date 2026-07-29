@@ -515,6 +515,7 @@ The project is designed to be small enough to explain clearly while still showin
 - `docs/v2/FRL_V2_DECISIONS.md` — current v2 engineering decisions and implemented scope
 - `docs/v2/VERIFICATION.md` — current v2 interaction, responsive, and engineering verification
 - `docs/v2/FRL_V2_MINI_SCOPE_V0_1.md` — historical v0.1 planning context
+- `docs/v3/evidence/README.md` — local v3 Answer → Revise → Review → recommended-question browser evidence
 - `docs/CURRENT_STATUS.md` — current branch and release status
 - `docs/EVALUATOR_RUBRIC.md` — shared evaluator criteria and boundary
 - `docs/v1/FRL_V1_DECISIONS.md` — historical v1 AI-assisted decision evidence
