@@ -5,12 +5,14 @@ import { fakeEvaluator } from "./lib/fakeEvaluator";
 import { OverviewPanel } from "./components/OverviewPanel";
 import { ProjectIntro } from "./components/ProjectIntro";
 import { QuestionNavigator } from "./components/QuestionNavigator";
+import { QuestionBrief } from "./components/QuestionBrief";
 import { ProjectFooter } from "./components/ProjectFooter";
 import { V3PracticeWorkspace } from "./components/V3PracticeWorkspace";
 import { AiRuntimeStatusPanel } from "./components/AiRuntimeStatusPanel";
 import {
   getV3PracticeQuestion,
   reactStateOwnershipQuestion,
+  v3PracticeQuestions,
 } from "./domain/v3/questionContent";
 import { usePracticeSession } from "./hooks/v3/usePracticeSession";
 import { createDiagnoseInitialAnswerService } from "./lib/v3/diagnoseInitialAnswerService";
@@ -27,7 +29,6 @@ const practiceEvaluationAdapter = createHttpPracticeEvaluationAdapter(
 export default function App() {
   const [selectedContent, setSelectedContent] =
     useState<SelectedContent>({ type: "overview" });
-  const [searchText, setSearchText] = useState("");
   const [answerText, setAnswerText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] =
@@ -48,20 +49,6 @@ export default function App() {
     selectedContent.type === "question"
       ? getV3PracticeQuestion(selectedContent.questionId)
       : undefined;
-
-  // for QuestionNavigator Search filter
-  const filteredQuestions = fixedQuestions.filter((question) => {
-    const normalizedSearchText = searchText.trim().toLowerCase();
-
-    if (!normalizedSearchText) return true;
-
-    return [
-      question.order,
-      question.title,
-      question.shortTitle,
-      question.category
-    ].some((value) => value.toLowerCase().includes(normalizedSearchText));
-  });
 
   const handleSelectContent = (content: SelectedContent) => {
     evaluationRequestVersionRef.current += 1;
@@ -138,6 +125,7 @@ export default function App() {
             practiceSession.editAfterRevisionReviewFailure
           }
           selectRecommendedQuestion={handleSelectRecommendedQuestion}
+          evaluationGuide={rubricCriteria}
         />
       );
     }
@@ -149,23 +137,16 @@ export default function App() {
       <section className="practice-panel" aria-labelledby="question-title">
         <div className="practice-layout">
           <div className="practice-main">
-            <section className="question-block" aria-labelledby="question-title">
-              <h1 id="question-title">{selectedQuestion.title}</h1>
-              <p>{selectedQuestion.scenario}</p>
-              <p>{selectedQuestion.prompt}</p>
-            </section>
-
-            <details
-              className="evaluation-guide"
-              aria-labelledby="evaluation-guide-title"
-            >
-              <summary id="evaluation-guide-title">Evaluation guide</summary>
-              <ul>
-                {rubricCriteria.map((criterion) => (
-                  <li key={criterion}>{criterion}</li>
-                ))}
-              </ul>
-            </details>
+            <QuestionBrief
+              titleId="question-title"
+              metadata={[
+                selectedQuestion.category,
+                selectedQuestion.difficulty,
+              ]}
+              title={selectedQuestion.title}
+              prompt={[selectedQuestion.scenario, selectedQuestion.prompt]}
+              evaluationGuide={rubricCriteria}
+            />
 
             <div className="practice-workflow">
               <form className="answer-form" onSubmit={handleSubmit}>
@@ -215,16 +196,20 @@ export default function App() {
       <section className="project-intro">
         <ProjectIntro />
       </section>
-      {import.meta.env.DEV && <AiRuntimeStatusPanel />}
-      <div className="workspace-layout">
-        <QuestionNavigator
-          questions={filteredQuestions}
-          searchText={searchText}
-          selectedContent={selectedContent}
-          onSelectContent={handleSelectContent}
-          onSearchTextChange={setSearchText}
-        />
-        {renderSelectedContent()}
+      <div className="workspace-shell">
+        <div className="workspace-layout">
+          <QuestionNavigator
+            guidedQuestions={v3PracticeQuestions}
+            selectedContent={selectedContent}
+            onSelectContent={handleSelectContent}
+          />
+          <div className="workspace-main">{renderSelectedContent()}</div>
+          {import.meta.env.DEV && (
+            <div className="ai-runtime-panel-slot">
+              <AiRuntimeStatusPanel />
+            </div>
+          )}
+        </div>
       </div>
       <ProjectFooter />
     </main>

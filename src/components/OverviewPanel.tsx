@@ -10,9 +10,9 @@ export function OverviewPanel() {
             <header className="overview-content__intro">
               <h1 id="overview-title">Overview</h1>
               <p>
-                Frontend Reasoning Lab is a React and TypeScript practice
-                workspace designed to make frontend reasoning visible through
-                structured questions, written responses, and evaluation feedback.
+                Frontend Reasoning Lab is a working reference flow for using
+                architecture-constrained AI to diagnose and improve frontend
+                reasoning.
               </p>
             </header>
 
@@ -22,9 +22,9 @@ export function OverviewPanel() {
             >
               <h2 id="overview-how-it-works">How it works</h2>
               <ol>
-                <li>Choose a frontend reasoning question from the navigator.</li>
-                <li>Review the scenario and write your response.</li>
-                <li>Submit your answer to receive structured feedback.</li>
+                <li>Choose an example and explain your frontend reasoning.</li>
+                <li>Receive a focused diagnosis of one reasoning gap.</li>
+                <li>Revise your answer and compare what improved.</li>
               </ol>
             </section>
 
@@ -35,21 +35,20 @@ export function OverviewPanel() {
               <h2 id="overview-data-flow">Data flow</h2>
               <ol className="overview-flow">
                 <li>Question selection</li>
-                <li>App-owned state</li>
                 <li>Answer submission</li>
-                <li>Evaluator boundary</li>
-                <li>Structured result</li>
-                <li>UI feedback</li>
+                <li>Model boundary</li>
+                <li>Structured diagnosis</li>
+                <li>Revision</li>
+                <li>Comparison</li>
+                <li>Recommended next question</li>
               </ol>
               <p>
-                The evaluator currently uses a deterministic mock implementation,
-                allowing the interaction and state flow to be reviewed independently
-                from an external AI service.
+                Model responses pass through typed contracts and semantic
+                validation before entering React state.
               </p>
               <p>
-                Pending evaluation requests are invalidated when the selected
-                content changes, preventing stale results from updating the current
-                view.
+                Pending requests are invalidated when the active question changes,
+                preventing stale results from updating the current session.
               </p>
             </section>
 
@@ -62,16 +61,14 @@ export function OverviewPanel() {
               </h2>
               <ul>
                 <li>Explicit React state ownership</li>
-                <li>Predictable component data flow</li>
-                <li>Clear evaluator and UI responsibility boundaries</li>
-                <li>
-                  Responsible review of AI-assisted implementation decisions
-                </li>
+                <li>Bounded model output</li>
+                <li>Validated data flow</li>
+                <li>Clear AI-assisted workflow responsibility boundaries</li>
               </ul>
             </section>
 
             <footer className="overview-content__start">
-              <p>Choose a question from the navigator to begin.</p>
+              <p>Choose a guided example from the navigator to begin.</p>
             </footer>
           </article>
         </div>

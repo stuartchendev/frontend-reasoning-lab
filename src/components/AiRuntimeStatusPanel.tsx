@@ -58,52 +58,69 @@ export function AiRuntimeStatusPanel() {
       className="ai-runtime-panel"
       aria-labelledby="ai-runtime-panel-title"
     >
-      <div className="ai-runtime-panel__header">
-        <div>
-          <p className="ai-runtime-panel__eyebrow">Development only</p>
-          <h2 id="ai-runtime-panel-title">AI Runtime</h2>
-        </div>
-        <span
-          className={`ai-runtime-panel__status ai-runtime-panel__status--${view.statusTone}`}
-        >
-          {view.statusLabel}
-        </span>
-      </div>
+      <details>
+        <summary className="ai-runtime-panel__summary">
+          <span className="ai-runtime-panel__heading">
+            <span className="ai-runtime-panel__eyebrow">
+              Development tool
+            </span>
+            <span
+              className="ai-runtime-panel__title"
+              id="ai-runtime-panel-title"
+            >
+              Local AI runtime
+            </span>
+          </span>
+          <span className="ai-runtime-panel__summary-meta">
+            <span
+              className={`ai-runtime-panel__status ai-runtime-panel__status--${view.statusTone}`}
+            >
+              {view.statusLabel}
+            </span>
+            <span className="ai-runtime-panel__toggle-label">Details</span>
+            <span className="ai-runtime-panel__chevron" aria-hidden="true">
+              ⌄
+            </span>
+          </span>
+        </summary>
 
-      <dl className="ai-runtime-panel__metadata">
-        <div>
-          <dt>Provider</dt>
-          <dd>{view.providerLabel}</dd>
-        </div>
-        {view.endpointLabel !== null && (
-          <div>
-            <dt>Endpoint</dt>
-            <dd>{view.endpointLabel}</dd>
+        <div className="ai-runtime-panel__body">
+          <dl className="ai-runtime-panel__metadata">
+            <div>
+              <dt>Provider</dt>
+              <dd>{view.providerLabel}</dd>
+            </div>
+            {view.endpointLabel !== null && (
+              <div>
+                <dt>Endpoint</dt>
+                <dd>{view.endpointLabel}</dd>
+              </div>
+            )}
+            <div>
+              <dt>Model</dt>
+              <dd>{view.modelLabel}</dd>
+            </div>
+          </dl>
+
+          <div className="ai-runtime-panel__actions">
+            <p role="status" aria-live="polite">
+              {view.statusMessage}
+            </p>
+            <button
+              type="button"
+              onClick={() => void testConnection()}
+              disabled={panelState.phase === "checking"}
+            >
+              {view.actionLabel}
+            </button>
           </div>
-        )}
-        <div>
-          <dt>Model</dt>
-          <dd>{view.modelLabel}</dd>
+
+          <p className="ai-runtime-panel__note">
+            Runtime settings come from the server environment. Restart the
+            development server after changing .env.
+          </p>
         </div>
-      </dl>
-
-      <div className="ai-runtime-panel__actions">
-        <p role="status" aria-live="polite">
-          {view.statusMessage}
-        </p>
-        <button
-          type="button"
-          onClick={() => void testConnection()}
-          disabled={panelState.phase === "checking"}
-        >
-          {view.actionLabel}
-        </button>
-      </div>
-
-      <p className="ai-runtime-panel__note">
-        Runtime settings are read from server environment variables. Restart
-        the development server after changing .env.
-      </p>
+      </details>
     </aside>
   );
 }

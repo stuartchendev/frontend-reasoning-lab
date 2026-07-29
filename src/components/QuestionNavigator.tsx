@@ -1,46 +1,27 @@
 import { staticNavigationItems } from "../data/staticNavigationItems";
+import type { QuestionContent } from "../domain/v3/questionContent";
 import type { SelectedContent } from "../types/navigation";
-import type { ReasoningQuestions } from "../types/reasoning";
 type QuestionNavigatorProps = {
-    questions: ReasoningQuestions[];
+    guidedQuestions: readonly QuestionContent[];
     selectedContent: SelectedContent;
-    searchText: string;
     onSelectContent: (content: SelectedContent) => void;
-    onSearchTextChange: (searchText: string) => void;
 }
 export function QuestionNavigator({
-    questions,
-    searchText,
+    guidedQuestions,
     selectedContent,
     onSelectContent,
-    onSearchTextChange
 }: QuestionNavigatorProps) {
 
     const selectedQuestionId = selectedContent.type === "question"
         ? selectedContent.questionId
         : undefined;
 
-    const groupedQuestions = questions.reduce<
-        Record<string, typeof questions>
-    >((groups, question) => {
-        const currentGroup = groups[question.category] ?? [];
-        return {
-            ...groups,
-            [question.category]: [...currentGroup, question],
-        }
-    }, {});
-
     return (
         <aside className="question-navigator" aria-label="Question navigator">
             <div className="question-navigator__header">
-                <input
-                    className="question-navigator__search"
-                    type="search"
-                    value={searchText}
-                    onChange={(event) => onSearchTextChange(event.target.value)}
-                    placeholder="Search questions..."
-                    aria-label="Search questions..."
-                ></input>
+                <h2 className="question-navigator__heading">
+                    Guided practice
+                </h2>
             </div>
 
             <nav className="question-navigator__nav">
@@ -57,7 +38,7 @@ export function QuestionNavigator({
                         <button
                             key={itemKey}
                             type="button"
-                            className={`question-navigator__link question-navigator__link--static${isActive ? " is-active" : ""
+                            className={`question-navigator__link question-navigator__link--overview${isActive ? " is-active" : ""
                                 }`}
                             aria-current={
                                 isActive ? "page" : undefined
@@ -71,62 +52,50 @@ export function QuestionNavigator({
                     );
                 })}
 
-                {questions.length === 0 ?
+                {guidedQuestions.length > 0 && (
+                    <section className="question-navigator__section question-navigator__section--guided">
+                        <h3 className="question-navigator__section-title">
+                            AI-guided examples
+                        </h3>
+                        <div className="question-navigator__group-list">
+                            {guidedQuestions.map((question) => (
+                                <button
+                                    key={question.id}
+                                    type="button"
+                                    className={`question-navigator__link question-navigator__link--guided${question.id === selectedQuestionId
+                                        ? " is-active"
+                                        : ""
+                                        }`}
+                                    aria-current={
+                                        question.id === selectedQuestionId
+                                            ? "page"
+                                            : undefined
+                                    }
+                                    onClick={() => onSelectContent({
+                                        type: "question",
+                                        questionId: question.id,
+                                    })}
+                                >
+                                    <span className="question-navigator__text">
+                                        <span className="question-navigator__title">
+                                            {question.title}
+                                        </span>
+                                        <span className="question-navigator__meta">
+                                            Answer → Revise → Review
+                                        </span>
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {guidedQuestions.length === 0 ?
                     (
                         <div className="question-navigator__empty">
-                            <p>No question found</p>
-                            <span>Try another keyword.</span>
+                            <p>No guided examples available.</p>
                         </div>
-                    ) :
-                    (
-                        Object.entries(groupedQuestions).map(([category, categoryQuestions]) => (
-                            <section
-                                key={category}
-                                className="question-navigator__group"
-                            >
-                                <h3 className="question-navigator__group-title">
-                                    {category}
-                                </h3>
-
-                                <div className="question-navigator__group-list">
-                                    {categoryQuestions.map((question) => (
-                                        <button
-                                            key={question.id}
-                                            type="button"
-                                            className={`question-navigator__link${question.id === selectedQuestionId
-                                                ? " is-active"
-                                                : ""
-                                                }`}
-                                            aria-current={
-                                                question.id === selectedQuestionId
-                                                    ? "page"
-                                                    : undefined
-                                            }
-                                            onClick={() => onSelectContent({
-                                                type: "question",
-                                                questionId: question.id,
-                                            })}
-                                        >
-                                            <span className="question-navigator__order">
-                                                {question.order}
-                                            </span>
-
-                                            <span className="question-navigator__text">
-                                                <span className="question-navigator__title">
-                                                    {question.shortTitle}
-                                                </span>
-
-                                                <span className="question-navigator__meta">
-                                                    {question.difficulty}
-                                                </span>
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </section>
-                        ))
-                    )
-
+                    ) : null
                 }
             </nav>
         </aside>

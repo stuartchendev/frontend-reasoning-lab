@@ -10,6 +10,7 @@ import {
 } from "../domain/v3/practiceSessionSelectors";
 import type { QuestionContent } from "../domain/v3/questionContent";
 import { reactStateOwnershipQuestion } from "../domain/v3/questionContent";
+import { QuestionBrief } from "./QuestionBrief";
 
 type V3PracticeWorkspaceProps = {
   readonly question: QuestionContent;
@@ -23,6 +24,7 @@ type V3PracticeWorkspaceProps = {
   readonly retryRevisionReview: () => Promise<void>;
   readonly editAfterRevisionReviewFailure: () => void;
   readonly selectRecommendedQuestion: (questionId: string) => void;
+  readonly evaluationGuide: readonly string[];
 };
 
 type AnswerSnapshotProps = {
@@ -45,6 +47,11 @@ function AnswerSnapshot({ title, answer }: AnswerSnapshotProps) {
   );
 }
 
+function formatIdentifier(value: string): string {
+  const words = value.replaceAll("-", " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 export function V3PracticeWorkspace({
   question,
   state,
@@ -57,9 +64,18 @@ export function V3PracticeWorkspace({
   retryRevisionReview,
   editAfterRevisionReviewFailure,
   selectRecommendedQuestion,
+  evaluationGuide,
 }: V3PracticeWorkspaceProps) {
   const hasReferenceDemoAnswers =
     question.id === reactStateOwnershipQuestion.id;
+  const activeStep =
+    state.phase === "revising"
+      ? "revise"
+      : state.phase === "reviewing-revision" ||
+          state.phase === "revision-review-failed" ||
+          state.phase === "complete"
+        ? "review"
+        : "answer";
 
   function handleAnswerSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -125,24 +141,29 @@ export function V3PracticeWorkspace({
               className="result-block v3-diagnosis"
               aria-labelledby="v3-gap-title"
             >
-              <h2 id="v3-gap-title">Primary reasoning gap</h2>
-              <p>
-                <strong>Criterion:</strong>{" "}
-                {state.diagnosis.primaryGap.criterionId}
-              </p>
+              <header className="result-block__header">
+                <p className="result-block__eyebrow">
+                  {formatIdentifier(
+                    state.diagnosis.primaryGap.criterionId,
+                  )}
+                </p>
+                <h2 id="v3-gap-title">What to revise</h2>
+              </header>
               <p>{state.diagnosis.primaryGap.explanation}</p>
-              <p>
-                <strong>Learner evidence:</strong>{" "}
-                <q>{state.diagnosis.primaryGap.learnerEvidence}</q>
-              </p>
-              <p>
-                <strong>Why it matters:</strong>{" "}
-                {state.diagnosis.primaryGap.whyItMatters}
-              </p>
-              <p>
-                <strong>Targeted follow-up:</strong>{" "}
-                {state.diagnosis.followUpQuestion}
-              </p>
+              <div className="v3-feedback-detail">
+                <h3>Your answer says</h3>
+                <p>
+                  <q>{state.diagnosis.primaryGap.learnerEvidence}</q>
+                </p>
+              </div>
+              <div className="v3-feedback-detail">
+                <h3>Why this matters</h3>
+                <p>{state.diagnosis.primaryGap.whyItMatters}</p>
+              </div>
+              <div className="v3-follow-up">
+                <p className="result-block__eyebrow">Focus question</p>
+                <p>{state.diagnosis.followUpQuestion}</p>
+              </div>
             </section>
             <form className="answer-form" onSubmit={handleRevisionSubmit}>
               <label htmlFor="v3-revision">Revise your answer:</label>
@@ -285,8 +306,10 @@ export function V3PracticeWorkspace({
                 <ul className="v3-assessment-list">
                   {state.diagnosis.assessments.map((assessment) => (
                     <li key={assessment.criterionId}>
-                      <code>{assessment.criterionId}</code>:{" "}
-                      {assessment.status}
+                      <span>
+                        {formatIdentifier(assessment.criterionId)}
+                      </span>
+                      <strong>{formatIdentifier(assessment.status)}</strong>
                     </li>
                   ))}
                 </ul>
@@ -313,26 +336,32 @@ export function V3PracticeWorkspace({
               className="result-block"
               aria-labelledby="v3-comparison-title"
             >
-              <h2 id="v3-comparison-title">Revision comparison</h2>
-              <p>
-                <strong>Resolution:</strong> {state.comparison.resolution}
+              <header className="result-block__header">
+                <p className="result-block__eyebrow">
+                  {formatIdentifier(state.comparison.resolution)}
+                </p>
+                <h2 id="v3-comparison-title">Revision comparison</h2>
+              </header>
+              <div className="v3-comparison-evidence">
+                <section>
+                  <h3>Original evidence</h3>
+                  <p>
+                    <q>{state.comparison.originalEvidence}</q>
+                  </p>
+                </section>
+                <section>
+                  <h3>Revised evidence</h3>
+                  <p>
+                    <q>{state.comparison.revisedEvidence}</q>
+                  </p>
+                </section>
+              </div>
+              <p className="v3-comparison-summary">
+                {state.comparison.comparisonSummary}
               </p>
-              <p>
-                <strong>Original evidence:</strong>{" "}
-                <q>{state.comparison.originalEvidence}</q>
-              </p>
-              <p>
-                <strong>Revised evidence:</strong>{" "}
-                <q>{state.comparison.revisedEvidence}</q>
-              </p>
-              <p>{state.comparison.comparisonSummary}</p>
               {nextAction && (
                 <div className="v3-next-action">
                   <h3>Next practice action</h3>
-                  <p>
-                    <strong>Question ID:</strong>{" "}
-                    <code>{nextAction.questionId}</code>
-                  </p>
                   <p>{nextAction.rationale}</p>
                   <button
                     type="button"
@@ -355,45 +384,36 @@ export function V3PracticeWorkspace({
     <section className="practice-panel" aria-labelledby="v3-question-title">
       <div className="practice-layout">
         <div className="practice-main">
-          <section
-            className="question-block"
-            aria-labelledby="v3-question-title"
-          >
-            <p className="v3-question-meta">
-              {question.category} · {question.difficulty} ·{" "}
-              {question.languageContext}
-            </p>
-            <h1 id="v3-question-title">{question.title}</h1>
-            <p>{question.prompt}</p>
-            {question.codeSnippet && (
-              <pre className="v3-code-block">
-                <code>{question.codeSnippet}</code>
-              </pre>
-            )}
-            <dl className="v3-question-context">
-              <div>
-                <dt>Evaluation mode</dt>
-                <dd>{question.evaluationMode}</dd>
-              </div>
-              <div>
-                <dt>Syntax policy</dt>
-                <dd>{question.syntaxPolicy}</dd>
-              </div>
-              <div>
-                <dt>Target concepts</dt>
-                <dd>{question.targetConceptIds.join(", ")}</dd>
-              </div>
-            </dl>
-          </section>
+          <QuestionBrief
+            titleId="v3-question-title"
+            metadata={[
+              question.category,
+              question.difficulty,
+              question.languageContext,
+            ]}
+            title={question.title}
+            prompt={[question.prompt]}
+            codeSnippet={question.codeSnippet}
+            evaluationGuide={evaluationGuide}
+          />
 
-          <p className="v3-demo-note">
-            Live diagnosis and revision review
-            {hasReferenceDemoAnswers &&
-              " — sample answers are available for repeatable testing"}
-            .
-          </p>
-
-          <div className="practice-workflow">{renderPhase()}</div>
+          <div className="practice-workflow">
+            <ol className="v3-progress" aria-label="Practice progress">
+              <li className={activeStep === "answer" ? "is-active" : ""}>
+                <span>1</span>
+                Answer
+              </li>
+              <li className={activeStep === "revise" ? "is-active" : ""}>
+                <span>2</span>
+                Revise
+              </li>
+              <li className={activeStep === "review" ? "is-active" : ""}>
+                <span>3</span>
+                Review
+              </li>
+            </ol>
+            {renderPhase()}
+          </div>
         </div>
       </div>
     </section>
