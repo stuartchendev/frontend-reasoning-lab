@@ -1,165 +1,151 @@
 # Frontend Reasoning Lab
 
-> **Release note:** FRL v2 Mini is released on `main`, deployed to production, and tagged as `v0.2.0`. FRL v1 remains preserved as completed and frozen historical evidence.
+> **Release line:** `v0.3.0` established the FRL v3 guided workflow. The
+> upcoming `v0.3.1` closure keeps that workflow intact and adds a public interactive
+> walkthrough that does not require a hosted model or public API key.
 
-Frontend Reasoning Lab is a React + TypeScript practice workspace designed to make frontend engineering reasoning visible through structured questions, written responses, explicit state ownership, and evaluation feedback.
+Frontend Reasoning Lab is a bounded React + TypeScript reference workflow for
+using architecture-constrained AI to diagnose and improve frontend reasoning.
 
-The project began as a small evaluator proof and has evolved into a controlled question-navigation and practice flow without expanding into a full learning platform.
+The application owns the workflow, legal state transitions, validation
+boundaries, and rendering. AI supplies structured evaluation results inside
+those constraints. FRL is intentionally a demonstrative engineering project,
+not a course platform or general-purpose question bank.
 
 > Small scope, clear engineering signal.
 
-## Project Evidence
-
-- **Frontend Reasoning Workspace** — question navigation, search, category grouping, and structured practice flow
-- **Explicit State Model** — parent-owned content selection and derived selected-question data
-- **Evaluator Boundary** — deterministic async-like evaluation separated from UI rendering
-- **Engineering Decisions** — implemented scope, trade-offs, AI assistance boundaries, and owner responsibility
-- **Verification Notes** — interaction checks, responsive checks, typecheck, and production build validation
-
 ## Live Demo
 
-[View Live Demo](https://frontend-reasoning-lab.netlify.app/)
+[Open the Public Interactive Walkthrough](https://frontend-reasoning-lab.netlify.app/)
 
-> The live demo serves the released FRL v2 Mini workspace.
+The public build replays validated responses captured from a real local model
+run. The reducer, phase transitions, revision comparison, recommendation
+navigation, and session reset still run live in the browser; only model
+inference is replayed.
+
+- [View real-model browser evidence](./docs/v3/evidence/README.md)
+- [Run the same workflow with live AI locally](#run-with-live-ai-locally)
+
+## Contents
+
+- [What FRL Demonstrates](#what-frl-demonstrates)
+- [Guided Workflow](#guided-workflow)
+- [Two Execution Modes, One Application Contract](#two-execution-modes-one-application-contract)
+- [State and Data Flow](#state-and-data-flow)
+- [Core Engineering Decisions](#core-engineering-decisions)
+- [Scope Control](#scope-control)
+- [Run with Live AI Locally](#run-with-live-ai-locally)
+- [Verification](#verification)
+- [Project History and Documentation](#project-history-and-documentation)
 
 ## Preview
 
-![Frontend Reasoning Lab preview](./docs/preview.png)
+![Frontend Reasoning Lab public walkthrough](./docs/preview.png)
 
-## What the Project Does
+## What FRL Demonstrates
 
-FRL v2 Mini provides a small frontend reasoning practice flow:
+- **Architecture-constrained AI** — the model interprets an answer inside
+  question-defined contracts; it does not own application state or grading
+  rules.
+- **Explicit workflow state** — Answer → Revise → Review is represented by
+  legal reducer transitions rather than incidental UI booleans.
+- **Validated model output** — structural parsing and semantic validation run
+  before live model results enter the application workflow.
+- **Execution-source independence** — local live inference and public replay
+  satisfy the same application-facing adapter contract.
+- **Evidence-backed presentation** — the public walkthrough identifies what is
+  replayed, what still runs live, and where the real-model evidence is stored.
 
-```txt
-open the workspace
-→ review the project overview
-→ search or browse question categories
-→ select a frontend reasoning question
-→ write an answer
-→ submit through the evaluator boundary
-→ receive structured feedback
-```
-
-The evaluator currently uses a deterministic mock implementation. This keeps the state transitions, async UI behavior, and responsibility boundaries reviewable without depending on an external AI service.
-
-## Why This Project Exists
-
-Frontend work is not only about rendering components. It also involves deciding:
-
-- what state should exist
-- what data should be derived
-- which component owns each decision
-- how user actions move through the system
-- how async results should update the current UI
-- where service and rendering responsibilities should be separated
-- which features should remain outside the current scope
-
-This project makes those decisions visible and explainable.
-
-## Evolution from FRL v1
-
-FRL v1 was intentionally built as a tiny proof of one controlled reasoning loop:
+## Guided Workflow
 
 ```txt
-fixed question
-→ user answer
-→ fake async evaluator
-→ structured result
-→ UI feedback
-→ documented decisions
+choose a guided frontend example
+→ explain the reasoning
+→ receive one focused diagnosis
+→ revise the answer
+→ compare what improved
+→ continue to one bounded recommended question
 ```
 
-FRL v2 Mini preserves that evaluator foundation and adds a clearer user-facing workspace:
+The workflow is deliberately narrow. It demonstrates how frontend architecture
+can constrain AI evaluation without expanding FRL into a full education
+platform.
 
-- a static frontend reasoning question bank
-- a searchable Question Navigator
-- visual category grouping
-- Overview and Question content modes
-- parent-owned selection state
-- selected-question derivation
-- reset and stale-result protection when content changes
-- a more presentation-ready project entry point
+## Two Execution Modes, One Application Contract
 
-The goal was not to replace v1 with a larger platform. The goal was to extend the original engineering proof through one bounded, reviewable frontend slice.
+| Context | Evaluation source | Input boundary |
+| --- | --- | --- |
+| Public production | Validated Call 1 and Call 2 responses captured from a real local model run | Verified demo answer and revision only |
+| Local development | Live LM Studio or OpenAI inference through server-owned HTTP adapters | Arbitrary answers and revisions |
+
+Both modes feed validated domain results into the same session workflow. The
+application still owns phase transitions, retry/edit actions, revision
+comparison, recommendation navigation, and fresh-session reset.
+
+The public walkthrough does not evaluate edited text with fixed feedback. If a
+verified input is changed, the UI requires a reset before replay can continue.
+This keeps the relationship between input and feedback honest without exposing
+credentials or consuming a public model budget.
 
 ## State and Data Flow
 
-The main application owns the state that coordinates the workspace:
-
-```ts
-type SelectedContent =
-  | { type: "overview" }
-  | { type: "question"; questionId: string };
-```
-
-The selected question is derived from:
-
-```txt
-selectedContent
-+ fixedQuestions
-→ selectedQuestion
-```
-
-This avoids storing both a selected ID and a duplicated selected question object as separate sources of truth.
-
-The main flow is:
+The v3 flow keeps selection, session state, model execution, and rendering as
+separate responsibilities:
 
 ```txt
 QuestionNavigator emits a selection intent
-→ App updates selectedContent
-→ App derives selectedQuestion
-→ App renders Overview or Practice content
-→ answer submission calls the evaluator
-→ evaluator returns a structured result
-→ App state updates the UI
+→ App updates SelectedContent and starts a fresh practice session
+→ V3PracticeWorkspace emits answer or revision actions
+→ usePracticeSession calls the configured evaluation adapter
+→ the session reducer accepts a validated domain result
+→ React renders the next legal phase
 ```
 
-When the selected content changes, the application resets the current answer, loading state, and evaluation result.
+Changing questions invalidates pending work before a new session begins, so an
+older result cannot update the newly selected question.
 
-Pending evaluator requests are also invalidated so that a response from a previous question cannot update the newly selected view.
+The application-facing boundary is stable across both execution modes:
+
+```ts
+type PracticeEvaluationAdapter = {
+  diagnose(
+    input: DiagnosePracticeAnswerInput,
+  ): Promise<InitialDiagnosisResult>;
+  compareRevision(
+    input: ComparePracticeRevisionInput,
+  ): Promise<RevisionComparisonResult>;
+};
+```
 
 ## Component Responsibilities
 
 ### App
 
-The application root owns cross-component workflow state:
-
-- selected content
-- search text
-- answer text
-- evaluation loading state
-- evaluation result
-- evaluator request version
-
-It also derives the selected question and decides whether to render the Overview or Practice view.
+The application root owns selected content, derives the active guided question,
+starts a fresh session when selection changes, and connects recommendation
+navigation back to the same controlled selection path.
 
 ### QuestionNavigator
 
-The navigator is responsible for:
-
-- rendering static navigation items
-- rendering question categories
-- displaying filtered questions
-- handling the controlled search input
-- indicating the active selection
-- emitting one unified selection intent
-
-It does not own the current selection and does not decide what the main content area renders.
+The navigator renders Overview and the bounded AI-guided examples. It receives
+the current selection and emits one `SelectedContent` intent; it does not own
+session or phase state.
 
 ### OverviewPanel
 
-The Overview introduces:
+The Overview explains the constrained workflow, the evaluation boundary, and
+the distinction between public replay and local live inference.
 
-- the project purpose
-- the user flow
-- the evaluator data flow
-- the main frontend engineering evidence
+### Practice session
 
-### Evaluator
+`usePracticeSession` coordinates async evaluation with the reducer. The reducer
+owns legal Answer → Revise → Review transitions and browser-safe failure states.
 
-The evaluator accepts a question and user answer and returns a structured result.
+### Evaluation composition
 
-It does not render UI and does not own React state.
+The composition selects the HTTP adapter in development and the public
+walkthrough adapter in production. Neither adapter renders UI or owns React
+state.
 
 ## Core Engineering Decisions
 
@@ -180,50 +166,57 @@ onSelectQuestion
 
 This gives the parent one consistent event boundary while preserving explicit content variants through a discriminated union.
 
-### Derived Question Data
+### Derived Guided Question
 
-The application stores the selected content identity and derives the corresponding question from the static question collection.
+The application stores the selected content identity and derives the
+corresponding v3 question from the guided-question registry.
 
 This keeps the question data as the source of truth and avoids duplicated state.
 
-### Stale Evaluation Protection
+### Session and stale-response protection
 
-Changing the current content invalidates pending evaluation requests.
+Changing the current question starts a new session. Async completion actions
+carry the session identity and are ignored when they no longer belong to the
+active session.
 
 This prevents an older async result from appearing under a different question after the user navigates away.
 
-### Evaluator Boundary
+### Validated evaluation boundary
 
-The UI and evaluator remain separate.
+The model cannot write directly to React state:
 
 ```txt
-UI collects input
-→ evaluator checks the answer
-→ evaluator returns structured data
-→ UI renders the result
+model output
+→ structural parsing
+→ semantic validation
+→ versioned safe result
+→ application adapter
+→ session reducer
 ```
 
-A real API could later replace the mock evaluator behind the same boundary without requiring the rendering layer to own evaluation logic.
+The public replay adapter demonstrates that the application depends on the
+validated result contract, not on one specific model runtime.
 
 ## Scope Control
 
-FRL v2 Mini intentionally does not include:
+FRL v3 intentionally does not include:
 
 - authentication
 - backend persistence
 - user accounts
-- real AI API integration
 - practice history
 - analytics dashboard
 - complex routing
 - admin tools
 - payments
 - a large design system
+- an open-ended public AI endpoint
+- a general-purpose question bank UI
 - a full education platform
 
-These are possible production extensions, not requirements for the current evidence slice.
-
-The current goal is to demonstrate a small, coherent frontend system that can be inspected, tested, and explained clearly.
+The goal is to demonstrate one coherent AI-assisted reasoning workflow whose
+state, contracts, failure handling, and execution boundaries can be inspected
+and explained clearly.
 
 ## AI-Assisted Engineering Workflow
 
@@ -236,17 +229,13 @@ AI was used to support:
 - improving documentation
 - validating whether changes stayed inside scope
 
-The project scope, state model, component responsibilities, trade-offs, verification criteria, and final implementation decisions were reviewed and owned by me.
+The project scope, state model, component responsibilities, trade-offs,
+verification criteria, and final implementation decisions were reviewed and
+owned by me.
 
 AI assistance is treated as part of the engineering workflow, not as a substitute for understanding or responsibility.
 
-Current v2 decision evidence is recorded in:
-
-```txt
-docs/v2/FRL_V2_DECISIONS.md
-```
-
-The original v1 AI-assisted decision log remains preserved as historical evidence.
+Versioned decision and verification records remain under [`docs/`](./docs/).
 
 ## Tech Stack
 
@@ -385,8 +374,7 @@ node --test \
 These tests use injected fake transports while exercising the real OpenAI
 request boundary, server pipeline, semantic validation, HTTP status mapping,
 safe envelopes, and trace IDs for Call 1 and Call 2. A successful automated run
-is not evidence of a live OpenAI or browser E2E. Public deployment also remains
-blocked on minimum rate limiting and usage protection.
+is not evidence of a live OpenAI or browser E2E. A future public live-model deployment would still require minimum rate limiting and usage protection.
 
 ### OpenAI live two-call HTTP smoke
 
@@ -483,77 +471,61 @@ browser execution: not run
 
 ## Verification
 
-The released v2 workspace has been checked for:
+The v3 workflow is covered by:
 
-- question selection behavior
-- Overview and Question navigation
-- controlled search behavior
-- derived question filtering
-- category grouping
-- answer and result reset after navigation
-- prevention of stale evaluation updates
-- keyboard interaction
-- responsive behavior
-- TypeScript typecheck
-- production build
-- development-server response
-- `git diff --check`
+- reducer and selector tests for legal phase transitions
+- adapter composition tests for development and production execution modes
+- public walkthrough tests for verified-input enforcement and replayed results
+- structural and semantic validation tests for both model calls
+- stale session/request protection checks
+- TypeScript typecheck and production build
+- responsive browser review of Overview and Answer → Revise → Review
+- same-session local real-model browser evidence
+- production-bundle checks for server-only runtime markers and credentials
 
-Detailed v2 verification notes are recorded in:
-
-```txt
-docs/v2/VERIFICATION.md
-```
-
-## Current Status
-
-FRL v2 Mini is released on `main`, deployed to production, and tagged as `v0.2.0`.
-
-The current production release includes:
-
-- static frontend reasoning question bank
-- searchable Question Navigator
-- visual category grouping
-- explicit Overview and Question content selection
-- parent-owned `SelectedContent` state
-- derived selected-question flow
-- preserved evaluator boundary
-- stale evaluation result protection
-- doc-style Overview content
-- project metadata and presentation polish
-- responsive and build verification
-
-FRL v1 is completed and frozen as historical evidence of the original tiny proof.
-
-Post-release follow-up is limited to aligning portfolio and public evidence with the released version. It is not a release blocker and does not reopen application feature scope.
-
-Dark mode, additional visual accents, practice history, backend features, and platform expansion remain outside the current release scope.
+The evidence record distinguishes automated tests, local HTTP smoke checks,
+real-model browser execution, and hosted production verification rather than
+treating them as interchangeable proof.
 
 ## Key Takeaway
 
-Frontend Reasoning Lab demonstrates how I turn a bounded UI workflow into visible frontend engineering evidence:
+Frontend Reasoning Lab demonstrates how a bounded application architecture can
+use AI without handing the model ownership of the product workflow:
 
-- explicit state ownership
-- derived data instead of duplicated state
-- predictable one-way data flow
-- separated component responsibilities
-- protected async result handling
-- documented trade-offs
-- controlled AI-assisted implementation
-- clear scope boundaries
+- React owns selection, session state, and rendering
+- the reducer owns legal transitions
+- adapters isolate the execution source
+- validators protect the domain boundary
+- correlated requests prevent stale updates
+- public replay and local live inference remain explicit
+- evidence and claims stay scoped to what was actually verified
 
-The project is designed to be small enough to explain clearly while still showing meaningful React + TypeScript engineering decisions.
+The project stays small enough to explain clearly while still showing
+meaningful React, TypeScript, async-state, and AI-boundary decisions.
 
-## Additional Documentation
+## Project History and Documentation
 
-- `docs/README.md` — documentation entry point and reading order
-- `docs/frl-core-concepts.svg` — shared reasoning model across FRL versions
-- `docs/v2/FRL_V2_DECISIONS.md` — current v2 engineering decisions and implemented scope
-- `docs/v2/VERIFICATION.md` — current v2 interaction, responsive, and engineering verification
-- `docs/v2/FRL_V2_MINI_SCOPE_V0_1.md` — historical v0.1 planning context
-- `docs/v3/evidence/README.md` — local v3 Answer → Revise → Review → recommended-question browser evidence
-- `docs/CURRENT_STATUS.md` — current branch and release status
-- `docs/EVALUATOR_RUBRIC.md` — shared evaluator criteria and boundary
-- `docs/v1/FRL_V1_DECISIONS.md` — historical v1 AI-assisted decision evidence
-- `docs/v1/VERIFICATION.md` — historical v1 verification
-- `docs/v1/TINY_PROOF.md` — original FRL v1 project direction
+FRL evolved through bounded, reviewable slices rather than by turning the
+original evaluator proof into a broad platform:
+
+- **v1** established one controlled deterministic reasoning loop.
+- **v2 Mini** added the frontend workspace, parent-owned selection, derived
+  question data, and stale-result protection.
+- **v3** added the typed Answer → Revise → Review session, two validated model
+  calls, recommendation navigation, local provider composition, and the public
+  interactive walkthrough.
+
+Reviewer entry points:
+
+- [`docs/v3/ARCHITECTURE_DECISIONS.md`](./docs/v3/ARCHITECTURE_DECISIONS.md) —
+  v3 ownership, contract, and session decisions
+- [`docs/v3/evidence/README.md`](./docs/v3/evidence/README.md) — local real-model
+  Answer → Revise → Review → recommended-question browser evidence
+- [`docs/v2/FRL_V2_DECISIONS.md`](./docs/v2/FRL_V2_DECISIONS.md) — retained v2
+  frontend foundation and historical implementation decisions
+- [`docs/frl-core-concepts.svg`](./docs/frl-core-concepts.svg) — reasoning model
+  shared across FRL versions
+- [`docs/EVALUATOR_RUBRIC.md`](./docs/EVALUATOR_RUBRIC.md) — shared evaluator
+  criteria and responsibility boundary
+- [`docs/v1/FRL_V1_DECISIONS.md`](./docs/v1/FRL_V1_DECISIONS.md) — frozen v1
+  decision evidence

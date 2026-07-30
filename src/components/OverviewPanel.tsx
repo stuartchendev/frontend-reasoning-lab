@@ -10,9 +10,10 @@ export function OverviewPanel() {
             <header className="overview-content__intro">
               <h1 id="overview-title">Overview</h1>
               <p>
-                Frontend Reasoning Lab is a working reference flow for using
-                architecture-constrained AI to diagnose and improve frontend
-                reasoning.
+                Frontend Reasoning Lab is a bounded reference workflow showing
+                how application architecture can constrain AI while it
+                diagnoses and improves frontend reasoning. It is an engineering
+                demonstration, not a course platform.
               </p>
             </header>
 
@@ -23,8 +24,11 @@ export function OverviewPanel() {
               <h2 id="overview-how-it-works">How it works</h2>
               <ol>
                 <li>Choose an example and explain your frontend reasoning.</li>
-                <li>Receive a focused diagnosis of one reasoning gap.</li>
-                <li>Revise your answer and compare what improved.</li>
+                <li>Receive one validated diagnosis of a reasoning gap.</li>
+                <li>
+                  Revise your answer, compare what improved, and continue to one
+                  bounded next question.
+                </li>
               </ol>
             </section>
 
@@ -36,19 +40,22 @@ export function OverviewPanel() {
               <ol className="overview-flow">
                 <li>Question selection</li>
                 <li>Answer submission</li>
-                <li>Model boundary</li>
-                <li>Structured diagnosis</li>
+                <li>Evaluation adapter</li>
+                <li>Validated diagnosis</li>
                 <li>Revision</li>
-                <li>Comparison</li>
+                <li>Validated comparison</li>
                 <li>Recommended next question</li>
               </ol>
               <p>
-                Model responses pass through typed contracts and semantic
-                validation before entering React state.
+                Local development uses live model inference. The public
+                walkthrough replays validated responses captured from a real
+                local model run. Both enter the same application workflow
+                through one adapter contract.
               </p>
               <p>
-                Pending requests are invalidated when the active question changes,
-                preventing stale results from updating the current session.
+                Session identity and legal reducer transitions remain
+                application-owned, preventing stale results from updating the
+                current question.
               </p>
             </section>
 
@@ -60,10 +67,10 @@ export function OverviewPanel() {
                 What this project demonstrates
               </h2>
               <ul>
-                <li>Explicit React state ownership</li>
-                <li>Bounded model output</li>
-                <li>Validated data flow</li>
-                <li>Clear AI-assisted workflow responsibility boundaries</li>
+                <li>Application-owned React state and phase transitions</li>
+                <li>Structurally and semantically validated model output</li>
+                <li>Execution-source-independent evaluation composition</li>
+                <li>Honest public replay and local live-AI boundaries</li>
               </ul>
             </section>
 

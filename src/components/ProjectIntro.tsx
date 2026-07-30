@@ -5,7 +5,7 @@ const footerLinks = [
   },
   {
     label: "Decision Log",
-    href: "https://github.com/stuartchendev/frontend-reasoning-lab/blob/FRLv2/docs/v1/FRL_V1_DECISIONS.md",
+    href: "https://github.com/stuartchendev/frontend-reasoning-lab/blob/main/docs/v3/ARCHITECTURE_DECISIONS.md",
   },
   {
     label: "Portfolio",
