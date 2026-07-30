@@ -4,15 +4,32 @@ This directory separates shared project references from version-specific evidenc
 
 ## Current Release Path
 
-FRL v2 Mini is the current production release on `main`, tagged as `v0.2.0`. FRL v1 is completed and frozen as historical evidence.
+FRL v3 is the current application on `main` and in production. Its guided
+workflow moves through Answer → Revise → Review while the application owns
+session state, legal transitions, validation boundaries, recommendation
+navigation, and rendering.
 
-For the current v2 implementation, read:
+The `v0.3.1` release-status closure adds the Public Interactive Walkthrough to
+the v3 release line. Production replays validated responses captured from a
+real local model run; local development can run the same application workflow
+with live LM Studio or OpenAI inference through the existing server-owned
+boundary.
 
-1. [`v2/FRL_V2_DECISIONS.md`](./v2/FRL_V2_DECISIONS.md) — current engineering decisions and implemented scope
-2. [`v2/VERIFICATION.md`](./v2/VERIFICATION.md) — v2 interaction, responsive, and engineering verification
-3. [`v2/FRL_V2_MINI_SCOPE_V0_1.md`](./v2/FRL_V2_MINI_SCOPE_V0_1.md) — historical v0.1 planning context; not the current scope source of truth
+For the current release and reviewer path, read:
 
-For the current release status, see [`CURRENT_STATUS.md`](./CURRENT_STATUS.md).
+1. [`CURRENT_STATUS.md`](./CURRENT_STATUS.md) — current production and
+   `v0.3.1` release-closure status
+2. [`../README.md`](../README.md) — project positioning, execution modes,
+   architecture, local live-AI setup, and verification boundaries
+3. [`v3/evidence/README.md`](./v3/evidence/README.md) — same-session local
+   real-model Answer → Revise → Review browser evidence
+4. [`v3/ARCHITECTURE_DECISIONS.md`](./v3/ARCHITECTURE_DECISIONS.md) — accepted
+   v3 ownership, contract, and state-machine decisions
+
+[`v3/DEMO_FLOW.md`](./v3/DEMO_FLOW.md) and
+[`v3/IMPLEMENTATION_PLAN.md`](./v3/IMPLEMENTATION_PLAN.md) are retained as the
+original v3 handoff and slice plan. Their baseline status language is
+historical and does not override the current release status.
 
 ## Shared Reference
 
@@ -22,6 +39,15 @@ The core reasoning model summarizes the project principles that remain shared ac
 
 - [`frl-core-concepts.svg`](./frl-core-concepts.svg) — cross-version reasoning model
 - [`EVALUATOR_RUBRIC.md`](./EVALUATOR_RUBRIC.md) — shared evaluator rubric and boundary
+
+## Historical v2 Evidence
+
+The following files describe the released v2 Mini frontend foundation retained
+by v3:
+
+- [`v2/FRL_V2_DECISIONS.md`](./v2/FRL_V2_DECISIONS.md)
+- [`v2/VERIFICATION.md`](./v2/VERIFICATION.md)
+- [`v2/FRL_V2_MINI_SCOPE_V0_1.md`](./v2/FRL_V2_MINI_SCOPE_V0_1.md)
 
 ## Historical v1 Evidence
 
@@ -39,4 +65,5 @@ The following planning documents are retained for historical context:
 - [`archive/FUTURE_ARCHITECTURE_NOTES.md`](./archive/FUTURE_ARCHITECTURE_NOTES.md)
 - [`archive/ARCHIVED_AI_COLLAB_CONTEXT.md`](./archive/ARCHIVED_AI_COLLAB_CONTEXT.md)
 
-They do not override [`CURRENT_STATUS.md`](./CURRENT_STATUS.md) or the current v2 decisions.
+They do not override [`CURRENT_STATUS.md`](./CURRENT_STATUS.md) or the current
+v3 reviewer path.
