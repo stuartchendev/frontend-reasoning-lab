@@ -1,7 +1,7 @@
 # Frontend Reasoning Lab
 
 > **Release line:** `v0.3.0` established the FRL v3 guided workflow. The
-> upcoming `v0.3.1` closure keeps that workflow intact and adds a public interactive
+> current `v0.3.1` release closure keeps that workflow intact and adds a public interactive
 > walkthrough that does not require a hosted model or public API key.
 
 Frontend Reasoning Lab is a bounded React + TypeScript reference workflow for
