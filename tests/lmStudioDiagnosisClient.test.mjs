@@ -322,21 +322,19 @@ test("translates one accepted Call 1 request into one bounded chat completion", 
   assert.equal(Object.hasOwn(chatRequest, "tools"), false);
   assert.deepEqual(
     chatRequest.messages.map(({ role }) => role),
-    ["system", "system", "user"],
+    ["system", "user"],
   );
-  assert.equal(chatRequest.messages[0].content, sourceRequest.instructions);
-  assert.equal(chatRequest.messages[1].content, sourceRequest.input[0].content);
-  assert.equal(chatRequest.messages[2].content, sourceRequest.input[1].content);
+  assert.equal(
+    chatRequest.messages[0].content,
+    [sourceRequest.instructions, sourceRequest.input[0].content].join("\n\n"),
+  );
+  assert.equal(chatRequest.messages[1].content, sourceRequest.input[1].content);
   assert.equal(
     chatRequest.messages[0].content.includes(flawedStateOwnershipAnswer),
     false,
   );
   assert.equal(
     chatRequest.messages[1].content.includes(flawedStateOwnershipAnswer),
-    false,
-  );
-  assert.equal(
-    chatRequest.messages[2].content.includes(flawedStateOwnershipAnswer),
     true,
   );
   assert.equal(chatRequest.response_format.type, "json_schema");
@@ -557,7 +555,7 @@ test("translates Call 2 through the same bounded LM Studio adapter", async () =>
   assert.equal(chatRequest.response_format.json_schema.name, "revision_review");
   assert.equal(chatRequest.response_format.json_schema.strict, true);
   assert.equal(
-    chatRequest.messages[2].content.includes(
+    chatRequest.messages[1].content.includes(
       "App owns the canonical selectedQuestionId",
     ),
     true,

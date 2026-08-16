@@ -259,8 +259,13 @@ function createChatCompletionRequest(
   return {
     model,
     messages: [
-      { role: "system", content: source.instructions },
-      { role: "system", content: source.canonicalDataMessage },
+      {
+        role: "system",
+        content: [
+          source.instructions,
+          source.canonicalDataMessage,
+        ].join("\n\n"),
+      },
       { role: "user", content: source.learnerSubmissionMessage },
     ],
     response_format: {

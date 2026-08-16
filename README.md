@@ -286,7 +286,7 @@ model placeholder with the exact identifier reported by LM Studio:
 ```env
 LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
 LM_STUDIO_MODEL=your-loaded-model-identifier
-LM_STUDIO_TIMEOUT_MS=90000
+LM_STUDIO_TIMEOUT_MS=25000
 ```
 
 Open the local URL printed by Vite. The development-only **AI Runtime** panel
@@ -298,9 +298,17 @@ The settings are read by the server runtime when development starts. Restart
 a `VITE_` prefix: credentials and model runtime configuration must remain
 server-owned. The status panel and status endpoint are unavailable in
 production. `LM_STUDIO_TIMEOUT_MS` is optional and accepts a positive integer
-number of milliseconds. It defaults to 25 seconds when missing or invalid; the
-90-second example is intended for a slower local architecture proof and does
-not change the separate 45-second OpenAI timeouts.
+number of milliseconds. It defaults to 25 seconds when missing or invalid and
+controls only the LM Studio client request timeout; it does not extend the
+surrounding Netlify synchronous Function execution limit. The browser live-AI
+flow currently passes through a Netlify Function, whose synchronous execution
+limit is 60 seconds. A slow local model can therefore succeed when invoked
+directly through the LM Studio pipeline but fail to return through the browser
+UI when inference approaches or exceeds that window. Setting
+`LM_STUDIO_TIMEOUT_MS` above 60 seconds does not remove the Function limit. For
+browser-based local testing, choose a model that can reliably complete each of
+the two evaluation calls within the available execution window. The separate
+OpenAI client timeout remains 45 seconds.
 
 ## OpenAI Runtime and Verification
 
